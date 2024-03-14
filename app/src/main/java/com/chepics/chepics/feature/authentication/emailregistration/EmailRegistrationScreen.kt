@@ -109,5 +109,6 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
 fun CheckEmailRegistrationCompletion(navController: NavController, viewModel: EmailRegistrationViewModel) {
     if (viewModel.isCompleted.value) {
         navController.navigate(Screens.OneTimeCodeScreen.name)
+        viewModel.isCompleted.value = false
     }
 }
