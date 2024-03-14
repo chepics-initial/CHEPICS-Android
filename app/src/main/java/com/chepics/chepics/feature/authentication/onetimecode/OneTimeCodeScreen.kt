@@ -1,5 +1,7 @@
 package com.chepics.chepics.feature.authentication.onetimecode
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,11 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -27,7 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -43,6 +49,8 @@ import com.chepics.chepics.utils.Constants
 
 @Composable
 fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewModel = viewModel()) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Box {
         Box(
             modifier = Modifier
@@ -77,51 +85,56 @@ fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewMo
                 }
             }
 
-            OtpTextField(
-                modifier = Modifier.align(Alignment.Center),
-                otpText = viewModel.code.value,
-                onOtpTextChange = { value, otpInputFilled ->
-                    viewModel.code.value = value
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OtpTextField(
+                    otpText = viewModel.code.value,
+                    onOtpTextChange = { value, otpInputFilled ->
+                        viewModel.code.value = value
+                    }
+                ) {
+                    keyboardController?.hide()
+                    viewModel.onTapButton()
                 }
-            )
+                
+                Spacer(modifier = Modifier.height(8.dp))
 
-//            TextField(
-//                value = viewModel.code.value,
-//                onValueChange = { if (it.count() <= Constants.ONE_TIME_CODE_COUNT) viewModel.code.value = it },
-//                modifier = Modifier
-//                    .width(0.dp)
-//                    .height(0.dp)
-//                    .align(Alignment.Center)
-//            )
-
-//            Row(
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .fillMaxWidth()
-//            ) {
-//                for (i in 0 ..Constants.ONE_TIME_CODE_COUNT) {
-//                    Column(modifier = Modifier.fillMaxWidth()) {
-//                        Text(text = viewModel.getCodeFromIndex(i).toString())
-//                    }
-//                }
-//            }
+                TextButton(onClick = {  }) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, Color.LightGray)
+                    ) {
+                        Text(
+                            text = "コードを再送信",
+                            color = Color.LightGray, 
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+            }
         }
 
-//        if (viewModel.isLoading.value) {
-//            CommonProgressSpinner()
-//        }
-//
-//        if (viewModel.showAlertDialog.value) {
-//            AlertDialog(
-//                onDismissRequest = {  },
-//                title = { Text(text = "エラー") },
-//                confirmButton = {
-//                    TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
-//                        Text(text = "OK")
-//                    }
-//                }
-//            )
-//        }
+        if (viewModel.isLoading.value) {
+            CommonProgressSpinner()
+        }
+
+        if (viewModel.showAlertDialog.value) {
+            AlertDialog(
+                onDismissRequest = {  },
+                title = { Text(text = "エラー") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -130,7 +143,8 @@ fun OtpTextField(
     modifier: Modifier = Modifier,
     otpText: String,
     otpCount: Int = 4,
-    onOtpTextChange: (String, Boolean) -> Unit
+    onOtpTextChange: (String, Boolean) -> Unit,
+    onDone: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         if (otpText.length > otpCount) {
@@ -146,7 +160,13 @@ fun OtpTextField(
                 onOtpTextChange.invoke(it.text, it.text.length == otpCount)
             }
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.NumberPassword,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = {
+            onDone()
+        }),
         decorationBox = {
             Row(
                 modifier = modifier.fillMaxWidth(),
@@ -155,9 +175,11 @@ fun OtpTextField(
                 repeat(otpCount) { index ->
                     CharView(
                         index = index,
-                        text = otpText
+                        text = otpText,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         }
@@ -167,16 +189,16 @@ fun OtpTextField(
 @Composable
 private fun CharView(
     index: Int,
-    text: String
+    text: String,
+    modifier: Modifier = Modifier
 ) {
-    val isFocused = text.length == index
     val char = when {
         index == text.length -> ""
         index > text.length -> ""
         else -> text[index].toString()
     }
     Column(
-        modifier = Modifier.width(40.dp),
+        modifier = modifier.width(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -186,8 +208,11 @@ private fun CharView(
             textAlign = TextAlign.Center
         )
 
+        Spacer(modifier = Modifier.height(4.dp))
+
         Divider(
-            modifier = Modifier.height(2.dp)
+            modifier = Modifier.height(2.dp),
+            color = if (isSystemInDarkTheme()) Color.White else Color.Black
         )
     }
 }
