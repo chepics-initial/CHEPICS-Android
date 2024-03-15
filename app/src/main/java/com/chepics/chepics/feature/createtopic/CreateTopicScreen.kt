@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.createtopic
 
+import android.webkit.URLUtil
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -7,12 +8,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -257,7 +259,10 @@ fun LinkView(viewModel: CreateTopicViewModel) {
         value = viewModel.link.value,
         onValueChange = { viewModel.link.value = it },
         label = { Text(text = "リンクを入力") },
+        maxLines = 1,
         colors = TextFieldDefaults.colors(
+            focusedTextColor = linkTextColor(viewModel = viewModel),
+            unfocusedTextColor = linkTextColor(viewModel = viewModel),
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             cursorColor = ChepicsPrimary,
@@ -265,7 +270,8 @@ fun LinkView(viewModel: CreateTopicViewModel) {
             focusedLabelColor = ChepicsPrimary
         ),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Uri
+            keyboardType = KeyboardType.Uri,
+            imeAction = ImeAction.Done
         ),
         modifier = Modifier.fillMaxWidth()
     )
@@ -287,19 +293,21 @@ fun ImagesView(viewModel: CreateTopicViewModel, onClick: () -> Unit) {
                 .horizontalScroll(scrollState)
                 .padding(vertical = 16.dp)
         ) {
-            for (image in viewModel.imageUris.value) {
+            viewModel.imageUris.value.forEachIndexed { index, uri ->
                 AsyncImage(
-                    model = image,
+                    model = uri,
                     contentDescription = "topic image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(120.dp)
-                        .clip(RoundedCornerShape(8))
-                        .border(1.dp, Color.LightGray)
+                        .clip(RoundedCornerShape(8.dp))
+                        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
                         .clickable { onClick.invoke() }
                 )
                 
-                Spacer(modifier = Modifier.width(16.dp))
+                if (index != Constants.TOPIC_IMAGE_COUNT - 1) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                }
             }
 
             if (viewModel.imageUris.value.count() < Constants.TOPIC_IMAGE_COUNT) {
@@ -322,4 +330,17 @@ fun ImagesView(viewModel: CreateTopicViewModel, onClick: () -> Unit) {
             }
         }
     }
+}
+
+@Composable
+fun linkTextColor(viewModel: CreateTopicViewModel): Color {
+    if (URLUtil.isValidUrl(viewModel.link.value)) {
+        return Color.Blue
+    }
+
+    if (isSystemInDarkTheme()) {
+        return Color.White
+    }
+
+    return Color.Black
 }
