@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.authentication.login
+package com.chepics.chepics.feature.authentication.passwordregistration
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -8,23 +8,26 @@ import com.chepics.chepics.utils.Constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LoginViewModel: ViewModel() {
-    val email: MutableState<String> = mutableStateOf("")
+class PasswordRegistrationViewModel: ViewModel() {
     val password: MutableState<String> = mutableStateOf("")
+    val confirmPassword: MutableState<String> = mutableStateOf("")
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val showAlertDialog: MutableState<Boolean> = mutableStateOf(false)
+    val isCompleted: MutableState<Boolean> = mutableStateOf(false)
 
-    fun loginButtonIsActive(): Boolean {
-        return email.value.isNotEmpty() && password.value.length >= Constants.PASSWORD_LENGTH
+    fun isActive(): Boolean {
+        return password.value == confirmPassword.value && password.value.length >= Constants.PASSWORD_LENGTH
     }
 
-    fun onTapLoginButton() {
+    fun onTapButton() {
         viewModelScope.launch {
             isLoading.value = true
             delay(1000L)
             isLoading.value = false
-            if (email.value == "aaa") {
+            if (password.value == "aaaaaaaa") {
                 showAlertDialog.value = true
+            } else {
+                isCompleted.value = true
             }
         }
     }

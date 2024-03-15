@@ -4,5 +4,8 @@ enum class Screens {
     LoginScreen,
     EmailRegistrationScreen,
     OneTimeCodeScreen,
-    PasswordScreen
+    PasswordScreen,
+    NameRegistrationScreen,
+    CompletionScreen,
+    IconRegistrationScreen
 }

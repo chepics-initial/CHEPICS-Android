@@ -19,18 +19,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -44,19 +40,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.ButtonType
 import com.chepics.chepics.feature.CommonProgressSpinner
 import com.chepics.chepics.feature.RoundButton
-import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.chepics.chepics.feature.authentication.HeaderView
+import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
 
 @Composable
 fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewModel = viewModel()) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    if (viewModel.isCompleted.value) {
+        navController.navigate(Screens.PasswordScreen.name)
+        viewModel.isCompleted.value = false
+    }
+
     Box {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
@@ -65,19 +67,7 @@ fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewMo
                     modifier = Modifier
                         .padding(vertical = 24.dp)
                 ) {
-                    Text(
-                        text = "認証コードを入力",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "に送信された${Constants.ONE_TIME_CODE_COUNT}桁のコードを入力してください",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    HeaderView(title = "認証コードを入力", description = "に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください")
                 }
 
                 RoundButton(text = "次へ", isActive = viewModel.code.value.count() == 4, type = ButtonType.Fill) {
@@ -100,7 +90,7 @@ fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewMo
                     keyboardController?.hide()
                     viewModel.onTapButton()
                 }
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 TextButton(onClick = {  }) {
@@ -110,7 +100,7 @@ fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewMo
                     ) {
                         Text(
                             text = "コードを再送信",
-                            color = Color.LightGray, 
+                            color = Color.LightGray,
                             fontWeight = FontWeight.SemiBold,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(8.dp)

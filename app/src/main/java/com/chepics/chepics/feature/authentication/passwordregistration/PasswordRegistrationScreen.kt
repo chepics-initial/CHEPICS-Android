@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.authentication.emailregistration
+package com.chepics.chepics.feature.authentication.passwordregistration
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,20 +20,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.ButtonType
 import com.chepics.chepics.feature.CommonProgressSpinner
 import com.chepics.chepics.feature.RoundButton
+import com.chepics.chepics.ui.theme.ChepicsPrimary
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.feature.navigation.Screens
-import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.chepics.chepics.utils.Constants
 
 @Composable
-fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegistrationViewModel = viewModel()) {
+fun PasswordRegistrationScreen(navController: NavController, viewModel: PasswordRegistrationViewModel = viewModel()) {
     if (viewModel.isCompleted.value) {
-        navController.navigate(Screens.OneTimeCodeScreen.name)
+        navController.navigate(Screens.NameRegistrationScreen.name)
         viewModel.isCompleted.value = false
     }
 
@@ -49,20 +51,52 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
                 Column(
                     modifier = Modifier.padding(vertical = 24.dp),
                 ) {
-                    HeaderView(title = "メールアドレス登録", description = "ログイン時に使用するメールアドレスを入力してください")
+                    HeaderView(title = "パスワード作成", description = "${Constants.PASSWORD_LENGTH}文字以上のパスワードを設定してください")
 
                     OutlinedTextField(
-                        value = viewModel.email.value,
-                        onValueChange = { viewModel.email.value = it },
+                        value = viewModel.password.value,
+                        onValueChange = { viewModel.password.value = it },
                         modifier = Modifier
                             .padding(vertical = 8.dp)
                             .fillMaxWidth(),
                         maxLines = 1,
-                        label = { Text(text = "メールアドレスを入力")},
+                        label = { Text(text = "${Constants.PASSWORD_LENGTH}文字以上の半角英数字") },
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Email,
+                            keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
                         ),
+                        visualTransformation = PasswordVisualTransformation(),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            cursorColor = ChepicsPrimary,
+                            focusedIndicatorColor = ChepicsPrimary,
+                            focusedLabelColor = ChepicsPrimary
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "確認のため再度パスワードを入力してください",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = viewModel.confirmPassword.value,
+                        onValueChange = { viewModel.confirmPassword.value = it },
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .fillMaxWidth(),
+                        maxLines = 1,
+                        label = { Text(text = "${Constants.PASSWORD_LENGTH}文字以上の半角英数字") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
+                        ),
+                        visualTransformation = PasswordVisualTransformation(),
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
@@ -73,7 +107,7 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
                     )
                 }
 
-                RoundButton(text = "次へ", isActive = viewModel.email.value.isNotEmpty(), type = ButtonType.Fill) {
+                RoundButton(text = "次へ", isActive = viewModel.isActive(), type = ButtonType.Fill) {
                     viewModel.onTapButton()
                 }
             }
