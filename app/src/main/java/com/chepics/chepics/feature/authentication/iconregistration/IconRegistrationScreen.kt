@@ -1,14 +1,10 @@
 package com.chepics.chepics.feature.authentication.iconregistration
 
-import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +42,7 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
     val iconImageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        viewModel.imageUrl.value = uri
+        viewModel.imageUri.value = uri
     }
     
     val isImageSelected = remember {
@@ -66,9 +62,9 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
             ) {
                 HeaderView(title = "プロフィール画像設定", description = "プロフィール画像は後から編集することができます")
                 
-                if (viewModel.imageUrl.value != null) {
+                if (viewModel.imageUri.value != null) {
                     AsyncImage(
-                        model = viewModel.imageUrl.value,
+                        model = viewModel.imageUri.value,
                         contentDescription = "selected icon",
                         modifier = Modifier
                             .size(160.dp)
@@ -122,7 +118,7 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
             Column(
                 modifier = Modifier.align(Alignment.BottomCenter)
             ) {
-                RoundButton(text = "画像を登録", isActive = viewModel.imageUrl.value != null, type = ButtonType.Fill) {
+                RoundButton(text = "画像を登録", isActive = viewModel.imageUri.value != null, type = ButtonType.Fill) {
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

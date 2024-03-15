@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -33,9 +34,8 @@ import com.chepics.chepics.feature.RoundButton
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
-@Preview
 @Composable
-fun LoginScreen(navController: NavController = NavController(context = LocalContext.current), viewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewModel()) {
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
@@ -113,6 +113,13 @@ fun LoginScreen(navController: NavController = NavController(context = LocalCont
                     navController.navigate(Screens.EmailRegistrationScreen.name)
                 }
             }
+        }
+
+        // TODO: - このボタンは後で消す
+        Button(onClick = {
+            navController.navigate(Screens.CreateTopicScreen.name)
+        }) {
+            Text(text = "投稿画面")
         }
 
         if (viewModel.isLoading.value) {

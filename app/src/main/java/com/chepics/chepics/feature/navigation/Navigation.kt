@@ -13,6 +13,7 @@ import com.chepics.chepics.feature.authentication.login.LoginScreen
 import com.chepics.chepics.feature.authentication.nameregistration.NameRegistrationScreen
 import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
+import com.chepics.chepics.feature.createtopic.CreateTopicScreen
 
 @Composable
 fun Navigation() {
@@ -48,6 +49,10 @@ fun Navigation() {
 
         composable(Screens.IconRegistrationScreen.name) {
             IconRegistrationScreen(navController = navController)
+        }
+
+        composable(Screens.CreateTopicScreen.name) {
+            CreateTopicScreen(navController = navController)
         }
     }
 }

@@ -24,6 +24,7 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @Composable
 fun RoundButton(
+    modifier: Modifier = Modifier,
     text: String,
     isActive: Boolean = true,
     type: ButtonType,
@@ -33,7 +34,7 @@ fun RoundButton(
         ButtonType.Fill -> {
             Button(
                 onClick = action,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
                 enabled = isActive,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -52,7 +53,7 @@ fun RoundButton(
         ButtonType.Border -> {
             Button(
                 onClick = action,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
                 enabled = isActive,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
