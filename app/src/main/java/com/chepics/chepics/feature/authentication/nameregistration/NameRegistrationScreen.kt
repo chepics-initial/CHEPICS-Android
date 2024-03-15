@@ -134,7 +134,8 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
                 onDismissRequest = {  },
-                title = { Text(text = "エラー") },
+                title = { Text(text = "このユーザー名は使用されています") },
+                text = { Text(text = "他のユーザー名を使用してください")},
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
                         Text(text = "OK")

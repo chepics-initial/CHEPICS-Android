@@ -15,7 +15,7 @@ import com.chepics.chepics.feature.authentication.passwordregistration.PasswordR
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.LoginScreen.name) {
+    NavHost(navController = navController, startDestination = Screens.IconRegistrationScreen.name) {
         composable(Screens.LoginScreen.name) {
             LoginScreen(navController = navController)
         }
