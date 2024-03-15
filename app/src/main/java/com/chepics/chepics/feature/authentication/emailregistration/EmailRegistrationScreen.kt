@@ -33,7 +33,7 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 @Composable
 fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegistrationViewModel = viewModel()) {
     if (viewModel.isCompleted.value) {
-        navController.navigate(Screens.OneTimeCodeScreen.name)
+        navController.navigate(Screens.OneTimeCodeScreen.name + "/${viewModel.email.value}")
         viewModel.isCompleted.value = false
     }
 

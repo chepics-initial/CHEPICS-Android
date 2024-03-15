@@ -45,7 +45,7 @@ import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
 
 @Composable
-fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewModel = viewModel()) {
+fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: OneTimeCodeViewModel = viewModel()) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     if (viewModel.isCompleted.value) {
@@ -67,7 +67,7 @@ fun OneTimeCodeScreen(navController: NavController, viewModel: OneTimeCodeViewMo
                     modifier = Modifier
                         .padding(vertical = 24.dp)
                 ) {
-                    HeaderView(title = "認証コードを入力", description = "に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください")
+                    HeaderView(title = "認証コードを入力", description = "${email}に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください")
                 }
 
                 RoundButton(text = "次へ", isActive = viewModel.code.value.count() == 4, type = ButtonType.Fill) {

@@ -1,9 +1,11 @@
 package com.chepics.chepics.feature.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.chepics.chepics.feature.authentication.CompletionScreen
 import com.chepics.chepics.feature.authentication.emailregistration.EmailRegistrationScreen
 import com.chepics.chepics.feature.authentication.iconregistration.IconRegistrationScreen
@@ -24,8 +26,12 @@ fun Navigation() {
             EmailRegistrationScreen(navController = navController)
         }
 
-        composable(Screens.OneTimeCodeScreen.name) {
-            OneTimeCodeScreen(navController = navController)
+        composable("${Screens.OneTimeCodeScreen.name}/{email}", arguments = listOf(navArgument("email") {
+            type = NavType.StringType
+        })) { backStackEntry ->
+            backStackEntry.arguments?.getString("email").let {
+                OneTimeCodeScreen(navController = navController, email = it.toString())
+            }
         }
 
         composable(Screens.PasswordScreen.name) {
