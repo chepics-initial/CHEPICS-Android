@@ -63,7 +63,7 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
                             style = MaterialTheme.typography.bodySmall
                         )
                         Text(
-                            text = "ユーザー名は一位である必要があります",
+                            text = "ユーザー名は一意である必要があります",
                             style = MaterialTheme.typography.bodySmall
                         )
                         OutlinedTextField(

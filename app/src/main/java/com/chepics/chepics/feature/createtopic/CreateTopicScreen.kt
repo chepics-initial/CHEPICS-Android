@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,16 +41,21 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.RoundButton
@@ -60,18 +66,23 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
-fun CreateTopicScreen(navController: NavController, viewModel: CreateTopicViewModel = viewModel()) {
+fun CreateTopicScreen(navController: NavController = NavController(LocalContext.current), viewModel: CreateTopicViewModel = viewModel()) {
     val scrollState = rememberScrollState()
+    val isEnabled = remember {
+        mutableStateOf(true)
+    }
     val imagesLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(4)
     ) {
+        isEnabled.value = true
         viewModel.imageUris.value = it
     }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = {
+            CenterAlignedTopAppBar(title = {
                 Box {
                     IconButton(
                         onClick = {
@@ -102,15 +113,14 @@ fun CreateTopicScreen(navController: NavController, viewModel: CreateTopicViewMo
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = it.calculateTopPadding())
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
                     .padding(16.dp)
-            ) {
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+                ) {
                 TitleView(viewModel = viewModel)
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -123,7 +133,8 @@ fun CreateTopicScreen(navController: NavController, viewModel: CreateTopicViewMo
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ImagesView(viewModel = viewModel) {
+                ImagesView(viewModel = viewModel, isEnabled = isEnabled) {
+                    isEnabled.value = false
                     imagesLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 }
             }
@@ -278,7 +289,7 @@ fun LinkView(viewModel: CreateTopicViewModel) {
 }
 
 @Composable
-fun ImagesView(viewModel: CreateTopicViewModel, onClick: () -> Unit) {
+fun ImagesView(viewModel: CreateTopicViewModel, isEnabled: MutableState<Boolean>, onClick: () -> Unit) {
     val scrollState = rememberScrollState()
 
     Column {
@@ -302,7 +313,11 @@ fun ImagesView(viewModel: CreateTopicViewModel, onClick: () -> Unit) {
                         .size(120.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-                        .clickable { onClick.invoke() }
+                        .clickable {
+                            if (isEnabled.value) {
+                                onClick.invoke()
+                            }
+                        }
                 )
                 
                 if (index != Constants.TOPIC_IMAGE_COUNT - 1) {
@@ -314,7 +329,11 @@ fun ImagesView(viewModel: CreateTopicViewModel, onClick: () -> Unit) {
                 Surface(
                     modifier = Modifier
                         .size(120.dp)
-                        .clickable { onClick.invoke() }
+                        .clickable {
+                            if (isEnabled.value) {
+                                onClick.invoke()
+                            }
+                        }
                         .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
                     shape = RoundedCornerShape(8.dp)
                 ) {
