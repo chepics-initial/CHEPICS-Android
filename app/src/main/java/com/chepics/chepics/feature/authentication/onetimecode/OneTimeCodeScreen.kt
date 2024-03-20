@@ -1,6 +1,7 @@
 package com.chepics.chepics.feature.authentication.onetimecode
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,12 +17,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -44,6 +51,7 @@ import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: OneTimeCodeViewModel = viewModel()) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -54,57 +62,72 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
     }
 
     Box {
-        Box(
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        IconButton(
+                            onClick = { navController.popBackStack() },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Image(imageVector = Icons.Default.ArrowBack, contentDescription = "Back button")
+                        }
+                    }
+                )
+            }
+        ) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
-                ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .padding(top = it.calculateTopPadding(), bottom = 16.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(vertical = 24.dp)
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    HeaderView(title = "認証コードを入力", description = "${email}に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください")
-                }
-
-                RoundButton(text = "次へ", isActive = viewModel.code.value.count() == 4, type = ButtonType.Fill) {
-                    viewModel.onTapButton()
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                OtpTextField(
-                    otpText = viewModel.code.value,
-                    onOtpTextChange = { value, otpInputFilled ->
-                        viewModel.code.value = value
-                    }
-                ) {
-                    keyboardController?.hide()
-                    viewModel.onTapButton()
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                TextButton(onClick = {  }) {
-                    Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, Color.LightGray)
+                    Column(
+                        modifier = Modifier
+                            .padding(vertical = 24.dp)
                     ) {
-                        Text(
-                            text = "コードを再送信",
-                            color = Color.LightGray,
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                        HeaderView(title = "認証コードを入力", description = "${email}に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください")
+                    }
+
+                    RoundButton(text = "次へ", isActive = viewModel.code.value.count() == 4, type = ButtonType.Fill) {
+                        viewModel.onTapButton()
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    OtpTextField(
+                        otpText = viewModel.code.value,
+                        onOtpTextChange = { value, otpInputFilled ->
+                            viewModel.code.value = value
+                        }
+                    ) {
+                        keyboardController?.hide()
+                        viewModel.onTapButton()
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    TextButton(onClick = {  }) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            border = BorderStroke(1.dp, Color.LightGray)
+                        ) {
+                            Text(
+                                text = "コードを再送信",
+                                color = Color.LightGray,
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
                     }
                 }
             }
