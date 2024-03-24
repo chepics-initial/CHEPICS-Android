@@ -79,11 +79,11 @@ enum class ButtonType {
 }
 
 @Composable
-fun CommonProgressSpinner() {
+fun CommonProgressSpinner(backgroundColor: Color = Color.LightGray) {
     Row(
         modifier = Modifier
             .alpha(0.5f)
-            .background(Color.LightGray)
+            .background(backgroundColor)
             .clickable(enabled = false) { }
             .fillMaxSize(),
         horizontalArrangement = Arrangement.Center,
