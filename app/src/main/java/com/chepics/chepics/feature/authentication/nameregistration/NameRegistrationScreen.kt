@@ -28,17 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.chepics.chepics.feature.ButtonType
-import com.chepics.chepics.feature.CommonProgressSpinner
-import com.chepics.chepics.feature.RoundButton
+import com.chepics.chepics.feature.common.ButtonType
+import com.chepics.chepics.feature.common.CommonProgressSpinner
+import com.chepics.chepics.feature.common.RoundButton
 import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
-import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

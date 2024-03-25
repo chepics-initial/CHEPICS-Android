@@ -31,9 +31,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.chepics.chepics.feature.ButtonType
-import com.chepics.chepics.feature.CommonProgressSpinner
-import com.chepics.chepics.feature.RoundButton
+import com.chepics.chepics.feature.common.ButtonType
+import com.chepics.chepics.feature.common.CommonProgressSpinner
+import com.chepics.chepics.feature.common.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.authentication.HeaderView

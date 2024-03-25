@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,9 +45,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.chepics.chepics.feature.ButtonType
-import com.chepics.chepics.feature.CommonProgressSpinner
-import com.chepics.chepics.feature.RoundButton
+import com.chepics.chepics.feature.common.ButtonType
+import com.chepics.chepics.feature.common.CommonProgressSpinner
+import com.chepics.chepics.feature.common.RoundButton
 import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
@@ -223,7 +224,7 @@ private fun CharView(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.height(2.dp),
             color = if (isSystemInDarkTheme()) Color.White else Color.Black
         )
