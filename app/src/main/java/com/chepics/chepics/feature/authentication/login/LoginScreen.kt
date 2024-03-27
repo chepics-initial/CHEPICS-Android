@@ -113,13 +113,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
             }
         }
 
-        // TODO: - このボタンは後で消す
-        Button(onClick = {
-            navController.navigate(Screens.CreateTopicScreen.name)
-        }) {
-            Text(text = "投稿画面")
-        }
-
         if (viewModel.isLoading.value) {
             CommonProgressSpinner()
         }

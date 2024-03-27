@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import javax.inject.Singleton
 
 interface TopicApi {
-    // TODO: - 仮置きなので修正必要
-    @GET
+    @GET("v1/chepics/topics")
     suspend fun fetchFavoriteTopics(): Response<List<Topic>>
 }
