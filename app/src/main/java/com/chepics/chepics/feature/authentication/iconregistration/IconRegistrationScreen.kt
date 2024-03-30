@@ -42,6 +42,7 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
     val iconImageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
         viewModel.imageUri.value = uri
     }
     

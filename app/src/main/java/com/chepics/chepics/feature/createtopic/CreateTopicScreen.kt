@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -76,6 +77,7 @@ fun CreateTopicScreen(navController: NavController = NavController(LocalContext.
         ActivityResultContracts.PickMultipleVisualMedia(4)
     ) {
         isEnabled.value = true
+        if (it.isEmpty()) return@rememberLauncherForActivityResult
         viewModel.imageUris.value = it
     }
 
@@ -304,20 +306,42 @@ fun ImagesView(viewModel: CreateTopicViewModel, isEnabled: MutableState<Boolean>
                 .padding(vertical = 16.dp)
         ) {
             viewModel.imageUris.value.forEachIndexed { index, uri ->
-                AsyncImage(
-                    model = uri,
-                    contentDescription = "topic image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-                        .clickable {
-                            if (isEnabled.value) {
-                                onClick.invoke()
+                Box {
+                    AsyncImage(
+                        model = uri,
+                        contentDescription = "topic image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+                            .clickable {
+                                if (isEnabled.value) {
+                                    onClick.invoke()
+                                }
                             }
-                        }
-                )
+                    )
+
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.Black,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .clickable {
+                                viewModel.onTapRemoveIcon(index)
+                            }
+                    ) {
+                        Image(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "remove button",
+                            colorFilter = ColorFilter.tint(Color.White),
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(16.dp)
+                        )
+                    }
+                }
                 
                 if (index != Constants.TOPIC_IMAGE_COUNT - 1) {
                     Spacer(modifier = Modifier.width(16.dp))

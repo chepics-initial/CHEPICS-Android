@@ -23,4 +23,10 @@ class CreateTopicViewModel: ViewModel() {
     fun onTapButton() {
 
     }
+
+    fun onTapRemoveIcon(index: Int) {
+        imageUris.value = imageUris.value.filterIndexed { thisIndex, _ ->
+            thisIndex != index
+        }
+    }
 }
