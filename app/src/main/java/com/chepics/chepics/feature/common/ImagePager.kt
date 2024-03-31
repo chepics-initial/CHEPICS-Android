@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.common
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -51,6 +52,9 @@ fun ImagePager(
     // 垂直方向へのスワイプで画面を閉じるために `VerticalPager` も用いている
     val verticalPagerState = rememberPagerState(1, pageCount = { 3 })
     val horizontalPagerState = rememberPagerState(index, pageCount = { imageUrls.size })
+    BackHandler {
+        onDismiss()
+    }
     VerticalPager(
         modifier = Modifier
             .fillMaxSize()

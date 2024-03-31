@@ -16,6 +16,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -129,7 +130,7 @@ fun ServiceNavigation() {
             startDestination = BottomNavigationType.Feed.name
         ) {
             composable(BottomNavigationType.Feed.name) {
-                FeedNavHost()
+                FeedNavHost(showBottomNavigation)
             }
 
             composable(
@@ -155,11 +156,11 @@ fun ServiceNavigation() {
 }
 
 @Composable
-fun FeedNavHost() {
+fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
     val feedNavController = rememberNavController()
     NavHost(feedNavController, startDestination = Screens.FeedScreen.name) {
         composable(Screens.FeedScreen.name) {
-            FeedScreen(navController = feedNavController)
+            FeedScreen(navController = feedNavController, showBottomNavigation = showBottomNavigation)
         }
     }
 }

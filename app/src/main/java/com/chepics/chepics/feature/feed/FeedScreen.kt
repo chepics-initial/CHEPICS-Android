@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,10 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.CommonProgressSpinner
+import com.chepics.chepics.feature.common.ImagePager
 import com.chepics.chepics.feature.feed.viewparts.TopicCell
 
 @Composable
-fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
+fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: FeedViewModel = hiltViewModel()) {
     val showImageViewer = remember {
         mutableStateOf(false)
     }
@@ -56,33 +58,47 @@ fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltView
             }
             when (viewModel.selectedTab.value) {
                 FeedTabType.TOPICS -> {
-                    FeedTopicContentView(viewModel = viewModel)
+                    FeedTopicContentView(viewModel = viewModel, showImageViewer = showImageViewer)
                 }
+
                 FeedTabType.COMMENTS -> {
                     Text(text = "Comments")
                 }
             }
         }
-        
-        if (showImageViewer.value) {
 
+        if (showImageViewer.value && viewModel.selectedIndex.value != null && viewModel.topicImages.value != null) {
+            showBottomNavigation.value = false
+            ImagePager(index = viewModel.selectedIndex.value!!, imageUrls = viewModel.topicImages.value!!) {
+                showImageViewer.value = false
+                showBottomNavigation.value = true
+            }
         }
     }
 }
 
 @Composable
-fun FeedTopicContentView(viewModel: FeedViewModel) {
+fun FeedTopicContentView(viewModel: FeedViewModel, showImageViewer: MutableState<Boolean>) {
     when (viewModel.topicUIState.value) {
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
         }
+
         UIState.SUCCESS -> {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(viewModel.topics.value) {
-                    TopicCell(topic = it)
+                    TopicCell(topic = it) { index ->
+                        it.images?.let { images ->
+                            viewModel.onTapImage(index = index, images = images.map { image ->
+                                image.url
+                            })
+                            showImageViewer.value = true
+                        }
+                    }
                 }
             }
         }
+
         UIState.FAILURE -> {
             Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
         }

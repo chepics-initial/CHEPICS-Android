@@ -50,7 +50,7 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
 
 @Composable
-fun TopicCell(topic: Topic) {
+fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit) {
     val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -94,7 +94,8 @@ fun TopicCell(topic: Topic) {
                                     modifier = Modifier
                                         .aspectRatio(1f)
                                         .padding(8.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable { onTapImage(index) },
                                     contentScale = ContentScale.Crop
                                 )
                             }
@@ -114,7 +115,8 @@ fun TopicCell(topic: Topic) {
                             .height(getHeight())
                             .padding(horizontal = 16.dp)
                             .align(Alignment.CenterHorizontally)
-                            .clip(RoundedCornerShape(8.dp)),
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onTapImage(images.size - 1) },
                         contentScale = ContentScale.Crop
                     )
 

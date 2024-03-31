@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.feed
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,9 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val topics: MutableState<List<Topic>> = mutableStateOf(emptyList())
     val selectedTab: MutableState<FeedTabType> = mutableStateOf(FeedTabType.TOPICS)
+    val selectedIndex: MutableState<Int?> = mutableStateOf(null)
+    val topicImages: MutableState<List<String>?> = mutableStateOf(null)
+
     init {
         viewModelScope.launch {
             fetchTopics()
@@ -53,6 +57,11 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
                 Log.d("Comment", "selectTab: Comment selected")
             }
         }
+    }
+
+    fun onTapImage(index: Int, images: List<String>) {
+        selectedIndex.value = index
+        topicImages.value = images
     }
 }
 
