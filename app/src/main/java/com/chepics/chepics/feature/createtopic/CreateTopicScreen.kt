@@ -66,7 +66,7 @@ import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTopicScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: CreateTopicViewModel = viewModel(), onDismiss: () -> Unit) {
+fun CreateTopicScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: CreateTopicViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val isEnabled = remember {
         mutableStateOf(true)
@@ -85,7 +85,6 @@ fun CreateTopicScreen(navController: NavController, showBottomNavigation: Mutabl
     
     LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
         showBottomNavigation.value = true
-        onDismiss()
     }
 
     Scaffold(

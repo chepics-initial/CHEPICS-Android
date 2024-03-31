@@ -87,7 +87,6 @@ fun ServiceNavigation() {
     val showBottomNavigation = remember {
         mutableStateOf(true)
     }
-    var previousSelectedTab: BottomNavigationItem? = null
 
     Scaffold(
         bottomBar = {
@@ -101,7 +100,6 @@ fun ServiceNavigation() {
                         NavigationBarItem(
                             selected = isSelected,
                             onClick = {
-                                if (item.name != BottomNavigationType.CreateTopic.name) previousSelectedTab = item
                                 rootNavController.navigate(item.name) {
                                     popUpTo(rootNavController.graph.findStartDestination().id) {
                                         saveState = true
@@ -146,17 +144,7 @@ fun ServiceNavigation() {
                 CreateTopicScreen(
                     navController = rootNavController,
                     showBottomNavigation = showBottomNavigation
-                ) {
-                    previousSelectedTab?.let { previousTab ->
-                        rootNavController.navigate(previousTab.name) {
-                            popUpTo(rootNavController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
+                )
             }
 
             composable(BottomNavigationType.MyPage.name) {
