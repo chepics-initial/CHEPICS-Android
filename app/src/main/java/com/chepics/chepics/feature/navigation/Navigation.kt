@@ -5,24 +5,20 @@ import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -88,36 +84,43 @@ fun AuthNavigation() {
 fun ServiceNavigation() {
     val rootNavController = rememberNavController()
     val navBackStackEntry by rootNavController.currentBackStackEntryAsState()
+    val showBottomNavigation = remember {
+        mutableStateOf(true)
+    }
+    var previousSelectedTab: BottomNavigationItem? = null
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = Color.Transparent
-            ) {
-                tabItems.forEach { item ->
-                    val isSelected =
-                        item.name == navBackStackEntry?.destination?.route
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = {
-                            rootNavController.navigate(item.name) {
-                                popUpTo(rootNavController.graph.findStartDestination().id) {
-                                    saveState = true
+            if (showBottomNavigation.value) {
+                NavigationBar(
+                    containerColor = Color.Transparent
+                ) {
+                    tabItems.forEach { item ->
+                        val isSelected =
+                            item.name == navBackStackEntry?.destination?.route
+                        NavigationBarItem(
+                            selected = isSelected,
+                            onClick = {
+                                if (item.name != BottomNavigationType.CreateTopic.name) previousSelectedTab = item
+                                rootNavController.navigate(item.name) {
+                                    popUpTo(rootNavController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                contentDescription = item.name
-                            )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.White,
-                            indicatorColor = ChepicsPrimary
-                        ))
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                                    contentDescription = item.name
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = Color.White,
+                                indicatorColor = ChepicsPrimary
+                            ))
+                    }
                 }
             }
         }
@@ -131,8 +134,29 @@ fun ServiceNavigation() {
                 FeedNavHost()
             }
 
-            composable(BottomNavigationType.CreateTopic.name) {
-                CreateTopicNavHost()
+            composable(
+                BottomNavigationType.CreateTopic.name,
+                enterTransition = {
+                    slideIn { fullSize -> IntOffset(0, fullSize.height) }
+                },
+                popExitTransition = {
+                    slideOut { fullSize -> IntOffset(0, fullSize.height) }
+                }
+            ) {
+                CreateTopicScreen(
+                    navController = rootNavController,
+                    showBottomNavigation = showBottomNavigation
+                ) {
+                    previousSelectedTab?.let { previousTab ->
+                        rootNavController.navigate(previousTab.name) {
+                            popUpTo(rootNavController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
             }
 
             composable(BottomNavigationType.MyPage.name) {
@@ -148,24 +172,6 @@ fun FeedNavHost() {
     NavHost(feedNavController, startDestination = Screens.FeedScreen.name) {
         composable(Screens.FeedScreen.name) {
             FeedScreen(navController = feedNavController)
-        }
-    }
-}
-
-@Composable
-fun CreateTopicNavHost() {
-    val createTopicNavController = rememberNavController()
-    NavHost(createTopicNavController, startDestination = Screens.CreateTopicScreen.name) {
-        composable(
-            Screens.CreateTopicScreen.name,
-            enterTransition = {
-                slideIn { fullSize -> IntOffset(0, fullSize.height) }
-            },
-            popExitTransition = {
-                slideOut { fullSize -> IntOffset(0, fullSize.height) }
-            }
-        ) {
-            CreateTopicScreen(navController = createTopicNavController)
         }
     }
 }

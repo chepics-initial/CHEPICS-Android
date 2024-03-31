@@ -29,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -50,13 +49,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.RoundButton
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -66,9 +65,8 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun CreateTopicScreen(navController: NavController = NavController(LocalContext.current), viewModel: CreateTopicViewModel = viewModel()) {
+fun CreateTopicScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: CreateTopicViewModel = viewModel(), onDismiss: () -> Unit) {
     val scrollState = rememberScrollState()
     val isEnabled = remember {
         mutableStateOf(true)
@@ -79,6 +77,15 @@ fun CreateTopicScreen(navController: NavController = NavController(LocalContext.
         isEnabled.value = true
         if (it.isEmpty()) return@rememberLauncherForActivityResult
         viewModel.imageUris.value = it
+    }
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
+        showBottomNavigation.value = false
+    }
+    
+    LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
+        showBottomNavigation.value = true
+        onDismiss()
     }
 
     Scaffold(

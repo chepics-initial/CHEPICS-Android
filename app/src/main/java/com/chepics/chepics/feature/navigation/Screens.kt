@@ -13,7 +13,6 @@ enum class Screens {
     NameRegistrationScreen,
     CompletionScreen,
     IconRegistrationScreen,
-    CreateTopicScreen,
     FeedScreen,
     ProfileScreen
 }
