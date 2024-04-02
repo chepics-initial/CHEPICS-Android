@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -16,21 +17,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.CommonProgressSpinner
 import com.chepics.chepics.feature.common.ImagePager
 import com.chepics.chepics.feature.feed.viewparts.TopicCell
+import kotlinx.coroutines.launch
 
 @Composable
 fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: FeedViewModel = hiltViewModel()) {
     val showImageViewer = remember {
         mutableStateOf(false)
     }
+    val topicScrollState = remember {
+        mutableStateOf(LazyListState())
+    }
+    val commentScrollState = remember {
+        mutableStateOf(LazyListState())
+    }
+
+    val topicCoroutineScope = rememberCoroutineScope()
+    val commentCoroutineScope = rememberCoroutineScope()
+
     Box {
         Column(verticalArrangement = Arrangement.Top) {
             TabRow(
@@ -43,6 +55,20 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
                     Tab(
                         selected = viewModel.selectedTab.value == index,
                         onClick = {
+                            if (viewModel.selectedTab.value == index) {
+                                when (viewModel.selectedTab.value) {
+                                    0 -> {
+                                        topicCoroutineScope.launch {
+                                            topicScrollState.value.animateScrollToItem(0)
+                                        }
+                                    }
+                                    1 -> {
+                                        commentCoroutineScope.launch {
+                                        }
+                                    }
+                                }
+                                return@Tab
+                            }
                             viewModel.selectTab(index)
                         },
                         text = {
@@ -58,7 +84,7 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
             }
             when (viewModel.selectedTab.value) {
                 0 -> {
-                    FeedTopicContentView(viewModel = viewModel, showImageViewer = showImageViewer)
+                    FeedTopicContentView(viewModel = viewModel, showImageViewer = showImageViewer, scrollState = topicScrollState)
                 }
 
                     1 -> {
@@ -78,14 +104,17 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
 }
 
 @Composable
-fun FeedTopicContentView(viewModel: FeedViewModel, showImageViewer: MutableState<Boolean>) {
+fun FeedTopicContentView(viewModel: FeedViewModel, showImageViewer: MutableState<Boolean>, scrollState: MutableState<LazyListState>) {
     when (viewModel.topicUIState.value) {
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
         }
 
         UIState.SUCCESS -> {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = scrollState.value
+            ) {
                 items(viewModel.topics.value) {
                     TopicCell(topic = it) { index ->
                         it.images?.let { images ->
