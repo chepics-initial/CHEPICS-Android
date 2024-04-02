@@ -1,8 +1,8 @@
 package com.chepics.chepics.feature.feed
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,8 +18,8 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
     val topicUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val topics: MutableState<List<Topic>> = mutableStateOf(emptyList())
-    val selectedTab: MutableState<FeedTabType> = mutableStateOf(FeedTabType.TOPICS)
-    val selectedIndex: MutableState<Int?> = mutableStateOf(null)
+    val selectedTab: MutableState<Int> = mutableIntStateOf(0)
+    val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val topicImages: MutableState<List<String>?> = mutableStateOf(null)
 
     init {
@@ -43,24 +43,24 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
         }
     }
 
-    fun selectTab(type: FeedTabType) {
-        selectedTab.value = type
-        when (type) {
-            FeedTabType.TOPICS -> {
+    fun selectTab(index: Int) {
+        selectedTab.value = index
+        when (index) {
+            0 -> {
                 if (topicUIState.value != UIState.SUCCESS) {
                     viewModelScope.launch {
                         fetchTopics()
                     }
                 }
             }
-            FeedTabType.COMMENTS -> {
+            1 -> {
                 Log.d("Comment", "selectTab: Comment selected")
             }
         }
     }
 
     fun onTapImage(index: Int, images: List<String>) {
-        selectedIndex.value = index
+        selectedImageIndex.value = index
         topicImages.value = images
     }
 }
@@ -71,14 +71,8 @@ enum class UIState {
     FAILURE
 }
 
-enum class FeedTabType {
-    TOPICS,
-    COMMENTS;
+data class FeedTabItem(
+    val title: String
+)
 
-    fun getTitle(): String {
-        return when (this) {
-            TOPICS -> "おすすめ"
-            COMMENTS -> "フォロー中"
-        }
-    }
-}
+val feedTabItems = listOf(FeedTabItem(title = "おすすめ"), FeedTabItem(title = "フォロー中"))
