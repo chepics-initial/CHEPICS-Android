@@ -55,9 +55,12 @@ fun AuthNavigation() {
             EmailRegistrationScreen(navController = navController)
         }
 
-        composable("${Screens.OneTimeCodeScreen.name}/{email}", arguments = listOf(navArgument("email") {
-            type = NavType.StringType
-        })) { backStackEntry ->
+        composable(
+            "${Screens.OneTimeCodeScreen.name}/{email}",
+            arguments = listOf(navArgument("email") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
             backStackEntry.arguments?.getString("email").let {
                 OneTimeCodeScreen(navController = navController, email = it.toString())
             }
@@ -118,7 +121,8 @@ fun ServiceNavigation() {
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = Color.White,
                                 indicatorColor = ChepicsPrimary
-                            ))
+                            )
+                        )
                     }
                 }
             }
@@ -133,21 +137,6 @@ fun ServiceNavigation() {
                 FeedNavHost(showBottomNavigation)
             }
 
-            composable(
-                BottomNavigationType.CreateTopic.name,
-                enterTransition = {
-                    slideIn { fullSize -> IntOffset(0, fullSize.height) }
-                },
-                popExitTransition = {
-                    slideOut { fullSize -> IntOffset(0, fullSize.height) }
-                }
-            ) {
-                CreateTopicScreen(
-                    navController = rootNavController,
-                    showBottomNavigation = showBottomNavigation
-                )
-            }
-
             composable(BottomNavigationType.MyPage.name) {
                 MyPageNavHost()
             }
@@ -160,7 +149,25 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
     val feedNavController = rememberNavController()
     NavHost(feedNavController, startDestination = Screens.FeedScreen.name) {
         composable(Screens.FeedScreen.name) {
-            FeedScreen(navController = feedNavController, showBottomNavigation = showBottomNavigation)
+            FeedScreen(
+                navController = feedNavController,
+                showBottomNavigation = showBottomNavigation
+            )
+        }
+
+        composable(
+            Screens.CreateTopicScreen.name,
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(0, fullSize.height) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(0, fullSize.height) }
+            }
+        ) {
+            CreateTopicScreen(
+                navController = feedNavController,
+                showBottomNavigation = showBottomNavigation
+            )
         }
     }
 }
@@ -186,11 +193,6 @@ val tabItems = listOf(
         name = BottomNavigationType.Feed.name,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home
-    ),
-    BottomNavigationItem(
-        name = BottomNavigationType.CreateTopic.name,
-        selectedIcon = Icons.Filled.Add,
-        unselectedIcon = Icons.Outlined.Add
     ),
     BottomNavigationItem(
         BottomNavigationType.MyPage.name,

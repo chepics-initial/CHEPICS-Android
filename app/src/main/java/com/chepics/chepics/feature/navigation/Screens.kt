@@ -2,9 +2,9 @@ package com.chepics.chepics.feature.navigation
 
 enum class BottomNavigationType {
     Feed,
-    CreateTopic,
     MyPage
 }
+
 enum class Screens {
     LoginScreen,
     EmailRegistrationScreen,
@@ -14,5 +14,6 @@ enum class Screens {
     CompletionScreen,
     IconRegistrationScreen,
     FeedScreen,
-    ProfileScreen
+    ProfileScreen,
+    CreateTopicScreen
 }

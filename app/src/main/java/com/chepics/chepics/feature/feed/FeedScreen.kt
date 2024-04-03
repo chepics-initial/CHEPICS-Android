@@ -6,11 +6,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -28,6 +35,7 @@ import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.CommonProgressSpinner
 import com.chepics.chepics.feature.common.ImagePager
 import com.chepics.chepics.feature.feed.viewparts.TopicCell
+import com.chepics.chepics.feature.navigation.Screens
 import kotlinx.coroutines.launch
 
 @Composable
@@ -44,56 +52,79 @@ fun FeedScreen(
     val commentCoroutineScope = rememberCoroutineScope()
 
     Box {
-        Column(verticalArrangement = Arrangement.Top) {
-            TabRow(
-                selectedTabIndex = viewModel.selectedTab.value,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                feedTabItems.forEachIndexed { index, item ->
-                    Tab(
-                        selected = viewModel.selectedTab.value == index,
-                        onClick = {
-                            if (viewModel.selectedTab.value == index) {
-                                when (viewModel.selectedTab.value) {
-                                    0 -> {
-                                        topicCoroutineScope.launch {
-                                            viewModel.topicScrollState.value.animateScrollToItem(0)
+        Scaffold(
+            topBar = {
+                TabRow(
+                    selectedTabIndex = viewModel.selectedTab.value,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
+                    feedTabItems.forEachIndexed { index, item ->
+                        Tab(
+                            selected = viewModel.selectedTab.value == index,
+                            onClick = {
+                                if (viewModel.selectedTab.value == index) {
+                                    when (viewModel.selectedTab.value) {
+                                        0 -> {
+                                            topicCoroutineScope.launch {
+                                                viewModel.topicScrollState.value.animateScrollToItem(
+                                                    0
+                                                )
+                                            }
                                         }
-                                    }
 
-                                    1 -> {
-                                        commentCoroutineScope.launch {
+                                        1 -> {
+                                            commentCoroutineScope.launch {
+                                            }
                                         }
                                     }
+                                    return@Tab
                                 }
-                                return@Tab
-                            }
-                            viewModel.selectTab(index)
-                        },
-                        text = {
-                            Text(
-                                text = item.title,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        },
-                        selectedContentColor = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                        unselectedContentColor = Color.LightGray
+                                viewModel.selectTab(index)
+                            },
+                            text = {
+                                Text(
+                                    text = item.title,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            },
+                            selectedContentColor = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                            unselectedContentColor = Color.LightGray
+                        )
+                    }
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { navController.navigate(Screens.CreateTopicScreen.name) },
+                    shape = CircleShape,
+                    containerColor = Color.Blue
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add a Topic",
+                        tint = Color.White
                     )
                 }
             }
-            when (viewModel.selectedTab.value) {
-                0 -> {
-                    FeedTopicContentView(
-                        viewModel = viewModel,
-                        showImageViewer = showImageViewer,
-                        navController = navController
-                    )
-                }
+        ) {
+            Column(
+                modifier = Modifier.padding(top = it.calculateTopPadding()),
+                verticalArrangement = Arrangement.Top
+            ) {
+                when (viewModel.selectedTab.value) {
+                    0 -> {
+                        FeedTopicContentView(
+                            viewModel = viewModel,
+                            showImageViewer = showImageViewer,
+                            navController = navController
+                        )
+                    }
 
-                1 -> {
-                    Text(text = "Comments")
+                    1 -> {
+                        Text(text = "Comments")
+                    }
                 }
             }
         }
