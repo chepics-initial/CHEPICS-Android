@@ -1,6 +1,7 @@
 package com.chepics.chepics.feature.feed
 
 import android.util.Log
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,13 +15,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): ViewModel() {
+class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : ViewModel() {
     val topicUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val topics: MutableState<List<Topic>> = mutableStateOf(emptyList())
     val selectedTab: MutableState<Int> = mutableIntStateOf(0)
     val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val topicImages: MutableState<List<String>?> = mutableStateOf(null)
+    val topicScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
 
     init {
         viewModelScope.launch {
@@ -37,6 +39,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
                 topics.value = result.data
                 topicUIState.value = UIState.SUCCESS
             }
+
             is CallResult.Error -> {
                 topicUIState.value = UIState.FAILURE
             }
@@ -53,6 +56,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
                     }
                 }
             }
+
             1 -> {
                 Log.d("Comment", "selectTab: Comment selected")
             }

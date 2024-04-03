@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,15 +31,13 @@ import com.chepics.chepics.feature.feed.viewparts.TopicCell
 import kotlinx.coroutines.launch
 
 @Composable
-fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: FeedViewModel = hiltViewModel()) {
+fun FeedScreen(
+    navController: NavController,
+    showBottomNavigation: MutableState<Boolean>,
+    viewModel: FeedViewModel = hiltViewModel()
+) {
     val showImageViewer = remember {
         mutableStateOf(false)
-    }
-    val topicScrollState = remember {
-        mutableStateOf(LazyListState())
-    }
-    val commentScrollState = remember {
-        mutableStateOf(LazyListState())
     }
 
     val topicCoroutineScope = rememberCoroutineScope()
@@ -59,9 +59,10 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
                                 when (viewModel.selectedTab.value) {
                                     0 -> {
                                         topicCoroutineScope.launch {
-                                            topicScrollState.value.animateScrollToItem(0)
+                                            viewModel.topicScrollState.value.animateScrollToItem(0)
                                         }
                                     }
+
                                     1 -> {
                                         commentCoroutineScope.launch {
                                         }
@@ -84,10 +85,14 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
             }
             when (viewModel.selectedTab.value) {
                 0 -> {
-                    FeedTopicContentView(viewModel = viewModel, showImageViewer = showImageViewer, scrollState = topicScrollState)
+                    FeedTopicContentView(
+                        viewModel = viewModel,
+                        showImageViewer = showImageViewer,
+                        navController = navController
+                    )
                 }
 
-                    1 -> {
+                1 -> {
                     Text(text = "Comments")
                 }
             }
@@ -95,7 +100,10 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
 
         if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.topicImages.value != null) {
             showBottomNavigation.value = false
-            ImagePager(index = viewModel.selectedImageIndex.value!!, imageUrls = viewModel.topicImages.value!!) {
+            ImagePager(
+                index = viewModel.selectedImageIndex.value!!,
+                imageUrls = viewModel.topicImages.value!!
+            ) {
                 showImageViewer.value = false
                 showBottomNavigation.value = true
             }
@@ -104,7 +112,11 @@ fun FeedScreen(navController: NavController, showBottomNavigation: MutableState<
 }
 
 @Composable
-fun FeedTopicContentView(viewModel: FeedViewModel, showImageViewer: MutableState<Boolean>, scrollState: MutableState<LazyListState>) {
+fun FeedTopicContentView(
+    viewModel: FeedViewModel,
+    showImageViewer: MutableState<Boolean>,
+    navController: NavController
+) {
     when (viewModel.topicUIState.value) {
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
@@ -113,15 +125,24 @@ fun FeedTopicContentView(viewModel: FeedViewModel, showImageViewer: MutableState
         UIState.SUCCESS -> {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                state = scrollState.value
+                state = viewModel.topicScrollState.value
             ) {
                 items(viewModel.topics.value) {
-                    TopicCell(topic = it) { index ->
-                        it.images?.let { images ->
-                            viewModel.onTapImage(index = index, images = images.map { image ->
-                                image.url
-                            })
-                            showImageViewer.value = true
+                    Card(
+                        onClick = {
+                        },
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Transparent
+                        ),
+                        shape = RectangleShape
+                    ) {
+                        TopicCell(topic = it) { index ->
+                            it.images?.let { images ->
+                                viewModel.onTapImage(index = index, images = images.map { image ->
+                                    image.url
+                                })
+                                showImageViewer.value = true
+                            }
                         }
                     }
                 }
