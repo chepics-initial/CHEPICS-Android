@@ -1,5 +1,7 @@
 package com.chepics.chepics.mock
 
+import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.CommentImage
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.TopicImage
 import com.chepics.chepics.domainmodel.User
@@ -376,6 +378,116 @@ val mockTopic15 = Topic(
     user = mockUser15,
     votes = 1354,
     set = null,
+    registerTime = LocalDateTime.now(),
+    updateTime = LocalDateTime.now()
+)
+
+val mockCommentImage1 = CommentImage(
+    id = "1",
+    commentId = "1",
+    url = "https://doremifahiroba.com/wp-content/uploads/2022/11/EP01_30-1024x576.jpg"
+)
+
+val mockCommentImage2 = CommentImage(
+    id = "2",
+    commentId = "1",
+    url = "https://realsound.jp/wp-content/uploads/2023/01/20230121-gudetama-07.jpg"
+)
+
+val mockCommentImage3 = CommentImage(
+    id = "3",
+    commentId = "1",
+    url = "https://eiga.k-img.com/images/anime/news/117485/photo/46fcf777bd7b0902/640.jpg?1669974887"
+)
+
+val mockCommentImage4 = CommentImage(
+    id = "4",
+    commentId = "1",
+    url = "https://netofuli.com/wp-content/uploads/2022/12/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88-2022-12-17-18.40.30.jpg"
+)
+
+val mockComment1 = Comment(
+    id = "1",
+    parentId = "1",
+    topicId = "1",
+    setId = "1",
+    comment = "猫が可愛い",
+    link = "https://www.google.com/",
+    images = listOf(
+        mockCommentImage1,
+        mockCommentImage2,
+        mockCommentImage3,
+        mockCommentImage4
+    ),
+    votes = 4232,
+    user = mockUser1,
+    registerTime = LocalDateTime.now(),
+    updateTime = LocalDateTime.now()
+)
+
+val mockComment2 = Comment(
+    id = "2",
+    parentId = "1",
+    topicId = "1",
+    setId = "1",
+    comment = "新鮮な朝の空気を感じながら、散歩するのは心地よい時間です。",
+    link = "https://www.google.com/",
+    images = listOf(
+        mockCommentImage1,
+        mockCommentImage3,
+        mockCommentImage4
+    ),
+    votes = 654,
+    user = mockUser2,
+    registerTime = LocalDateTime.now(),
+    updateTime = LocalDateTime.now()
+)
+
+val mockComment3 = Comment(
+    id = "3",
+    parentId = "1",
+    topicId = "1",
+    setId = "1",
+    comment = "友達との楽しい会話は、日常のストレスを忘れさせてくれます。",
+    link = "https://www.google.com/",
+    images = null,
+    votes = 11111,
+    user = mockUser6,
+    registerTime = LocalDateTime.now(),
+    updateTime = LocalDateTime.now()
+)
+
+val mockComment4 = Comment(
+    id = "4",
+    parentId = "1",
+    topicId = "1",
+    setId = "1",
+    comment = "雨の音が心地よく響く夜は、読書をするのに最適な時間です。",
+    link = "https://www.google.com/",
+    images = listOf(
+        mockCommentImage3,
+        mockCommentImage4
+    ),
+    votes = 909,
+    user = mockUser9,
+    registerTime = LocalDateTime.now(),
+    updateTime = LocalDateTime.now()
+)
+
+val mockComment5 = Comment(
+    id = "5",
+    parentId = "1",
+    topicId = "1",
+    setId = "1",
+    comment = "色とりどりの花が咲き誇る庭園を散策すると、心が癒されます。",
+    link = "https://www.google.com/",
+    images = listOf(
+        mockCommentImage1,
+        mockCommentImage4,
+        mockCommentImage3
+        ),
+    votes = 54,
+    user = mockUser12,
     registerTime = LocalDateTime.now(),
     updateTime = LocalDateTime.now()
 )

@@ -32,9 +32,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.chepics.chepics.feature.common.CommentCell
 import com.chepics.chepics.feature.common.CommonProgressSpinner
 import com.chepics.chepics.feature.common.ImagePager
-import com.chepics.chepics.feature.feed.viewparts.TopicCell
+import com.chepics.chepics.feature.common.TopicCell
 import com.chepics.chepics.feature.navigation.Screens
 import kotlinx.coroutines.launch
 
@@ -123,7 +124,7 @@ fun FeedScreen(
                     }
 
                     1 -> {
-                        Text(text = "Comments")
+                        CommentCell()
                     }
                 }
             }
