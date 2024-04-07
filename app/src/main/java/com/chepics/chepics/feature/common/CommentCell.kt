@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -111,7 +113,7 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = comment.comment,
+                            text = "猫が可愛い",
                             fontSize = 16.sp,
                             color = ChepicsPrimary,
                             fontWeight = FontWeight.SemiBold,
@@ -119,6 +121,10 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                             overflow = TextOverflow.Ellipsis
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(text = comment.comment)
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -182,7 +188,13 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                 ,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "like icon")
+                Image(
+                    imageVector = Icons.Outlined.FavoriteBorder,
+                    contentDescription = "like icon",
+                    colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(text = "${comment.votes}")
             }

@@ -167,21 +167,12 @@ fun FeedTopicContentView(
                 state = viewModel.topicScrollState.value
             ) {
                 items(viewModel.topics.value) {
-                    Card(
-                        onClick = {
-                        },
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.Transparent
-                        ),
-                        shape = RectangleShape
-                    ) {
-                        TopicCell(topic = it) { index ->
-                            it.images?.let { images ->
-                                viewModel.onTapImage(index = index, images = images.map { image ->
-                                    image.url
-                                })
-                                showImageViewer.value = true
-                            }
+                    TopicCell(topic = it) { index ->
+                        it.images?.let { images ->
+                            viewModel.onTapImage(index = index, images = images.map { image ->
+                                image.url
+                            })
+                            showImageViewer.value = true
                         }
                     }
                 }
@@ -210,21 +201,12 @@ fun FeedCommentContentView(
                 state = viewModel.commentScrollState.value
             ) {
                 items(viewModel.comments.value) {
-                    Card(
-                        onClick = {
-                        },
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.Transparent
-                        ),
-                        shape = RectangleShape
-                    ) {
-                        CommentCell(comment = it) { index ->
-                            it.images?.let { images ->
-                                viewModel.onTapImage(index = index, images = images.map { image ->
-                                    image.url
-                                })
-                                showImageViewer.value = true
-                            }
+                    CommentCell(comment = it) { index ->
+                        it.images?.let { images ->
+                            viewModel.onTapImage(index = index, images = images.map { image ->
+                                image.url
+                            })
+                            showImageViewer.value = true
                         }
                     }
                 }
