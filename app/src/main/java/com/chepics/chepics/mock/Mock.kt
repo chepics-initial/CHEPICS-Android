@@ -491,3 +491,19 @@ val mockComment5 = Comment(
     registerTime = LocalDateTime.now(),
     updateTime = LocalDateTime.now()
 )
+
+val mockComment6 = Comment(
+    id = "6",
+    parentId = "1",
+    topicId = "1",
+    setId = "1",
+    comment = "遠くから聞こえる鳥のさえずりが、静かな午後を彩ります。",
+    link = "https://www.google.com/",
+    images = listOf(
+        mockCommentImage4
+    ),
+    votes = 38,
+    user = mockUser8,
+    registerTime = LocalDateTime.now(),
+    updateTime = LocalDateTime.now()
+)

@@ -7,13 +7,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,20 +34,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.chepics.chepics.domainmodel.Comment
-import com.chepics.chepics.mock.mockComment1
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
 
-@Preview
 @Composable
-fun CommentCell(comment: Comment = mockComment1, onTapImage: (Int) -> Unit = {}) {
+fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
     val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -103,12 +107,16 @@ fun CommentCell(comment: Comment = mockComment1, onTapImage: (Int) -> Unit = {})
                                     shape = RoundedCornerShape(2.dp)
                                 )
                         )
+                        
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
                             text = comment.comment,
                             fontSize = 16.sp,
                             color = ChepicsPrimary,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
@@ -122,26 +130,70 @@ fun CommentCell(comment: Comment = mockComment1, onTapImage: (Int) -> Unit = {})
                             },
                         color = Color.Blue
                     )
+                }
+            }
 
-                    comment.images?.let { images ->
-                        val imageUrlList = images.map { it.url }
-                        GridImagesView(imageUrlList = imageUrlList) {
-                            onTapImage(it)
+            comment.images?.let { images ->
+                val imageUrlList = images.map { it.url }
+                if (imageUrlList.size > 1) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .height(if (imageUrlList.size == 4) (getHeight() * 2 + 16.dp) else getHeight() + 8.dp),
+                        contentPadding = PaddingValues(start = 52.dp, end = 12.dp)
+                    ) {
+                        items(imageUrlList.size) {index ->
+                            if (!(imageUrlList.size % 2 != 0 && index == imageUrlList.size - 1)) {
+                                AsyncImage(
+                                    model = imageUrlList[index],
+                                    contentDescription = "$index image",
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .padding(4.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable { onTapImage(index) },
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
-
-                    Row(
-                        modifier = Modifier.align(Alignment.End),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "like icon")
-
-                        Text(text = "${comment.votes}")
-                    }
                 }
+
+                if (imageUrlList.size % 2 == 1) {
+                    AsyncImage(
+                        model = imageUrlList.last(),
+                        contentDescription = "last image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(getHeight())
+                            .padding(top = 4.dp, bottom = 4.dp, start = 56.dp, end = 16.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onTapImage(imageUrlList.size - 1) },
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                ,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "like icon")
+
+                Text(text = "${comment.votes}")
             }
 
             HorizontalDivider()
         }
     }
+}
+
+@Composable
+private fun getHeight(): Dp {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    return ((screenWidth - 80) / 2).dp
 }

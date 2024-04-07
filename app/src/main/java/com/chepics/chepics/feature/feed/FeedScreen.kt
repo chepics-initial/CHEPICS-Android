@@ -77,6 +77,9 @@ fun FeedScreen(
 
                                         1 -> {
                                             commentCoroutineScope.launch {
+                                                viewModel.commentScrollState.value.animateScrollToItem(
+                                                    0
+                                                )
                                             }
                                         }
                                     }
@@ -124,17 +127,21 @@ fun FeedScreen(
                     }
 
                     1 -> {
-                        CommentCell()
+                        FeedCommentContentView(
+                            viewModel = viewModel,
+                            showImageViewer = showImageViewer,
+                            navController = navController
+                        )
                     }
                 }
             }
         }
 
-        if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.topicImages.value != null) {
+        if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.feedImages.value != null) {
             showBottomNavigation.value = false
             ImagePager(
                 index = viewModel.selectedImageIndex.value!!,
-                imageUrls = viewModel.topicImages.value!!
+                imageUrls = viewModel.feedImages.value!!
             ) {
                 showImageViewer.value = false
                 showBottomNavigation.value = true
@@ -181,6 +188,48 @@ fun FeedTopicContentView(
             }
         }
 
+        UIState.FAILURE -> {
+            Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+        }
+    }
+}
+
+@Composable
+fun FeedCommentContentView(
+    viewModel: FeedViewModel,
+    showImageViewer: MutableState<Boolean>,
+    navController: NavController
+) {
+    when (viewModel.commentUIState.value) {
+        UIState.LOADING -> {
+            CommonProgressSpinner(backgroundColor = Color.Transparent)
+        }
+        UIState.SUCCESS -> {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = viewModel.commentScrollState.value
+            ) {
+                items(viewModel.comments.value) {
+                    Card(
+                        onClick = {
+                        },
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Transparent
+                        ),
+                        shape = RectangleShape
+                    ) {
+                        CommentCell(comment = it) { index ->
+                            it.images?.let { images ->
+                                viewModel.onTapImage(index = index, images = images.map { image ->
+                                    image.url
+                                })
+                                showImageViewer.value = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
         UIState.FAILURE -> {
             Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
         }
