@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.common
+package com.chepics.chepics.feature.commonparts
 
 import android.content.Intent
 import android.net.Uri
@@ -123,11 +123,11 @@ fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit) {
                     .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = R.drawable.chart),
                         contentDescription = "chart",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(16.dp)
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))

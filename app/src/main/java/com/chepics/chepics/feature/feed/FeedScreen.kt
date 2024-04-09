@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -28,14 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.chepics.chepics.feature.common.CommentCell
-import com.chepics.chepics.feature.common.CommonProgressSpinner
-import com.chepics.chepics.feature.common.ImagePager
-import com.chepics.chepics.feature.common.TopicCell
+import com.chepics.chepics.feature.common.UIState
+import com.chepics.chepics.feature.commonparts.CommentCell
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.ImagePager
+import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.navigation.Screens
 import kotlinx.coroutines.launch
 

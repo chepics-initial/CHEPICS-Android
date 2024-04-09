@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.common
+package com.chepics.chepics.feature.commonparts
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable

@@ -29,11 +29,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.chepics.chepics.feature.common.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.chepics.chepics.feature.common.ButtonType
-import com.chepics.chepics.feature.common.RoundButton
+import com.chepics.chepics.feature.commonparts.ButtonType
+import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 

@@ -138,7 +138,7 @@ fun ServiceNavigation() {
             }
 
             composable(BottomNavigationType.MyPage.name) {
-                MyPageNavHost()
+                MyPageNavHost(showBottomNavigation)
             }
         }
     }
@@ -173,11 +173,14 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
 }
 
 @Composable
-fun MyPageNavHost() {
+fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
     val myPageNavController = rememberNavController()
     NavHost(myPageNavController, startDestination = Screens.ProfileScreen.name) {
         composable(Screens.ProfileScreen.name) {
-            ProfileScreen(navController = myPageNavController)
+            ProfileScreen(
+                navController = myPageNavController,
+                showBottomNavigation = showBottomNavigation
+            )
         }
     }
 }

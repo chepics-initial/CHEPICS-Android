@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.common
+package com.chepics.chepics.feature.commonparts
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth

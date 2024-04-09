@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.common
+package com.chepics.chepics.feature.commonparts
 
 import android.content.Intent
 import android.net.Uri

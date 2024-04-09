@@ -57,10 +57,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
-import com.chepics.chepics.feature.common.RoundButton
+import com.chepics.chepics.feature.commonparts.RoundButton
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.chepics.chepics.feature.common.ButtonType
+import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
 

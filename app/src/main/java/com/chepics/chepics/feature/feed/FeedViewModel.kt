@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.mock.mockComment1
 import com.chepics.chepics.mock.mockComment2
 import com.chepics.chepics.mock.mockComment3
@@ -96,12 +97,6 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         selectedImageIndex.value = index
         feedImages.value = images
     }
-}
-
-enum class UIState {
-    LOADING,
-    SUCCESS,
-    FAILURE
 }
 
 data class FeedTabItem(

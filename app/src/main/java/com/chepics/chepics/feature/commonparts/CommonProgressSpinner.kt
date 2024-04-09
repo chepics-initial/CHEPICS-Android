@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.common
+package com.chepics.chepics.feature.commonparts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
