@@ -40,7 +40,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         }
     }
 
-    private suspend fun fetchTopics() {
+    suspend fun fetchTopics() {
         if (topicUIState.value != UIState.SUCCESS) {
             topicUIState.value = UIState.LOADING
         }

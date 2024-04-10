@@ -13,19 +13,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -148,32 +154,48 @@ fun FeedScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedTopicContentView(
     viewModel: FeedViewModel,
     showImageViewer: MutableState<Boolean>,
     navController: NavController
 ) {
+    val refreshState = rememberPullToRefreshState()
+    if (refreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            viewModel.fetchTopics()
+            refreshState.endRefresh()
+        }
+    }
+
     when (viewModel.topicUIState.value) {
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
         }
 
         UIState.SUCCESS -> {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = viewModel.topicScrollState.value
-            ) {
-                items(viewModel.topics.value) {
-                    TopicCell(topic = it) { index ->
-                        it.images?.let { images ->
-                            viewModel.onTapImage(index = index, images = images.map { image ->
-                                image.url
-                            })
-                            showImageViewer.value = true
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = viewModel.topicScrollState.value
+                ) {
+                    items(viewModel.topics.value) {
+                        TopicCell(topic = it) { index ->
+                            it.images?.let { images ->
+                                viewModel.onTapImage(index = index, images = images.map { image ->
+                                    image.url
+                                })
+                                showImageViewer.value = true
+                            }
                         }
                     }
                 }
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
             }
         }
 
@@ -183,31 +205,47 @@ fun FeedTopicContentView(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedCommentContentView(
     viewModel: FeedViewModel,
     showImageViewer: MutableState<Boolean>,
     navController: NavController
 ) {
+    val refreshState = rememberPullToRefreshState()
+    if (refreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            viewModel.fetchTopics()
+            refreshState.endRefresh()
+        }
+    }
+
     when (viewModel.commentUIState.value) {
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
         }
         UIState.SUCCESS -> {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = viewModel.commentScrollState.value
-            ) {
-                items(viewModel.comments.value) {
-                    CommentCell(comment = it) { index ->
-                        it.images?.let { images ->
-                            viewModel.onTapImage(index = index, images = images.map { image ->
-                                image.url
-                            })
-                            showImageViewer.value = true
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = viewModel.commentScrollState.value
+                ) {
+                    items(viewModel.comments.value) {
+                        CommentCell(comment = it) { index ->
+                            it.images?.let { images ->
+                                viewModel.onTapImage(index = index, images = images.map { image ->
+                                    image.url
+                                })
+                                showImageViewer.value = true
+                            }
                         }
                     }
                 }
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
             }
         }
         UIState.FAILURE -> {
