@@ -119,8 +119,8 @@ fun ServiceNavigation() {
                                 )
                             },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = Color.White,
-                                indicatorColor = ChepicsPrimary
+                                selectedIconColor = ChepicsPrimary,
+                                indicatorColor = Color.Transparent
                             )
                         )
                     }
