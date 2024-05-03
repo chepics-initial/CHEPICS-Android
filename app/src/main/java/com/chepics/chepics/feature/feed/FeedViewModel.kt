@@ -10,15 +10,8 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.feature.common.UIState
-import com.chepics.chepics.mock.mockComment1
-import com.chepics.chepics.mock.mockComment2
-import com.chepics.chepics.mock.mockComment3
-import com.chepics.chepics.mock.mockComment4
-import com.chepics.chepics.mock.mockComment5
-import com.chepics.chepics.mock.mockComment6
 import com.chepics.chepics.usecase.feed.FeedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,7 +37,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         if (topicUIState.value != UIState.SUCCESS) {
             topicUIState.value = UIState.LOADING
         }
-        when (val result = feedUseCase.fetchFavoriteTopics()) {
+        when (val result = feedUseCase.fetchFavoriteTopics(null)) {
             is CallResult.Success -> {
                 topics.value = result.data
                 topicUIState.value = UIState.SUCCESS
@@ -60,16 +53,16 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         if (commentUIState.value != UIState.SUCCESS) {
             commentUIState.value = UIState.LOADING
         }
-        delay(1000L)
-        comments.value = listOf(
-            mockComment1,
-            mockComment2,
-            mockComment3,
-            mockComment4,
-            mockComment5,
-            mockComment6
-        )
-        commentUIState.value = UIState.SUCCESS
+        when (val result = feedUseCase.fetchComments(null)) {
+            is CallResult.Success -> {
+                comments.value = result.data
+                commentUIState.value = UIState.SUCCESS
+            }
+
+            is CallResult.Error -> {
+                commentUIState.value = UIState.FAILURE
+            }
+        }
     }
 
     fun selectTab(index: Int) {

@@ -8,16 +8,16 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface TopicRepository {
-    suspend fun fetchFavoriteTopics(): CallResult<List<Topic>>
+    suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>>
 }
 
 internal class TopicRepositoryImpl @Inject constructor(
     private val topicDataSource: TopicDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): TopicRepository {
-    override suspend fun fetchFavoriteTopics(): CallResult<List<Topic>> {
+    override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
         return withContext(ioDispatcher) {
-            topicDataSource.fetchFavoriteTopics()
+            topicDataSource.fetchFavoriteTopics(offset)
         }
     }
 }

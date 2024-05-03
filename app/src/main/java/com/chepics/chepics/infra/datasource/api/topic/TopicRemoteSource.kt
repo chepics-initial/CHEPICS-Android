@@ -22,7 +22,7 @@ import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class TopicRemoteSource @Inject constructor(private val api: TopicApi): TopicDataSource {
-    override suspend fun fetchFavoriteTopics(): CallResult<List<Topic>> {
+    override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
         delay(1000L)
         return CallResult.Success(data = listOf(
             mockTopic1,
