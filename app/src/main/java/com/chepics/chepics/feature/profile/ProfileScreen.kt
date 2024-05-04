@@ -18,10 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -48,7 +44,6 @@ import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
-import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.mock.mockTopicImage1
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import kotlinx.coroutines.launch
@@ -197,19 +192,6 @@ fun ProfileScreen(
                                 unselectedContentColor = Color.LightGray
                             )
                         }
-                    }
-                },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = { navController.navigate(Screens.CreateTopicScreen.name) },
-                        shape = CircleShape,
-                        containerColor = Color.Blue
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add a Topic",
-                            tint = Color.White
-                        )
                     }
                 }
             ) {
