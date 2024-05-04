@@ -15,5 +15,6 @@ enum class Screens {
     IconRegistrationScreen,
     FeedScreen,
     ProfileScreen,
-    CreateTopicScreen
+    CreateTopicScreen,
+    MyPageTopScreen
 }

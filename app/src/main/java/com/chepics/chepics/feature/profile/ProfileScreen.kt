@@ -56,6 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileScreen(
     navController: NavController,
+    userId: String,
     showBottomNavigation: MutableState<Boolean>,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {

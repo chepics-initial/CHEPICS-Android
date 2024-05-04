@@ -40,6 +40,7 @@ import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
 import com.chepics.chepics.feature.createtopic.CreateTopicScreen
 import com.chepics.chepics.feature.feed.FeedScreen
+import com.chepics.chepics.feature.mypage.MyPageTopScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
@@ -175,12 +176,24 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
 @Composable
 fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
     val myPageNavController = rememberNavController()
-    NavHost(myPageNavController, startDestination = Screens.ProfileScreen.name) {
-        composable(Screens.ProfileScreen.name) {
-            ProfileScreen(
-                navController = myPageNavController,
-                showBottomNavigation = showBottomNavigation
-            )
+    NavHost(myPageNavController, startDestination = Screens.MyPageTopScreen.name) {
+        composable(
+            "${Screens.ProfileScreen.name}/{userId}",
+            arguments = listOf(navArgument("userId") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("userId")?.let {
+                ProfileScreen(
+                    navController = myPageNavController,
+                    userId = it,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
+
+        composable(Screens.MyPageTopScreen.name) {
+            MyPageTopScreen(navController = myPageNavController)
         }
     }
 }

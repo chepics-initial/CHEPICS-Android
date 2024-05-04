@@ -60,14 +60,7 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
     ) {
         Column {
             Row(modifier = Modifier.padding(16.dp)) {
-                AsyncImage(
-                    model = comment.user.profileImageUrl,
-                    contentDescription = "user icon",
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                UserIcon(url = comment.user.profileImageUrl, scale = IconScale.COMMENT)
 
                 Spacer(modifier = Modifier.width(8.dp))
 

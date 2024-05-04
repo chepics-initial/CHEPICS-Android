@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -139,14 +138,7 @@ fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit) {
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    AsyncImage(
-                        model = topic.user.profileImageUrl,
-                        contentDescription = "user icon",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    UserIcon(url = topic.user.profileImageUrl, scale = IconScale.TOPIC)
 
                     Spacer(modifier = Modifier.width(8.dp))
 
