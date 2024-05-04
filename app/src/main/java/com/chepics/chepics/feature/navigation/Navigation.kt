@@ -37,6 +37,7 @@ import com.chepics.chepics.feature.authentication.nameregistration.NameRegistrat
 import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
 import com.chepics.chepics.feature.createtopic.CreateTopicScreen
+import com.chepics.chepics.feature.editprofile.EditProfileScreen
 import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.MyPageTopScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
@@ -177,12 +178,6 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
     NavHost(myPageNavController, startDestination = Screens.MyPageTopScreen.name) {
         composable(
             "${Screens.ProfileScreen.name}/{userId}",
-            enterTransition = {
-                slideIn { fullSize -> IntOffset(fullSize.width, 0) }
-            },
-            popExitTransition = {
-                slideOut { fullSize -> IntOffset(fullSize.width, 0) }
-            },
             arguments = listOf(navArgument("userId") {
                 type = NavType.StringType
             })
@@ -198,6 +193,18 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
 
         composable(Screens.MyPageTopScreen.name) {
             MyPageTopScreen(navController = myPageNavController)
+        }
+        
+        composable(
+            Screens.EditProfileScreen.name,
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(0, fullSize.height) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(0, fullSize.height) }
+            }
+        ) {
+            EditProfileScreen(navController = myPageNavController, showBottomNavigation = showBottomNavigation)
         }
     }
 }

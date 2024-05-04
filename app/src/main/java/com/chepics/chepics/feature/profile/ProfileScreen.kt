@@ -1,6 +1,6 @@
 package com.chepics.chepics.feature.profile
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
+import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.mock.mockTopicImage1
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import kotlinx.coroutines.launch
@@ -82,17 +85,25 @@ fun ProfileScreen(
                         contentScale = ContentScale.Crop
                     )
 
-                    Surface(
-                        modifier = Modifier.clickable {  },
-                        shape = RoundedCornerShape(8.dp),
-                        color = ChepicsPrimary
-                    ) {
-                        Text(
-                            text = "フォローする",
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White,
-                            modifier = Modifier.padding(8.dp)
+//                    Surface(
+//                        modifier = Modifier.clickable {  },
+//                        shape = RoundedCornerShape(8.dp),
+//                        color = ChepicsPrimary
+//                    ) {
+//                        Text(
+//                            text = "フォローする",
+//                            fontWeight = FontWeight.SemiBold,
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            color = Color.White,
+//                            modifier = Modifier.padding(8.dp)
+//                        )
+//                    }
+
+                    IconButton(onClick = { navController.navigate(Screens.EditProfileScreen.name) }) {
+                        Image(
+                            imageVector = Icons.Default.Create,
+                            contentDescription = "edit profile",
+                            colorFilter = ColorFilter.tint(color = ChepicsPrimary)
                         )
                     }
                 }
