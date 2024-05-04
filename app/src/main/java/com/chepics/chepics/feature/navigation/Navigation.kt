@@ -4,10 +4,8 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
@@ -179,6 +177,12 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
     NavHost(myPageNavController, startDestination = Screens.MyPageTopScreen.name) {
         composable(
             "${Screens.ProfileScreen.name}/{userId}",
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(fullSize.width, 0) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(fullSize.width, 0) }
+            },
             arguments = listOf(navArgument("userId") {
                 type = NavType.StringType
             })

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,15 +33,29 @@ import com.chepics.chepics.R
 import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.navigation.Screens
+import kotlinx.coroutines.delay
 
 @Composable
 fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel = hiltViewModel()) {
     val showConfirmDialog = remember {
         mutableStateOf(false)
     }
+    val isNavigationEnabled = remember {
+        mutableStateOf(true)
+    }
+
+    if (!isNavigationEnabled.value) {
+        LaunchedEffect(key1 = true) {
+            delay(1000L)
+            isNavigationEnabled.value = true
+        }
+    }
+
     Box {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -49,7 +65,10 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
 //                        viewModel.user.value?.id?.let {
 //                            navController.navigate(Screens.ProfileScreen.name + "/$it")
 //                        }
-                        navController.navigate(Screens.ProfileScreen.name + "/hello")
+                        if (isNavigationEnabled.value) {
+                            isNavigationEnabled.value = false
+                            navController.navigate(Screens.ProfileScreen.name + "/hello")
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
