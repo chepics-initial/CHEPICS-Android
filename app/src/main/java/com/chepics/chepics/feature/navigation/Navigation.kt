@@ -38,6 +38,7 @@ import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
 import com.chepics.chepics.feature.createtopic.CreateTopicScreen
 import com.chepics.chepics.feature.editprofile.EditProfileScreen
+import com.chepics.chepics.feature.explore.result.ExploreResultScreen
 import com.chepics.chepics.feature.explore.top.ExploreTopScreen
 import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.MyPageTopScreen
@@ -173,6 +174,17 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         
         composable(Screens.ExploreTopScreen.name) {
             ExploreTopScreen(navController = feedNavController)
+        }
+
+        composable(
+            "${Screens.ExploreResultScreen.name}/{searchText}",
+            arguments = listOf(navArgument("searchText") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("searchText")?.let {
+                ExploreResultScreen(navController = feedNavController, searchText = it, showBottomNavigation = showBottomNavigation)
+            }
         }
     }
 }

@@ -4,5 +4,8 @@ data class User(
     val id: String,
     val username: String,
     val fullname: String,
-    val profileImageUrl: String?
+    val profileImageUrl: String?,
+    val bio: String?,
+    val isFollowing: Boolean?,
+    val isFollowed: Boolean?
 )

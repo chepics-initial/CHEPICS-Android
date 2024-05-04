@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -27,14 +28,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
+import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +49,20 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 fun ExploreTopScreen(navController: NavController) {
     val searchText = remember {
         mutableStateOf("")
+    }
+
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
+    val focusManager = LocalFocusManager.current
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+        focusRequester.requestFocus()
+    }
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
+        focusManager.clearFocus()
     }
 
     Scaffold(
@@ -91,10 +112,17 @@ fun ExploreTopScreen(navController: NavController) {
                                 disabledIndicatorColor = Color.Transparent
                             ),
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
                             keyboardOptions = KeyboardOptions(
                                 imeAction = ImeAction.Search
-                            )
+                            ),
+                            keyboardActions = KeyboardActions {
+                                if (searchText.value.isNotEmpty()) {
+                                    navController.navigate(Screens.ExploreResultScreen.name + "/${searchText.value}")
+                                }
+                            }
                         )
                     }
                 }
@@ -106,7 +134,9 @@ fun ExploreTopScreen(navController: NavController) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable {
+                            navController.navigate(Screens.ExploreResultScreen.name + "/${searchText.value}")
+                        }
                         .padding(16.dp)
                 ) {
                     Image(

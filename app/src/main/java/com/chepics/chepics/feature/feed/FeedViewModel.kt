@@ -49,7 +49,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         }
     }
 
-    private suspend fun fetchComments() {
+    suspend fun fetchComments() {
         if (commentUIState.value != UIState.SUCCESS) {
             commentUIState.value = UIState.LOADING
         }

@@ -18,12 +18,10 @@ import com.chepics.chepics.mock.mockTopic7
 import com.chepics.chepics.mock.mockTopic8
 import com.chepics.chepics.mock.mockTopic9
 import com.chepics.chepics.repository.topic.TopicDataSource
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class TopicRemoteSource @Inject constructor(private val api: TopicApi): TopicDataSource {
     override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
-        delay(1000L)
         return CallResult.Success(data = listOf(
             mockTopic1,
             mockTopic2,

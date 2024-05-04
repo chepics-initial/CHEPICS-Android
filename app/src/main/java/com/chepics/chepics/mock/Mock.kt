@@ -35,105 +35,150 @@ val mockUser1 = User(
     id = "1",
     username = "taro",
     fullname = "太郎",
-    profileImageUrl = "https://animeanime.jp/imgs/ogp_f/303592.jpg"
+    profileImageUrl = "https://animeanime.jp/imgs/ogp_f/303592.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser2 = User(
     id = "2",
     username = "Sakura",
     fullname = "さくら",
-    profileImageUrl = "https://d1uzk9o9cg136f.cloudfront.net/f/16783489/rc/2022/10/25/b86bd6fa3f0fc8c9cb3aaa5eb26bfd60066a598e.jpg"
+    profileImageUrl = "https://d1uzk9o9cg136f.cloudfront.net/f/16783489/rc/2022/10/25/b86bd6fa3f0fc8c9cb3aaa5eb26bfd60066a598e.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser3 = User(
     id = "3",
     username = "Yuta",
     fullname = "ゆうた",
-    profileImageUrl = "https://static.gltjp.com/glt/prd/data/article/21000/20584/20240112_113107_c7298818_w1920.jpg"
+    profileImageUrl = "https://static.gltjp.com/glt/prd/data/article/21000/20584/20240112_113107_c7298818_w1920.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser4 = User(
     id = "4",
     username = "Akari",
     fullname = "あかり",
-    profileImageUrl = "https://img.freepik.com/free-photo/fuji-mountain-and-kawaguchiko-lake-in-morning-autumn-seasons-fuji-mountain-at-yamanachi-in-japan_335224-102.jpg?size=626&ext=jpg&ga=GA1.1.967060102.1710806400&semt=ais"
+    profileImageUrl = "https://img.freepik.com/free-photo/fuji-mountain-and-kawaguchiko-lake-in-morning-autumn-seasons-fuji-mountain-at-yamanachi-in-japan_335224-102.jpg?size=626&ext=jpg&ga=GA1.1.967060102.1710806400&semt=ais",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser5 = User(
     id = "5",
     username = "Haruto",
     fullname = "はると",
-    profileImageUrl = "https://fujifilmsquare.jp/assets/img/column/column_39_01.jpg"
+    profileImageUrl = "https://fujifilmsquare.jp/assets/img/column/column_39_01.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser6 = User(
     id = "6",
     username = "Mizuki",
     fullname = "みずき",
-    profileImageUrl = "https://tabiiro.jp/auto_sysnc/images/article/2738/share_images1671604951.jpg"
+    profileImageUrl = "https://tabiiro.jp/auto_sysnc/images/article/2738/share_images1671604951.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser7 = User(
     id = "7",
     username = "Rio",
     fullname = "りお",
-    profileImageUrl = "https://img01.jalannews.jp/img/2023/06/202307_kanto_1_114-670x443.jpg"
+    profileImageUrl = "https://img01.jalannews.jp/img/2023/06/202307_kanto_1_114-670x443.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser8 = User(
     id = "8",
     username = "Riku",
     fullname = "りく",
-    profileImageUrl = "https://discoverjapan-web.com/wp-content/uploads/2020/06/4ffe6b26cd5640fa352a979cc7a96dd7.jpg"
+    profileImageUrl = "https://discoverjapan-web.com/wp-content/uploads/2020/06/4ffe6b26cd5640fa352a979cc7a96dd7.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser9 = User(
     id = "9",
     username = "Airi",
     fullname = "あいり",
-    profileImageUrl = "https://prtimes.jp/i/7916/471/resize/d7916-471-835089-22.jpg"
+    profileImageUrl = "https://prtimes.jp/i/7916/471/resize/d7916-471-835089-22.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser10 = User(
     id = "10",
     username = "Shunsuke",
     fullname = "しゅんすけ",
-    profileImageUrl = "https://travel.rakuten.co.jp/mytrip/sites/mytrip/files/styles/main_image/public/migration_article_images/amazing/amazingviews-kanto-key.jpg?itok=F7xs4yDv"
+    profileImageUrl = "https://travel.rakuten.co.jp/mytrip/sites/mytrip/files/styles/main_image/public/migration_article_images/amazing/amazingviews-kanto-key.jpg?itok=F7xs4yDv",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser11 = User(
     id = "11",
     username = "Rena",
     fullname = "れな",
-    profileImageUrl = "https://fs.tour.ne.jp/index.php/file_manage/view/?contents_code=curation&file_name=814/27186/98ca4c60e2fcc431d31fdc8fd05c7bc3.jpg&w=1200"
+    profileImageUrl = "https://fs.tour.ne.jp/index.php/file_manage/view/?contents_code=curation&file_name=814/27186/98ca4c60e2fcc431d31fdc8fd05c7bc3.jpg&w=1200",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser12 = User(
     id = "12",
     username = "Kaito",
     fullname = "かいと",
-    profileImageUrl = "https://media.vogue.co.jp/photos/64df24ddd343815066c32ece/master/w_1600%2Cc_limit/VJ-travel-world-bridge-06.jpeg"
+    profileImageUrl = "https://media.vogue.co.jp/photos/64df24ddd343815066c32ece/master/w_1600%2Cc_limit/VJ-travel-world-bridge-06.jpeg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser13 = User(
     id = "13",
     username = "Mana",
     fullname = "まな",
-    profileImageUrl = "https://cdn.fujiyama-navi.jp/entries/images/000/004/668/original/6688648b-443d-4f6b-a39f-be2240ea06e3.jpg?1516586033"
+    profileImageUrl = "https://cdn.fujiyama-navi.jp/entries/images/000/004/668/original/6688648b-443d-4f6b-a39f-be2240ea06e3.jpg?1516586033",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser14 = User(
     id = "14",
     username = "Taichi",
     fullname = "たいち",
-    profileImageUrl = "https://animeanime.jp/imgs/ogp_f/303592.jpg"
+    profileImageUrl = "https://animeanime.jp/imgs/ogp_f/303592.jpg",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockUser15 = User(
     id = "15",
     username = "Rin",
     fullname = "りん",
-    profileImageUrl = "https://www.nta.co.jp/media/tripa/static_contents/nta-tripa/item_images/images/000/066/242/medium/8c11da1d-97de-4c99-96dd-78089cc52f72.jpg?1550676731"
+    profileImageUrl = "https://www.nta.co.jp/media/tripa/static_contents/nta-tripa/item_images/images/000/066/242/medium/8c11da1d-97de-4c99-96dd-78089cc52f72.jpg?1550676731",
+    bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
+    isFollowing = false,
+    isFollowed = false
 )
 
 val mockTopic1 = Topic(
