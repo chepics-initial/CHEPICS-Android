@@ -18,7 +18,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -70,7 +70,7 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
                             onClick = { navController.popBackStack() },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
-                            Image(imageVector = Icons.Default.ArrowBack, contentDescription = "Back button")
+                            Image(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back button")
                         }
                     }
                 )

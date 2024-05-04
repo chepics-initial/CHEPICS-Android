@@ -38,6 +38,7 @@ import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
 import com.chepics.chepics.feature.createtopic.CreateTopicScreen
 import com.chepics.chepics.feature.editprofile.EditProfileScreen
+import com.chepics.chepics.feature.explore.top.ExploreTopScreen
 import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.MyPageTopScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
@@ -168,6 +169,10 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 navController = feedNavController,
                 showBottomNavigation = showBottomNavigation
             )
+        }
+        
+        composable(Screens.ExploreTopScreen.name) {
+            ExploreTopScreen(navController = feedNavController)
         }
     }
 }

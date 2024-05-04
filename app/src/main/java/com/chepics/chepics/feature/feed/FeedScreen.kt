@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.feed
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,13 +14,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -30,9 +35,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.UIState
@@ -43,6 +52,7 @@ import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.navigation.Screens
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
     navController: NavController,
@@ -59,11 +69,51 @@ fun FeedScreen(
     Box {
         Scaffold(
             topBar = {
+                     TopAppBar(
+                         title = { },
+                         actions = {
+                             IconButton(onClick = { navController.navigate(Screens.ExploreTopScreen.name) }) {
+                                 Surface(
+                                     modifier = Modifier
+                                         .clip(CircleShape),
+                                     color = Color.LightGray
+                                 ) {
+                                     Image(
+                                         imageVector = Icons.Default.Search,
+                                         contentDescription = "search icon",
+                                         colorFilter = ColorFilter.tint(color = Color.Gray),
+                                         modifier = Modifier
+                                             .padding(all = 4.dp)
+                                     )
+                                 }
+                             }
+                         }
+                     )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { navController.navigate(Screens.CreateTopicScreen.name) },
+                    shape = CircleShape,
+                    containerColor = Color.Blue
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add a Topic",
+                        tint = Color.White
+                    )
+                }
+            }
+        ) {
+            Column(
+                modifier = Modifier.padding(top = it.calculateTopPadding()),
+                verticalArrangement = Arrangement.Top
+            ) {
                 TabRow(
                     selectedTabIndex = viewModel.selectedTab.value,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .zIndex(1f)
                 ) {
                     feedTabItems.forEachIndexed { index, item ->
                         Tab(
@@ -102,25 +152,6 @@ fun FeedScreen(
                         )
                     }
                 }
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.navigate(Screens.CreateTopicScreen.name) },
-                    shape = CircleShape,
-                    containerColor = Color.Blue
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add a Topic",
-                        tint = Color.White
-                    )
-                }
-            }
-        ) {
-            Column(
-                modifier = Modifier.padding(top = it.calculateTopPadding()),
-                verticalArrangement = Arrangement.Top
-            ) {
                 when (viewModel.selectedTab.value) {
                     0 -> {
                         FeedTopicContentView(
