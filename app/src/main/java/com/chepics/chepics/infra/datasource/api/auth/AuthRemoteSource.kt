@@ -9,4 +9,8 @@ class AuthRemoteSource @Inject constructor(private val api: AuthApi): AuthDataSo
     override suspend fun login(request: LoginRequest): CallResult<Unit> {
         return CallResult.Success(Unit)
     }
+
+    override suspend fun createCode(email: String): CallResult<String> {
+        return CallResult.Success("google@gmail.com")
+    }
 }

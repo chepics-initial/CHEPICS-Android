@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 interface AuthRepository {
     suspend fun login(request: LoginRequest): CallResult<Unit>
+    suspend fun createCode(email: String): CallResult<String>
 }
 
 internal class AuthRepositoryImpl @Inject constructor(
@@ -18,6 +19,12 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(request: LoginRequest): CallResult<Unit> {
         return withContext(ioDispatcher) {
             authDataSource.login(request)
+        }
+    }
+
+    override suspend fun createCode(email: String): CallResult<String> {
+        return withContext(ioDispatcher) {
+            authDataSource.createCode(email)
         }
     }
 }

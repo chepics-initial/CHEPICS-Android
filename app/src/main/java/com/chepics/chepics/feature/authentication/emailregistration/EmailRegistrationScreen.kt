@@ -26,8 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
@@ -37,7 +37,7 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegistrationViewModel = viewModel()) {
+fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegistrationViewModel = hiltViewModel()) {
     if (viewModel.isCompleted.value) {
         navController.navigate(Screens.OneTimeCodeScreen.name + "/${viewModel.email.value}")
         viewModel.isCompleted.value = false

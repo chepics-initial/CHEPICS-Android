@@ -8,4 +8,7 @@ import retrofit2.http.POST
 interface AuthApi {
     @POST("v1/chepics/auth/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<Unit>
+
+    @POST("v1/chepics/auth/email-confirm-code")
+    suspend fun createCode(@Body email: String): Response<String>
 }

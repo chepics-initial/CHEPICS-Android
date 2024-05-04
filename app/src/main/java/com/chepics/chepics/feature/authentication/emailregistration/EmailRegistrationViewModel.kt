@@ -4,10 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.usecase.auth.EmailRegistrationUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EmailRegistrationViewModel: ViewModel() {
+@HiltViewModel
+class EmailRegistrationViewModel @Inject constructor(
+    private val emailRegistrationUseCase: EmailRegistrationUseCase
+): ViewModel() {
     val email: MutableState<String> = mutableStateOf("")
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val showAlertDialog: MutableState<Boolean> = mutableStateOf(false)
@@ -16,13 +22,14 @@ class EmailRegistrationViewModel: ViewModel() {
     fun onTapButton() {
         viewModelScope.launch {
             isLoading.value = true
-            delay(1000L)
-            isLoading.value = false
-            if (email.value == "aaa") {
-                showAlertDialog.value = true
-            } else {
-                isCompleted.value = true
+            when (val result = emailRegistrationUseCase.createCode(email.value)) {
+                is CallResult.Success -> {
+                    email.value = result.data
+                    isCompleted.value = true
+                }
+                is CallResult.Error -> showAlertDialog.value = true
             }
+            isLoading.value = false
         }
     }
 }
