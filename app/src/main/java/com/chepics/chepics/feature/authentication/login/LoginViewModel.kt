@@ -4,11 +4,15 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.usecase.auth.LoginUseCase
 import com.chepics.chepics.utils.Constants
-import kotlinx.coroutines.delay
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel: ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase): ViewModel() {
     val email: MutableState<String> = mutableStateOf("")
     val password: MutableState<String> = mutableStateOf("")
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
@@ -21,10 +25,14 @@ class LoginViewModel: ViewModel() {
     fun onTapLoginButton() {
         viewModelScope.launch {
             isLoading.value = true
-            delay(1000L)
-            isLoading.value = false
-            if (email.value == "aaa") {
-                showAlertDialog.value = true
+            when (loginUseCase.login(email = email.value, password = password.value)) {
+                is CallResult.Success -> {
+                    isLoading.value = false
+                }
+                is CallResult.Error -> {
+                    showAlertDialog.value = true
+                    isLoading.value = false
+                }
             }
         }
     }
