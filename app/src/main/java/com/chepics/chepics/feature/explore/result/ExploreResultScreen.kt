@@ -59,7 +59,9 @@ import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserCell
+import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +85,17 @@ fun ExploreResultScreen(
         mutableStateOf(false)
     }
     val focusManager = LocalFocusManager.current
+
+    val isNavigationEnabled = remember {
+        mutableStateOf(true)
+    }
+
+    if (!isNavigationEnabled.value) {
+        LaunchedEffect(key1 = true) {
+            delay(1000L)
+            isNavigationEnabled.value = true
+        }
+    }
 
     BackHandler {
         if (isFocused.value) {
@@ -239,6 +252,7 @@ fun ExploreResultScreen(
                         2 -> {
                             ExploreUserContentView(
                                 viewModel = viewModel,
+                                isNavigationEnabled = isNavigationEnabled,
                                 navController = navController
                             )
                         }
@@ -364,6 +378,7 @@ fun ExploreCommentContentView(
 @Composable
 fun ExploreUserContentView(
     viewModel: ExploreResultViewModel,
+    isNavigationEnabled: MutableState<Boolean>,
     navController: NavController
 ) {
     val refreshState = rememberPullToRefreshState()
@@ -385,7 +400,15 @@ fun ExploreUserContentView(
                     state = viewModel.userScrollState.value
                 ) {
                     items(viewModel.users.value) {
-                        UserCell(user = it)
+                        UserCell(
+                            user = it,
+                            modifier = Modifier.clickable {
+                                if (isNavigationEnabled.value) {
+                                    isNavigationEnabled.value = false
+                                    navController.navigate(Screens.ProfileScreen.name + "/hello")
+                                }
+                            }
+                        )
                     }
                 }
 

@@ -17,8 +17,11 @@ import androidx.compose.ui.unit.dp
 import com.chepics.chepics.domainmodel.User
 
 @Composable
-fun UserCell(user: User) {
-    Column {
+fun UserCell(
+    user: User,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
         Row(modifier = Modifier.padding(16.dp)) {
             UserIcon(url = user.profileImageUrl, scale = IconScale.USER)
             

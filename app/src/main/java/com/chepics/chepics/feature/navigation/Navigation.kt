@@ -186,6 +186,21 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 ExploreResultScreen(navController = feedNavController, searchText = it, showBottomNavigation = showBottomNavigation)
             }
         }
+
+        composable(
+            "${Screens.ProfileScreen.name}/{userId}",
+            arguments = listOf(navArgument("userId") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("userId")?.let {
+                ProfileScreen(
+                    navController = feedNavController,
+                    userId = it,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
     }
 }
 
