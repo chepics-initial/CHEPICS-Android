@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.explore.result
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -37,9 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -76,6 +79,20 @@ fun ExploreResultScreen(
     val showImageViewer = remember {
         mutableStateOf(false)
     }
+    val isFocused = remember {
+        mutableStateOf(false)
+    }
+    val focusManager = LocalFocusManager.current
+
+    BackHandler {
+        if (isFocused.value) {
+            isFocused.value = false
+            viewModel.searchText.value = viewModel.initialSearchText
+            focusManager.clearFocus()
+        } else {
+            navController.popBackStack()
+        }
+    }
 
     Box {
         Scaffold(
@@ -85,7 +102,15 @@ fun ExploreResultScreen(
                         Image(
                             imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                             contentDescription = "Logo Icon",
-                            modifier = Modifier.clickable { navController.popBackStack() }
+                            modifier = Modifier.clickable {
+                                if (isFocused.value) {
+                                    isFocused.value = false
+                                    viewModel.searchText.value = viewModel.initialSearchText
+                                    focusManager.clearFocus()
+                                } else {
+                                    navController.popBackStack()
+                                }
+                            }
                         )
 
                         Surface(
@@ -106,7 +131,7 @@ fun ExploreResultScreen(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (viewModel.searchText.value.isNotEmpty()) {
+                                    if (viewModel.searchText.value.isNotEmpty() && isFocused.value) {
                                         Image(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "search icon",
@@ -125,7 +150,12 @@ fun ExploreResultScreen(
                                     disabledIndicatorColor = Color.Transparent
                                 ),
                                 singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onFocusChanged {
+                                        isFocused.value = it.isFocused
+                                    }
+                                ,
                                 keyboardOptions = KeyboardOptions(
                                     imeAction = ImeAction.Search
                                 )
@@ -136,80 +166,82 @@ fun ExploreResultScreen(
             }
         ) {
             Column(modifier = Modifier.padding(top = it.calculateTopPadding())) {
-                TabRow(
-                    selectedTabIndex = viewModel.selectedTab.value,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .zIndex(1f)
-                ) {
-                    searchTabItems.forEachIndexed { index, item ->
-                        Tab(
-                            selected = viewModel.selectedTab.value == index,
-                            onClick = {
-                                if (viewModel.selectedTab.value == index) {
-                                    when (viewModel.selectedTab.value) {
-                                        0 -> {
-                                            topicCoroutineScope.launch {
-                                                viewModel.topicScrollState.value.animateScrollToItem(
-                                                    0
-                                                )
+                if (!isFocused.value) {
+                    TabRow(
+                        selectedTabIndex = viewModel.selectedTab.value,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .zIndex(1f)
+                    ) {
+                        searchTabItems.forEachIndexed { index, item ->
+                            Tab(
+                                selected = viewModel.selectedTab.value == index,
+                                onClick = {
+                                    if (viewModel.selectedTab.value == index) {
+                                        when (viewModel.selectedTab.value) {
+                                            0 -> {
+                                                topicCoroutineScope.launch {
+                                                    viewModel.topicScrollState.value.animateScrollToItem(
+                                                        0
+                                                    )
+                                                }
                                             }
-                                        }
 
-                                        1 -> {
-                                            commentCoroutineScope.launch {
-                                                viewModel.commentScrollState.value.animateScrollToItem(
-                                                    0
-                                                )
+                                            1 -> {
+                                                commentCoroutineScope.launch {
+                                                    viewModel.commentScrollState.value.animateScrollToItem(
+                                                        0
+                                                    )
+                                                }
                                             }
-                                        }
 
-                                        2 -> {
-                                            userCoroutineScope.launch {
-                                                viewModel.userScrollState.value.animateScrollToItem(
-                                                    0
-                                                )
+                                            2 -> {
+                                                userCoroutineScope.launch {
+                                                    viewModel.userScrollState.value.animateScrollToItem(
+                                                        0
+                                                    )
+                                                }
                                             }
                                         }
+                                        return@Tab
                                     }
-                                    return@Tab
-                                }
-                                viewModel.selectTab(index)
-                            },
-                            text = {
-                                Text(
-                                    text = item.title,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            },
-                            selectedContentColor = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                            unselectedContentColor = Color.LightGray
-                        )
+                                    viewModel.selectTab(index)
+                                },
+                                text = {
+                                    Text(
+                                        text = item.title,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                },
+                                selectedContentColor = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                                unselectedContentColor = Color.LightGray
+                            )
+                        }
                     }
-                }
-                when (viewModel.selectedTab.value) {
-                    0 -> {
-                        ExploreTopicContentView(
-                            viewModel = viewModel,
-                            showImageViewer = showImageViewer,
-                            navController = navController
-                        )
-                    }
+                    when (viewModel.selectedTab.value) {
+                        0 -> {
+                            ExploreTopicContentView(
+                                viewModel = viewModel,
+                                showImageViewer = showImageViewer,
+                                navController = navController
+                            )
+                        }
 
-                    1 -> {
-                        ExploreCommentContentView(
-                            viewModel = viewModel,
-                            showImageViewer = showImageViewer,
-                            navController = navController
-                        )
-                    }
+                        1 -> {
+                            ExploreCommentContentView(
+                                viewModel = viewModel,
+                                showImageViewer = showImageViewer,
+                                navController = navController
+                            )
+                        }
 
-                    2 -> {
-                        ExploreUserContentView(
-                            viewModel = viewModel,
-                            navController = navController
-                        )
+                        2 -> {
+                            ExploreUserContentView(
+                                viewModel = viewModel,
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }

@@ -31,6 +31,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val userScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val searchImages: MutableState<List<String>?> = mutableStateOf(null)
+    var initialSearchText: String = ""
 
     init {
         viewModelScope.launch {
@@ -39,6 +40,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     }
 
     fun onAppear(searchText: String) {
+        initialSearchText = searchText
         this.searchText.value = searchText
     }
 
@@ -75,7 +77,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         if (topicUIState.value != UIState.SUCCESS) {
             topicUIState.value = UIState.LOADING
         }
-        when (val result = exploreResultUseCase.fetchTopics(searchText.value)) {
+        when (val result = exploreResultUseCase.fetchTopics(initialSearchText)) {
             is CallResult.Success -> {
                 topics.value = result.data
                 topicUIState.value = UIState.SUCCESS
@@ -91,7 +93,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         if (commentUIState.value != UIState.SUCCESS) {
             commentUIState.value = UIState.LOADING
         }
-        when (val result = exploreResultUseCase.fetchComments(searchText.value)) {
+        when (val result = exploreResultUseCase.fetchComments(initialSearchText)) {
             is CallResult.Success -> {
                 comments.value = result.data
                 commentUIState.value = UIState.SUCCESS
@@ -108,7 +110,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             userUIState.value = UIState.LOADING
         }
 
-        when (val result = exploreResultUseCase.fetchUsers(searchText.value)) {
+        when (val result = exploreResultUseCase.fetchUsers(initialSearchText)) {
             is CallResult.Success -> {
                 users.value = result.data
                 userUIState.value = UIState.SUCCESS
