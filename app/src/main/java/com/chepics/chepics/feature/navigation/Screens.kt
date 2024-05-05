@@ -19,5 +19,6 @@ enum class Screens {
     MyPageTopScreen,
     EditProfileScreen,
     ExploreTopScreen,
-    ExploreResultScreen
+    ExploreResultScreen,
+    MyPageTopicListScreen
 }

@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.mypage
+package com.chepics.chepics.feature.mypage.top
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -102,7 +102,9 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
             Spacer(modifier = Modifier.height(32.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate(Screens.MyPageTopicListScreen.name) },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

@@ -41,7 +41,8 @@ import com.chepics.chepics.feature.editprofile.EditProfileScreen
 import com.chepics.chepics.feature.explore.result.ExploreResultScreen
 import com.chepics.chepics.feature.explore.top.ExploreTopScreen
 import com.chepics.chepics.feature.feed.FeedScreen
-import com.chepics.chepics.feature.mypage.MyPageTopScreen
+import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
+import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
@@ -237,6 +238,10 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             }
         ) {
             EditProfileScreen(navController = myPageNavController, showBottomNavigation = showBottomNavigation)
+        }
+
+        composable(Screens.MyPageTopicListScreen.name) {
+            MyPageTopicListScreen(navController = myPageNavController)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.mypage
+package com.chepics.chepics.feature.mypage.top
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
