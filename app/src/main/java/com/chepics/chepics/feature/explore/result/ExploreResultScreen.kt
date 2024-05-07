@@ -43,6 +43,7 @@ import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserCell
+import com.chepics.chepics.feature.explore.viewparts.AutoCompleteView
 import com.chepics.chepics.feature.explore.viewparts.ExploreTopBar
 import com.chepics.chepics.feature.navigation.Screens
 import kotlinx.coroutines.delay
@@ -196,6 +197,10 @@ fun ExploreResultScreen(
                                 navController = navController
                             )
                         }
+                    }
+                } else {
+                    AutoCompleteView(searchText = viewModel.searchText) {
+                        navController.navigate(Screens.ExploreResultScreen.name + "/${viewModel.searchText.value}")
                     }
                 }
             }
