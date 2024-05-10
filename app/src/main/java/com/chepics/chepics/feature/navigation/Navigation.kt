@@ -2,6 +2,7 @@ package com.chepics.chepics.feature.navigation
 
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -99,7 +101,8 @@ fun ServiceNavigation() {
         bottomBar = {
             if (showBottomNavigation.value) {
                 NavigationBar(
-                    containerColor = Color.Transparent
+                    containerColor = Color.Transparent,
+                    modifier = Modifier.height(40.dp)
                 ) {
                     tabItems.forEach { item ->
                         val isSelected =
