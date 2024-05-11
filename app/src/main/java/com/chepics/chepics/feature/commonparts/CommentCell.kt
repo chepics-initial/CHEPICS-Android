@@ -47,7 +47,13 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @Composable
-fun CommentCell(comment: Comment, type: CommentType, modifier: Modifier = Modifier, onTapImage: (Int) -> Unit) {
+fun CommentCell(
+    comment: Comment,
+    type: CommentType,
+    modifier: Modifier = Modifier,
+    onTapImage: (Int) -> Unit,
+    onTapUserInfo: (String) -> Unit
+) {
     val context = LocalContext.current
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -58,7 +64,11 @@ fun CommentCell(comment: Comment, type: CommentType, modifier: Modifier = Modifi
     ) {
         Column {
             Row(modifier = Modifier.padding(16.dp)) {
-                UserIcon(url = comment.user.profileImageUrl, scale = IconScale.COMMENT)
+                UserIcon(
+                    url = comment.user.profileImageUrl,
+                    scale = IconScale.COMMENT,
+                    modifier = Modifier.clickable { onTapUserInfo(comment.user.id) }
+                )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -68,7 +78,10 @@ fun CommentCell(comment: Comment, type: CommentType, modifier: Modifier = Modifi
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { onTapUserInfo(comment.user.id) }
+                        ) {
                             Text(
                                 text = comment.user.fullname,
                                 style = MaterialTheme.typography.bodyLarge

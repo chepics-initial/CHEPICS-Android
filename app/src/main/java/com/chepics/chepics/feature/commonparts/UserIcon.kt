@@ -18,19 +18,19 @@ import coil.compose.AsyncImage
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @Composable
-fun UserIcon(url: String?, scale: IconScale) {
+fun UserIcon(url: String?, scale: IconScale, modifier: Modifier = Modifier) {
     if (url != null) {
         AsyncImage(
             model = url,
             contentDescription = "user icon",
-            modifier = Modifier
+            modifier = modifier
                 .size(scale.scaleValue())
                 .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
     } else {
         Surface(
-            modifier = Modifier
+            modifier = modifier
                 .size(scale.scaleValue())
                 .clip(CircleShape),
             color = ChepicsPrimary.copy(0.4f)

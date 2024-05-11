@@ -33,6 +33,7 @@ import com.chepics.chepics.feature.commonparts.CommentType
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.ImagePager
+import com.chepics.chepics.feature.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,13 +67,18 @@ fun CommentDetailScreen(
                     .verticalScroll(scrollState)
 
             ) {
-                CommentCell(comment = comment, type = CommentType.DETAIL) { index ->
-                    comment.images?.let { images ->
-                        viewModel.onTapImage(index = index, images = images.map { image ->
-                            image.url
-                        })
-                        showImageViewer.value = true
-                    }
+                CommentCell(
+                    comment = comment,
+                    type = CommentType.DETAIL,
+                    onTapImage = { index ->
+                        comment.images?.let { images ->
+                            viewModel.onTapImage(index = index, images = images.map { image ->
+                                image.url
+                            })
+                            showImageViewer.value = true
+                        }
+                    }) { userId ->
+                    navController.navigate(Screens.ProfileScreen.name + "/${userId}")
                 }
 
                 Row(

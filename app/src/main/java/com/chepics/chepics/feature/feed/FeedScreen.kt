@@ -71,26 +71,26 @@ fun FeedScreen(
     Box {
         Scaffold(
             topBar = {
-                     TopAppBar(
-                         title = { },
-                         actions = {
-                             IconButton(onClick = { navController.navigate(Screens.ExploreTopScreen.name) }) {
-                                 Surface(
-                                     modifier = Modifier
-                                         .clip(CircleShape),
-                                     color = Color.LightGray
-                                 ) {
-                                     Image(
-                                         imageVector = Icons.Default.Search,
-                                         contentDescription = "search icon",
-                                         colorFilter = ColorFilter.tint(color = Color.Gray),
-                                         modifier = Modifier
-                                             .padding(all = 4.dp)
-                                     )
-                                 }
-                             }
-                         }
-                     )
+                TopAppBar(
+                    title = { },
+                    actions = {
+                        IconButton(onClick = { navController.navigate(Screens.ExploreTopScreen.name) }) {
+                            Surface(
+                                modifier = Modifier
+                                    .clip(CircleShape),
+                                color = Color.LightGray
+                            ) {
+                                Image(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "search icon",
+                                    colorFilter = ColorFilter.tint(color = Color.Gray),
+                                    modifier = Modifier
+                                        .padding(all = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                )
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -259,6 +259,7 @@ fun FeedCommentContentView(
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
         }
+
         UIState.SUCCESS -> {
             Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
                 LazyColumn(
@@ -271,14 +272,18 @@ fun FeedCommentContentView(
                             type = CommentType.COMMENT,
                             modifier = Modifier.clickable {
                                 navController.navigate(Screens.CommentDetailScreen.name + "/${it}")
-                            }
-                        ) { index ->
-                            it.images?.let { images ->
-                                viewModel.onTapImage(index = index, images = images.map { image ->
-                                    image.url
-                                })
-                                showImageViewer.value = true
-                            }
+                            },
+                            onTapImage = { index ->
+                                it.images?.let { images ->
+                                    viewModel.onTapImage(
+                                        index = index,
+                                        images = images.map { image ->
+                                            image.url
+                                        })
+                                    showImageViewer.value = true
+                                }
+                            }) { userId ->
+                            navController.navigate(Screens.ProfileScreen.name + "/${userId}")
                         }
                     }
                 }
@@ -289,6 +294,7 @@ fun FeedCommentContentView(
                 )
             }
         }
+
         UIState.FAILURE -> {
             Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
         }

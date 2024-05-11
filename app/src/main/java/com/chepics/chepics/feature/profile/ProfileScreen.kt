@@ -333,14 +333,16 @@ fun ProfileCommentContentView(
                         type = CommentType.COMMENT,
                         modifier = Modifier.clickable {
                             navController.navigate(Screens.CommentDetailScreen.name + "/${it}")
-                        }
-                    ) { index ->
-                        it.images?.let { images ->
-                            viewModel.onTapImage(index = index, images = images.map { image ->
-                                image.url
-                            })
-                            showImageViewer.value = true
-                        }
+                        },
+                        onTapImage = { index ->
+                            it.images?.let { images ->
+                                viewModel.onTapImage(index = index, images = images.map { image ->
+                                    image.url
+                                })
+                                showImageViewer.value = true
+                            }
+                        }) { userId ->
+                        navController.navigate(Screens.ProfileScreen.name + "/${userId}")
                     }
                 }
             }

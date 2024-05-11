@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.explore.top
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -36,6 +37,11 @@ fun ExploreTopScreen(navController: NavController) {
         focusManager.clearFocus()
     }
 
+    BackHandler {
+        focusManager.clearFocus()
+        navController.popBackStack()
+    }
+
     Scaffold(
         topBar = {
             ExploreTopBar(
@@ -43,8 +49,9 @@ fun ExploreTopScreen(navController: NavController) {
                 searchText = searchText,
                 showTrailingIcon = searchText.value.isNotEmpty(),
                 onTapBackButton = {
-                navController.popBackStack()
-            }) {
+                    focusManager.clearFocus()
+                    navController.popBackStack()
+                }) {
                 navController.navigate(Screens.ExploreResultScreen.name + "/${searchText.value}")
             }
         }
