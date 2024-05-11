@@ -52,6 +52,7 @@ import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.mock.mockTopicImage1
+import com.chepics.chepics.mock.mockUser1
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import kotlinx.coroutines.launch
 
@@ -117,7 +118,7 @@ fun ProfileScreen(
 //                        )
 //                    }
 
-                        IconButton(onClick = { navController.navigate(Screens.EditProfileScreen.name) }) {
+                        IconButton(onClick = { navController.navigate(Screens.EditProfileScreen.name + "/${mockUser1}") }) {
                             Image(
                                 imageVector = Icons.Default.Create,
                                 contentDescription = "edit profile",

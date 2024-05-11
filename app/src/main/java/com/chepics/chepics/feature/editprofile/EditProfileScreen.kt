@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -49,6 +50,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
@@ -60,6 +63,7 @@ import com.chepics.chepics.utils.Constants
 fun EditProfileScreen(
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
+    user: User,
     viewModel: EditProfileViewModel = viewModel()
 ) {
     val scrollState = rememberScrollState()
@@ -75,6 +79,7 @@ fun EditProfileScreen(
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         showBottomNavigation.value = false
+        viewModel.onAppear(user)
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
@@ -129,18 +134,29 @@ fun EditProfileScreen(
                                 iconImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                             }
                     ) {
-                        Surface(
-                            modifier = Modifier
-                                .size(96.dp)
-                                .align(Alignment.Center),
-                            color = Color.LightGray,
-                            shape = CircleShape
-                        ) {
-                            Image(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "icon",
-                                modifier = Modifier.size(48.dp)
+                        if (viewModel.imageUri.value != null) {
+                            AsyncImage(
+                                model = viewModel.imageUri.value,
+                                contentDescription = "selected icon",
+                                modifier = Modifier
+                                    .size(96.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
                             )
+                        } else {
+                            Surface(
+                                modifier = Modifier
+                                    .size(96.dp)
+                                    .align(Alignment.Center),
+                                color = Color.LightGray,
+                                shape = CircleShape
+                            ) {
+                                Image(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = "icon",
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
                         }
 
                         Surface(

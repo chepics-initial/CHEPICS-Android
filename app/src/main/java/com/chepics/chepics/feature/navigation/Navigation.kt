@@ -31,6 +31,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.chepics.chepics.domainmodel.User
+import com.chepics.chepics.domainmodel.UserNavType
 import com.chepics.chepics.feature.authentication.CompletionScreen
 import com.chepics.chepics.feature.authentication.emailregistration.EmailRegistrationScreen
 import com.chepics.chepics.feature.authentication.iconregistration.IconRegistrationScreen
@@ -47,6 +49,7 @@ import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
 import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.google.gson.Gson
 
 @Composable
 fun AuthNavigation() {
@@ -232,15 +235,26 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
         
         composable(
-            Screens.EditProfileScreen.name,
+            "${Screens.EditProfileScreen.name}/{user}",
+            arguments = listOf(navArgument("user") {
+                type = UserNavType()
+            }),
             enterTransition = {
                 slideIn { fullSize -> IntOffset(0, fullSize.height) }
             },
             popExitTransition = {
                 slideOut { fullSize -> IntOffset(0, fullSize.height) }
             }
-        ) {
-            EditProfileScreen(navController = myPageNavController, showBottomNavigation = showBottomNavigation)
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("user")?.let {
+                Gson().fromJson(it, User::class.java)
+            }?.let {
+                EditProfileScreen(
+                    navController = myPageNavController,
+                    showBottomNavigation = showBottomNavigation,
+                    user = it
+                )
+            }
         }
 
         composable(Screens.MyPageTopicListScreen.name) {
