@@ -75,6 +75,7 @@ fun EditProfileScreen(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
+        viewModel.imageUri.value = uri
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
