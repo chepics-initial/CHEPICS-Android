@@ -466,8 +466,8 @@ val mockComment1 = Comment(
     ),
     votes = 4232,
     user = mockUser1,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
+    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )
 
 val mockComment2 = Comment(
@@ -484,8 +484,8 @@ val mockComment2 = Comment(
     ),
     votes = 654,
     user = mockUser2,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
+    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )
 
 val mockComment3 = Comment(
@@ -498,8 +498,8 @@ val mockComment3 = Comment(
     images = null,
     votes = 11111,
     user = mockUser6,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
+    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )
 
 val mockComment4 = Comment(
@@ -515,8 +515,8 @@ val mockComment4 = Comment(
     ),
     votes = 909,
     user = mockUser9,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
+    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )
 
 val mockComment5 = Comment(
@@ -533,8 +533,8 @@ val mockComment5 = Comment(
         ),
     votes = 54,
     user = mockUser12,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
+    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )
 
 val mockComment6 = Comment(
@@ -549,6 +549,6 @@ val mockComment6 = Comment(
     ),
     votes = 38,
     user = mockUser8,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
+    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )

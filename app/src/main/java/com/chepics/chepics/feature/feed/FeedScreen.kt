@@ -1,6 +1,7 @@
 package com.chepics.chepics.feature.feed
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommentCell
+import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
@@ -264,7 +266,13 @@ fun FeedCommentContentView(
                     state = viewModel.commentScrollState.value
                 ) {
                     items(viewModel.comments.value) {
-                        CommentCell(comment = it) { index ->
+                        CommentCell(
+                            comment = it,
+                            type = CommentType.COMMENT,
+                            modifier = Modifier.clickable {
+                                navController.navigate(Screens.CommentDetailScreen.name + "/${it}")
+                            }
+                        ) { index ->
                             it.images?.let { images ->
                                 viewModel.onTapImage(index = index, images = images.map { image ->
                                     image.url

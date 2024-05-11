@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.navigation
 
+import android.util.Log
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.CommentNavType
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.UserNavType
 import com.chepics.chepics.feature.authentication.CompletionScreen
@@ -40,6 +43,7 @@ import com.chepics.chepics.feature.authentication.login.LoginScreen
 import com.chepics.chepics.feature.authentication.nameregistration.NameRegistrationScreen
 import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
+import com.chepics.chepics.feature.comment.CommentDetailScreen
 import com.chepics.chepics.feature.createtopic.CreateTopicScreen
 import com.chepics.chepics.feature.editprofile.EditProfileScreen
 import com.chepics.chepics.feature.explore.result.ExploreResultScreen
@@ -208,6 +212,46 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 )
             }
         }
+
+        composable(
+            "${Screens.EditProfileScreen.name}/{user}",
+            arguments = listOf(navArgument("user") {
+                type = UserNavType()
+            }),
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(0, fullSize.height) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(0, fullSize.height) }
+            }
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("user")?.let {
+                Gson().fromJson(it, User::class.java)
+            }?.let {
+                EditProfileScreen(
+                    navController = feedNavController,
+                    showBottomNavigation = showBottomNavigation,
+                    user = it
+                )
+            }
+        }
+
+        composable(
+            "${Screens.CommentDetailScreen.name}/{comment}",
+            arguments = listOf(navArgument("comment") {
+                type = CommentNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("comment")?.let {
+                Gson().fromJson(it, Comment::class.java)
+            }?.let {
+                CommentDetailScreen(
+                    comment = it,
+                    navController = feedNavController,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
     }
 }
 
@@ -259,6 +303,24 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
 
         composable(Screens.MyPageTopicListScreen.name) {
             MyPageTopicListScreen(navController = myPageNavController)
+        }
+
+        composable(
+            "${Screens.CommentDetailScreen.name}/{comment}",
+            arguments = listOf(navArgument("comment") {
+                type = CommentNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("comment")?.let {
+                Gson().fromJson(it, Comment::class.java)
+            }?.let {
+                Log.d("COMMENT", "MyPageNavHost: ${it}")
+                CommentDetailScreen(
+                    comment = it,
+                    navController = myPageNavController,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
         }
     }
 }

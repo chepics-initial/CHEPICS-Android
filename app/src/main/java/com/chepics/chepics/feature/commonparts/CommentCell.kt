@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,11 +16,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -46,13 +45,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.ui.theme.ChepicsPrimary
-import com.chepics.chepics.utils.getDateTimeString
 
 @Composable
-fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
+fun CommentCell(comment: Comment, type: CommentType, modifier: Modifier = Modifier, onTapImage: (Int) -> Unit) {
     val context = LocalContext.current
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
@@ -84,35 +82,47 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                             )
                         }
 
-                        Text(
-                            text = getDateTimeString(comment.registerTime),
-                            color = Color.LightGray
-                        )
+//                        Text(
+//                            text = getDateTimeString(comment.registerTime),
+//                            color = Color.LightGray
+//                        )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Row {
-                        Spacer(
-                            modifier = Modifier
-                                .width(4.dp)
-                                .height(24.dp)
-                                .background(
-                                    color = ChepicsPrimary,
-                                    shape = RoundedCornerShape(2.dp)
+                    when (type) {
+                        CommentType.COMMENT -> {
+                            Row {
+                                Spacer(
+                                    modifier = Modifier
+                                        .width(4.dp)
+                                        .height(24.dp)
+                                        .background(
+                                            color = ChepicsPrimary,
+                                            shape = RoundedCornerShape(2.dp)
+                                        )
                                 )
-                        )
-                        
-                        Spacer(modifier = Modifier.width(8.dp))
 
-                        Text(
-                            text = "猫が可愛い",
-                            fontSize = 16.sp,
-                            color = ChepicsPrimary,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    text = "猫が可愛い",
+                                    fontSize = 16.sp,
+                                    color = ChepicsPrimary,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+
+                        CommentType.DETAIL -> {
+                            Box(modifier = Modifier)
+                        }
+
+                        CommentType.REPLY -> {
+                            Box(modifier = Modifier)
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -125,7 +135,12 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                         text = comment.link.toString(),
                         modifier = Modifier
                             .clickable {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(comment.link)))
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(comment.link)
+                                    )
+                                )
                             },
                         color = Color.Blue
                     )
@@ -141,7 +156,7 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                             .height(if (imageUrlList.size == 4) (getHeight() * 2 + 16.dp) else getHeight() + 8.dp),
                         contentPadding = PaddingValues(start = 52.dp, end = 12.dp)
                     ) {
-                        items(imageUrlList.size) {index ->
+                        items(imageUrlList.size) { index ->
                             if (!(imageUrlList.size % 2 != 0 && index == imageUrlList.size - 1)) {
                                 AsyncImage(
                                     model = imageUrlList[index],
@@ -177,8 +192,7 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
             Row(
                 modifier = Modifier
                     .align(Alignment.End)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                ,
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
@@ -186,7 +200,7 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
                     contentDescription = "like icon",
                     colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(text = "${comment.votes}")
@@ -201,4 +215,10 @@ fun CommentCell(comment: Comment, onTapImage: (Int) -> Unit) {
 private fun getHeight(): Dp {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     return ((screenWidth - 80) / 2).dp
+}
+
+enum class CommentType {
+    COMMENT,
+    DETAIL,
+    REPLY
 }
