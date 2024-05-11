@@ -43,6 +43,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.chepics.chepics.feature.common.UIState
@@ -51,8 +53,6 @@ import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.navigation.Screens
-import com.chepics.chepics.mock.mockTopicImage1
-import com.chepics.chepics.mock.mockUser1
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import kotlinx.coroutines.launch
 
@@ -70,6 +70,10 @@ fun ProfileScreen(
 
     val topicCoroutineScope = rememberCoroutineScope()
     val commentCoroutineScope = rememberCoroutineScope()
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
+        viewModel.onAppear(userId)
+    }
 
     Box {
         Scaffold(
@@ -89,20 +93,21 @@ fun ProfileScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = mockTopicImage1.url,
-                            contentDescription = "profile icon",
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
+                viewModel.user.value?.let {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                model = it.profileImageUrl,
+                                contentDescription = "profile icon",
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
 
 //                    Surface(
 //                        modifier = Modifier.clickable {  },
@@ -118,63 +123,68 @@ fun ProfileScreen(
 //                        )
 //                    }
 
-                        IconButton(onClick = { navController.navigate(Screens.EditProfileScreen.name + "/${mockUser1}") }) {
-                            Image(
-                                imageVector = Icons.Default.Create,
-                                contentDescription = "edit profile",
-                                colorFilter = ColorFilter.tint(color = ChepicsPrimary)
+                            IconButton(onClick = {
+                                viewModel.user.value?.let {
+                                    navController.navigate(Screens.EditProfileScreen.name + "/${it}")
+                                }
+                            }) {
+                                Image(
+                                    imageVector = Icons.Default.Create,
+                                    contentDescription = "edit profile",
+                                    colorFilter = ColorFilter.tint(color = ChepicsPrimary)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = it.fullname,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Text(
+                            text = "@${it.username}",
+                            color = Color.LightGray,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = it.bio.toString(),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "20",
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
+                            Text(
+                                text = "フォロー",
+                                color = Color.LightGray,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Text(
+                                text = "20",
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
+                            Text(
+                                text = "フォロワー",
+                                color = Color.LightGray,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "太郎",
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    Text(
-                        text = "@aabbcc",
-                        color = Color.LightGray,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "動物に関するトピックを投稿しています\nよろしく",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "20",
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            text = "フォロー",
-                            color = Color.LightGray,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Text(
-                            text = "20",
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-
-                        Text(
-                            text = "フォロワー",
-                            color = Color.LightGray,
-                            style = MaterialTheme.typography.bodySmall
-                        )
                     }
                 }
 

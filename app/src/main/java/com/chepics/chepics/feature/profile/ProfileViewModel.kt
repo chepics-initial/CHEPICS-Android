@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.Topic
+import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.mock.mockComment1
 import com.chepics.chepics.mock.mockComment2
@@ -30,6 +31,7 @@ import com.chepics.chepics.mock.mockTopic6
 import com.chepics.chepics.mock.mockTopic7
 import com.chepics.chepics.mock.mockTopic8
 import com.chepics.chepics.mock.mockTopic9
+import com.chepics.chepics.mock.mockUser1
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,13 +48,18 @@ class ProfileViewModel @Inject constructor(): ViewModel() {
     val topicScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val commentScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val profileImages: MutableState<List<String>?> = mutableStateOf(null)
+    val user: MutableState<User?> = mutableStateOf(null)
 
-    init {
+    fun onAppear(userId: String) {
+        user.value = fetchUser(userId)
         viewModelScope.launch {
             fetchTopics()
         }
     }
 
+    private fun fetchUser(userId: String): User {
+        return mockUser1
+    }
     private suspend fun fetchTopics() {
         if (topicUIState.value != UIState.SUCCESS) {
             topicUIState.value = UIState.LOADING
