@@ -2,7 +2,6 @@ package com.chepics.chepics.feature.feed
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +20,6 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val topics: MutableState<List<Topic>> = mutableStateOf(emptyList())
     val comments: MutableState<List<Comment>> = mutableStateOf(emptyList())
-    val selectedTab: MutableState<Int> = mutableIntStateOf(0)
     val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val feedImages: MutableState<List<String>?> = mutableStateOf(null)
     val topicScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
@@ -66,7 +64,6 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     }
 
     fun selectTab(index: Int) {
-        selectedTab.value = index
         when (index) {
             0 -> {
                 if (topicUIState.value != UIState.SUCCESS) {
