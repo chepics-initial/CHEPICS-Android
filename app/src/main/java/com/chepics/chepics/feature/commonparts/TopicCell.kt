@@ -43,7 +43,7 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
 
 @Composable
-fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit) {
+fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (String) -> Unit) {
     val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -138,14 +138,19 @@ fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit) {
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    UserIcon(url = topic.user.profileImageUrl, scale = IconScale.TOPIC)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { onTapUserInfo(topic.user.id) }
+                    ) {
+                        UserIcon(url = topic.user.profileImageUrl, scale = IconScale.TOPIC)
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(
-                        text = topic.user.fullname,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                        Text(
+                            text = topic.user.fullname,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
 
                 Text(

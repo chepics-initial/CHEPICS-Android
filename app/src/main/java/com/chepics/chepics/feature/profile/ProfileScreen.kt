@@ -291,13 +291,15 @@ fun ProfileTopicContentView(
                 state = viewModel.topicScrollState.value
             ) {
                 items(viewModel.topics.value) {
-                    TopicCell(topic = it) { index ->
+                    TopicCell(topic = it, onTapImage = { index ->
                         it.images?.let { images ->
                             viewModel.onTapImage(index = index, images = images.map { image ->
                                 image.url
                             })
                             showImageViewer.value = true
                         }
+                    }) { userId ->
+                        navController.navigate(Screens.ProfileScreen.name + "/${userId}")
                     }
                 }
             }
