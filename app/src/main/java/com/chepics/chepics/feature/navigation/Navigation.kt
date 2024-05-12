@@ -103,6 +103,9 @@ fun ServiceNavigation() {
     val showBottomNavigation = remember {
         mutableStateOf(true)
     }
+    val currentTab: MutableState<BottomNavigationItem> = remember {
+        mutableStateOf(tabItems.first())
+    }
 
     Scaffold(
         bottomBar = {
@@ -117,6 +120,8 @@ fun ServiceNavigation() {
                         NavigationBarItem(
                             selected = isSelected,
                             onClick = {
+                                if (currentTab.value == item) return@NavigationBarItem
+                                currentTab.value = item
                                 rootNavController.navigate(item.name) {
                                     popUpTo(rootNavController.graph.findStartDestination().id) {
                                         saveState = true
