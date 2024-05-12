@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.authentication.onetimecode
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -34,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -63,6 +65,11 @@ fun OneTimeCodeScreen(
     if (viewModel.isCompleted.value) {
         navController.navigate(Screens.PasswordScreen.name)
         viewModel.isCompleted.value = false
+    }
+
+    if (viewModel.showToast.value) {
+        Toast.makeText(LocalContext.current, "認証コードを再送信しました", Toast.LENGTH_SHORT).show()
+        viewModel.showToast.value = false
     }
 
     Box {
@@ -135,7 +142,9 @@ fun OneTimeCodeScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    TextButton(onClick = { }) {
+                    TextButton(onClick = {
+                        viewModel.onTapResendButton(email)
+                    }) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),
                             border = BorderStroke(1.dp, Color.LightGray)

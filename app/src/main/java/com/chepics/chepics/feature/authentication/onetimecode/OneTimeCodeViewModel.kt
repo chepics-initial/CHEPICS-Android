@@ -17,11 +17,12 @@ class OneTimeCodeViewModel @Inject constructor(private val oneTimeCodeUseCase: O
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val showAlertDialog: MutableState<Boolean> = mutableStateOf(false)
     val isCompleted: MutableState<Boolean> = mutableStateOf(false)
+    val showToast: MutableState<Boolean> = mutableStateOf(false)
 
     fun onTapButton(email: String) {
         viewModelScope.launch {
             isLoading.value = true
-            when ((oneTimeCodeUseCase.verifyCode(email = email, code = code.value))) {
+            when (oneTimeCodeUseCase.verifyCode(email = email, code = code.value)) {
                 is CallResult.Success -> {
                     isCompleted.value = true
                 }
@@ -29,6 +30,18 @@ class OneTimeCodeViewModel @Inject constructor(private val oneTimeCodeUseCase: O
                 is CallResult.Error -> showAlertDialog.value = true
             }
             isLoading.value = false
+        }
+    }
+
+    fun onTapResendButton(email: String) {
+        viewModelScope.launch {
+            when (oneTimeCodeUseCase.createCode(email)) {
+                is CallResult.Success -> {
+                    showToast.value = true
+                }
+
+                is CallResult.Error -> return@launch
+            }
         }
     }
 }
