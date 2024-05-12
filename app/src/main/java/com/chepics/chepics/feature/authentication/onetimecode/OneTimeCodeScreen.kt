@@ -42,8 +42,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
@@ -53,7 +53,11 @@ import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: OneTimeCodeViewModel = viewModel()) {
+fun OneTimeCodeScreen(
+    navController: NavController,
+    email: String,
+    viewModel: OneTimeCodeViewModel = hiltViewModel()
+) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     if (viewModel.isCompleted.value) {
@@ -70,7 +74,10 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
                             onClick = { navController.popBackStack() },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
-                            Image(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back button")
+                            Image(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back button"
+                            )
                         }
                     }
                 )
@@ -79,7 +86,12 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = it.calculateTopPadding(), bottom = 16.dp, start = 16.dp, end = 16.dp)
+                    .padding(
+                        top = it.calculateTopPadding(),
+                        bottom = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -89,11 +101,18 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
                         modifier = Modifier
                             .padding(vertical = 24.dp)
                     ) {
-                        HeaderView(title = "認証コードを入力", description = "${email}に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください")
+                        HeaderView(
+                            title = "認証コードを入力",
+                            description = "${email}に送信された${Constants.ONE_TIME_CODE_LENGTH}桁のコードを入力してください"
+                        )
                     }
 
-                    RoundButton(text = "次へ", isActive = viewModel.code.value.count() == 4, type = ButtonType.Fill) {
-                        viewModel.onTapButton()
+                    RoundButton(
+                        text = "次へ",
+                        isActive = viewModel.code.value.count() == 4,
+                        type = ButtonType.Fill
+                    ) {
+                        viewModel.onTapButton(email)
                     }
                 }
 
@@ -105,17 +124,18 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
                 ) {
                     OtpTextField(
                         otpText = viewModel.code.value,
-                        onOtpTextChange = { value, otpInputFilled ->
+                        onOtpTextChange = { value, _ ->
                             viewModel.code.value = value
                         }
                     ) {
+                        if (viewModel.code.value.length != 4) return@OtpTextField
                         keyboardController?.hide()
-                        viewModel.onTapButton()
+                        viewModel.onTapButton(email)
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    TextButton(onClick = {  }) {
+                    TextButton(onClick = { }) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),
                             border = BorderStroke(1.dp, Color.LightGray)
@@ -139,7 +159,7 @@ fun OneTimeCodeScreen(navController: NavController, email: String, viewModel: On
 
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
-                onDismissRequest = {  },
+                onDismissRequest = { },
                 title = { Text(text = "エラー") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {

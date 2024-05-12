@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.chepics.chepics.feature.navigation.AuthNavigation
 import com.chepics.chepics.feature.navigation.ServiceNavigation
 import com.chepics.chepics.ui.theme.CHEPICSTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,8 +37,8 @@ fun ChepicsApp() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            AuthNavigation()
-            ServiceNavigation()
+            AuthNavigation()
+//            ServiceNavigation()
         }
     }
 }
