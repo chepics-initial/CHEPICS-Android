@@ -106,6 +106,9 @@ fun ServiceNavigation() {
     val currentTab: MutableState<BottomNavigationItem> = remember {
         mutableStateOf(tabItems.first())
     }
+    val feedPopToRoot = remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         bottomBar = {
@@ -120,7 +123,12 @@ fun ServiceNavigation() {
                         NavigationBarItem(
                             selected = isSelected,
                             onClick = {
-                                if (currentTab.value == item) return@NavigationBarItem
+                                if (currentTab.value == item) {
+                                    if (currentTab.value == tabItems.first()) {
+                                        feedPopToRoot.value = true
+                                    }
+                                    return@NavigationBarItem
+                                }
                                 currentTab.value = item
                                 rootNavController.navigate(item.name) {
                                     popUpTo(rootNavController.graph.findStartDestination().id) {
@@ -152,7 +160,7 @@ fun ServiceNavigation() {
             startDestination = BottomNavigationType.Feed.name
         ) {
             composable(BottomNavigationType.Feed.name) {
-                FeedNavHost(showBottomNavigation)
+                FeedNavHost(feedPopToRoot, showBottomNavigation)
             }
 
             composable(BottomNavigationType.MyPage.name) {
@@ -163,8 +171,12 @@ fun ServiceNavigation() {
 }
 
 @Composable
-fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
+fun FeedNavHost(popToRoot: MutableState<Boolean>, showBottomNavigation: MutableState<Boolean>) {
     val feedNavController = rememberNavController()
+    if (popToRoot.value) {
+        feedNavController.popBackStack(Screens.FeedScreen.name, true)
+        popToRoot.value = false
+    }
     NavHost(feedNavController, startDestination = Screens.FeedScreen.name) {
         composable(Screens.FeedScreen.name) {
             FeedScreen(
