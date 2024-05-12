@@ -2,6 +2,7 @@ package com.chepics.chepics.feature.comment
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.chepics.chepics.domainmodel.Comment
@@ -55,7 +57,8 @@ fun CommentDetailScreen(
                     Image(
                         imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                         contentDescription = "Logo Icon",
-                        modifier = Modifier.clickable { navController.popBackStack() }
+                        modifier = Modifier.clickable { navController.popBackStack() },
+                        colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
                 })
             }

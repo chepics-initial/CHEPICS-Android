@@ -37,8 +37,8 @@ fun ChepicsApp() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AuthNavigation()
-//            ServiceNavigation()
+//            AuthNavigation()
+            ServiceNavigation()
         }
     }
 }

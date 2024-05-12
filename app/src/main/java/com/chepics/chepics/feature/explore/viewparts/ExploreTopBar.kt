@@ -2,6 +2,7 @@ package com.chepics.chepics.feature.explore.viewparts
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,13 +41,15 @@ fun ExploreTopBar(
     modifier: Modifier = Modifier,
     showTrailingIcon: Boolean,
     onTapBackButton: () -> Unit,
-    keyboardAction: () -> Unit) {
+    keyboardAction: () -> Unit
+) {
     TopAppBar(title = {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 contentDescription = "Logo Icon",
-                modifier = Modifier.clickable { onTapBackButton() }
+                modifier = Modifier.clickable { onTapBackButton() },
+                colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
             )
 
             Surface(

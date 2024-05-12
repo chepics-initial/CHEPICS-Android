@@ -3,6 +3,7 @@ package com.chepics.chepics.feature.mypage.topiclist
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +54,8 @@ fun MyPageTopicListScreen(navController: NavController) {
                         contentDescription = "Logo Icon",
                         modifier = Modifier
                             .align(Alignment.CenterStart)
-                            .clickable { navController.popBackStack() }
+                            .clickable { navController.popBackStack() },
+                        colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
 
                     Text(
@@ -65,9 +68,10 @@ fun MyPageTopicListScreen(navController: NavController) {
             })
         }
     ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(top = it.calculateTopPadding())
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = it.calculateTopPadding())
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),

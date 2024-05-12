@@ -83,7 +83,8 @@ fun ProfileScreen(
                     Image(
                         imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                         contentDescription = "Logo Icon",
-                        modifier = Modifier.clickable { navController.popBackStack() }
+                        modifier = Modifier.clickable { navController.popBackStack() },
+                        colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
                 })
             }
@@ -322,6 +323,7 @@ fun ProfileCommentContentView(
         UIState.LOADING -> {
             CommonProgressSpinner(backgroundColor = Color.Transparent)
         }
+
         UIState.SUCCESS -> {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -347,6 +349,7 @@ fun ProfileCommentContentView(
                 }
             }
         }
+
         UIState.FAILURE -> {
             Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
         }

@@ -78,7 +78,7 @@ fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (String) -
                             .height(if (imageUrlList.size == 4) (getHeight() * 2 + 28.dp) else getHeight() + 20.dp),
                         contentPadding = PaddingValues(top = 12.dp, start = 12.dp, end = 12.dp)
                     ) {
-                        items(imageUrlList.size) {index ->
+                        items(imageUrlList.size) { index ->
                             if (!(imageUrlList.size % 2 != 0 && index == imageUrlList.size - 1)) {
                                 AsyncImage(
                                     model = imageUrlList[index],
@@ -124,7 +124,7 @@ fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (String) -
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
-                        painter = painterResource(id = R.drawable.chart),
+                        painter = painterResource(id = R.drawable.persons),
                         contentDescription = "chart",
                         modifier = Modifier.size(16.dp)
                     )
