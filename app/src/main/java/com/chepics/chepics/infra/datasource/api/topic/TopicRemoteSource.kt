@@ -2,6 +2,7 @@ package com.chepics.chepics.infra.datasource.api.topic
 
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.infra.datasource.api.safeApiCall
 import com.chepics.chepics.mock.mockTopic1
 import com.chepics.chepics.mock.mockTopic10
 import com.chepics.chepics.mock.mockTopic11
