@@ -34,6 +34,8 @@ import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.chepics.chepics.feature.commonparts.CreateCommentType
+import com.chepics.chepics.feature.commonparts.CreateCommentView
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.mock.mockComment1
@@ -71,6 +73,7 @@ fun CommentDetailScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     item {
                         CommentCell(
@@ -125,6 +128,14 @@ fun CommentDetailScreen(
                         }
                     }
                 }
+
+                CreateCommentView(
+                    text = viewModel.replyText,
+                    link = viewModel.linkText,
+                    images = viewModel.images,
+                    type = CreateCommentType.REPLY,
+                    modifier = Modifier
+                )
             }
         }
 
