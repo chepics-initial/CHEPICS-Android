@@ -1,6 +1,5 @@
 package com.chepics.chepics.infra.datasource.api
 
-import android.util.Log
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.domainmodel.contentOrNull
@@ -8,6 +7,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import okhttp3.ResponseBody
 import retrofit2.Response
+import timber.log.Timber
 
 suspend inline fun <reified T : Any> safeApiCall(call: suspend () -> Response<T>): CallResult<T> = safeApiCallInternal(call) { it.body() }
 
@@ -30,7 +30,7 @@ suspend inline fun <reified T : Any, U : Any> safeApiCallInternal(
         CallResult.Error(parseErrorBody(r.errorBody()))
     }
 } catch (e: IllegalArgumentException) {
-    Log.e("SafeApiCall", "safeApiCallInternal: ", e)
+    Timber.tag("SafeApiCall").e(e, "safeApiCallInternal: ")
     CallResult.Error(e)
 } catch (e: Exception) {
     CallResult.Error(e)
