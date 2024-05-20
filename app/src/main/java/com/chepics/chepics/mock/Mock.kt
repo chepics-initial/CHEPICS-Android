@@ -428,26 +428,26 @@ val mockTopic15 = Topic(
 )
 
 val mockCommentImage1 = CommentImage(
-    id = "1",
     commentId = "1",
+    number = 1,
     url = "https://doremifahiroba.com/wp-content/uploads/2022/11/EP01_30-1024x576.jpg"
 )
 
 val mockCommentImage2 = CommentImage(
-    id = "2",
     commentId = "1",
+    number = 2,
     url = "https://realsound.jp/wp-content/uploads/2023/01/20230121-gudetama-07.jpg"
 )
 
 val mockCommentImage3 = CommentImage(
-    id = "3",
     commentId = "1",
+    number = 3,
     url = "https://eiga.k-img.com/images/anime/news/117485/photo/46fcf777bd7b0902/640.jpg?1669974887"
 )
 
 val mockCommentImage4 = CommentImage(
-    id = "4",
     commentId = "1",
+    number = 4,
     url = "https://netofuli.com/wp-content/uploads/2022/12/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88-2022-12-17-18.40.30.jpg"
 )
 
@@ -456,7 +456,8 @@ val mockComment1 = Comment(
     parentId = "1",
     topicId = "1",
     setId = "1",
-    comment = "猫が可愛い",
+    topic = "猫が可愛い",
+    comment = "猫は多くの場合、社交的な関わりよりも孤独を好むと考えられているが、本実験データは異なる結果を示している。",
     link = "https://www.google.com/",
     images = listOf(
         mockCommentImage1,
@@ -465,9 +466,9 @@ val mockComment1 = Comment(
         mockCommentImage4
     ),
     votes = 4232,
+    isLiked = true,
     user = mockUser1,
     registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
-    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
 )
 
 val mockComment2 = Comment(
@@ -475,6 +476,7 @@ val mockComment2 = Comment(
     parentId = "1",
     topicId = "1",
     setId = "1",
+    topic = "猫が可愛い",
     comment = "新鮮な朝の空気を感じながら、散歩するのは心地よい時間です。",
     link = "https://www.google.com/",
     images = listOf(
@@ -483,9 +485,9 @@ val mockComment2 = Comment(
         mockCommentImage4
     ),
     votes = 654,
+    isLiked = false,
     user = mockUser2,
-    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
-    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20)
 )
 
 val mockComment3 = Comment(
@@ -493,13 +495,14 @@ val mockComment3 = Comment(
     parentId = "1",
     topicId = "1",
     setId = "1",
+    topic = "猫が可愛い",
     comment = "友達との楽しい会話は、日常のストレスを忘れさせてくれます。",
     link = "https://www.google.com/",
     images = null,
     votes = 11111,
+    isLiked = true,
     user = mockUser6,
-    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
-    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20)
 )
 
 val mockComment4 = Comment(
@@ -507,6 +510,7 @@ val mockComment4 = Comment(
     parentId = "1",
     topicId = "1",
     setId = "1",
+    topic = "猫が可愛い",
     comment = "雨の音が心地よく響く夜は、読書をするのに最適な時間です。",
     link = "https://www.google.com/",
     images = listOf(
@@ -514,9 +518,9 @@ val mockComment4 = Comment(
         mockCommentImage4
     ),
     votes = 909,
+    isLiked = false,
     user = mockUser9,
-    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
-    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20)
 )
 
 val mockComment5 = Comment(
@@ -524,17 +528,18 @@ val mockComment5 = Comment(
     parentId = "1",
     topicId = "1",
     setId = "1",
+    topic = "猫が可愛い",
     comment = "色とりどりの花が咲き誇る庭園を散策すると、心が癒されます。",
     link = "https://www.google.com/",
     images = listOf(
         mockCommentImage1,
         mockCommentImage4,
         mockCommentImage3
-        ),
+    ),
     votes = 54,
+    isLiked = true,
     user = mockUser12,
-    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
-    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20)
 )
 
 val mockComment6 = Comment(
@@ -542,13 +547,14 @@ val mockComment6 = Comment(
     parentId = "1",
     topicId = "1",
     setId = "1",
+    topic = "猫が可愛い",
     comment = "遠くから聞こえる鳥のさえずりが、静かな午後を彩ります。",
     link = "https://www.google.com/",
     images = listOf(
         mockCommentImage4
     ),
     votes = 38,
+    isLiked = false,
     user = mockUser8,
-    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20),
-    updateTime = LocalDateTime.of(2024, 3, 22, 20, 20, 20)
+    registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20)
 )

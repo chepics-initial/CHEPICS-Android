@@ -7,21 +7,22 @@ import java.time.LocalDateTime
 
 data class Comment(
     val id: String,
-    val parentId: String,
+    val parentId: String?,
     val topicId: String,
     val setId: String,
+    val topic: String,
     val comment: String,
     val link: String?,
     val images: List<CommentImage>?,
     val votes: Int,
+    val isLiked: Boolean,
     val user: User,
-    val registerTime: LocalDateTime,
-    val updateTime: LocalDateTime
+    val registerTime: LocalDateTime
 ) {
     override fun toString(): String = Uri.encode(Gson().toJson(this))
 }
 
-class CommentNavType: JsonNavType<Comment>() {
+class CommentNavType : JsonNavType<Comment>() {
     override fun fromJsonParse(value: String): Comment {
         return Gson().fromJson(value, Comment::class.java)
     }
