@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,12 +39,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
@@ -119,7 +123,7 @@ fun CommentCell(
                                 Spacer(modifier = Modifier.width(8.dp))
 
                                 Text(
-                                    text = "猫が可愛い",
+                                    text = comment.topic,
                                     fontSize = 16.sp,
                                     color = ChepicsPrimary,
                                     fontWeight = FontWeight.SemiBold,
@@ -208,10 +212,23 @@ fun CommentCell(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (type == CommentType.REPLY) {
+                    Image(
+                        painter = painterResource(id = R.drawable.reply),
+                        contentDescription = "reply icon",
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clickable { }
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
                 Image(
-                    imageVector = Icons.Outlined.FavoriteBorder,
+                    imageVector = if (comment.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = "like icon",
-                    colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
+                    colorFilter = ColorFilter.tint(color = if (comment.isLiked) Color.Red else if (isSystemInDarkTheme()) Color.White else Color.Black),
+                    modifier = Modifier.clickable { }
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
