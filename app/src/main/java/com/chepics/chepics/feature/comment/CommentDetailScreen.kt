@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,11 +30,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.chepics.chepics.feature.common.UIState
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.CreateCommentType
 import com.chepics.chepics.feature.commonparts.CreateCommentView
 import com.chepics.chepics.feature.commonparts.ImagePager
@@ -46,10 +51,14 @@ fun CommentDetailScreen(
     comment: Comment,
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
-    viewModel: CommentDetailViewModel = viewModel()
+    viewModel: CommentDetailViewModel = hiltViewModel()
 ) {
     val showImageViewer = remember {
         mutableStateOf(false)
+    }
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
+        viewModel.onAppear(comment)
     }
 
     Box {
@@ -76,55 +85,74 @@ fun CommentDetailScreen(
                         .weight(1f)
                 ) {
                     item {
-                        CommentCell(
-                            comment = comment,
-                            type = CommentType.DETAIL,
-                            onTapImage = { index ->
-                                comment.images?.let { images ->
-                                    viewModel.onTapImage(
-                                        index = index,
-                                        images = images.map { image ->
-                                            image.url
-                                        })
-                                    showImageViewer.value = true
-                                }
-                            }) { user ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                        }
+                        viewModel.comment.value?.let { rootComment ->
+                            CommentCell(
+                                comment = rootComment,
+                                type = CommentType.DETAIL,
+                                onTapImage = { index ->
+                                    rootComment.images?.let { images ->
+                                        viewModel.onTapImage(
+                                            index = index,
+                                            images = images.map { image ->
+                                                image.url
+                                            })
+                                        showImageViewer.value = true
+                                    }
+                                }) { user ->
+                                navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                            }
 
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Reply",
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Reply",
+                                    fontWeight = FontWeight.SemiBold
+                                )
 
-                            Spacer(modifier = Modifier.width(16.dp))
+                                Spacer(modifier = Modifier.width(16.dp))
 
-                            Text(
-                                text = "4件の返信",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Color.LightGray
-                            )
+                                Text(
+                                    text = "4件の返信",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Color.LightGray
+                                )
+                            }
                         }
                     }
-                    items(5) {
-                        CommentCell(
-                            comment = mockComment1,
-                            type = CommentType.REPLY,
-                            onTapImage = { index ->
-                                comment.images?.let { images ->
-                                    viewModel.onTapImage(
-                                        index = index,
-                                        images = images.map { image ->
-                                            image.url
-                                        })
-                                    showImageViewer.value = true
+                    when (viewModel.uiState.value) {
+                        UIState.LOADING -> {
+                            item {
+                                CommonProgressSpinner(backgroundColor = Color.Transparent)
+                            }
+                        }
+
+                        UIState.SUCCESS -> {
+                            items(viewModel.replies.value) {
+                                CommentCell(
+                                    comment = mockComment1,
+                                    type = CommentType.REPLY,
+                                    onTapImage = { index ->
+                                        comment.images?.let { images ->
+                                            viewModel.onTapImage(
+                                                index = index,
+                                                images = images.map { image ->
+                                                    image.url
+                                                })
+                                            showImageViewer.value = true
+                                        }
+                                    }
+                                ) { user ->
+                                    navController.navigate(Screens.ProfileScreen.name + "/${user}")
                                 }
                             }
-                        ) {
+                        }
+
+                        UIState.FAILURE -> {
+                            item {
+                                Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+                            }
                         }
                     }
                 }

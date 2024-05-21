@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUseCase) : ViewModel() {
+class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUseCase) :
+    ViewModel() {
     val topicUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val selectedTab: MutableState<Int> = mutableIntStateOf(0)
@@ -39,12 +40,8 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
 
     private suspend fun fetchUser(userId: String) {
         when (val result = profileUseCase.fetchUser(userId)) {
-            is CallResult.Success -> {
-                user.value = result.data
-            }
-            is CallResult.Error -> {
-                return
-            }
+            is CallResult.Success -> user.value = result.data
+            is CallResult.Error -> return
         }
     }
 
@@ -58,6 +55,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                     topics.value = result.data
                     topicUIState.value = UIState.SUCCESS
                 }
+
                 is CallResult.Error -> topicUIState.value = UIState.FAILURE
             }
         }
@@ -73,6 +71,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                     comments.value = result.data
                     commentUIState.value = UIState.SUCCESS
                 }
+
                 is CallResult.Error -> commentUIState.value = UIState.FAILURE
             }
         }

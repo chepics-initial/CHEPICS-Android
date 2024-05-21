@@ -10,12 +10,15 @@ import javax.inject.Inject
 interface CommentRepository {
     suspend fun fetchFollowingComments(offset: Int?): CallResult<List<Comment>>
     suspend fun fetchUserComments(userId: String, offset: Int?): CallResult<List<Comment>>
+    suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>>
+    suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>>
+    suspend fun fetchComment(id: String): CallResult<Comment>
 }
 
 internal class CommentRepositoryImpl @Inject constructor(
     private val commentDataSource: CommentDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-): CommentRepository {
+) : CommentRepository {
     override suspend fun fetchFollowingComments(offset: Int?): CallResult<List<Comment>> {
         return withContext(ioDispatcher) {
             commentDataSource.fetchFollowingComments(offset)
@@ -28,6 +31,24 @@ internal class CommentRepositoryImpl @Inject constructor(
     ): CallResult<List<Comment>> {
         return withContext(ioDispatcher) {
             commentDataSource.fetchUserComments(userId = userId, offset = offset)
+        }
+    }
+
+    override suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>> {
+        return withContext(ioDispatcher) {
+            commentDataSource.fetchSetComments(setId = setId, offset = offset)
+        }
+    }
+
+    override suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>> {
+        return withContext(ioDispatcher) {
+            commentDataSource.fetchReplies(commentId = commentId, offset = offset)
+        }
+    }
+
+    override suspend fun fetchComment(id: String): CallResult<Comment> {
+        return withContext(ioDispatcher) {
+            commentDataSource.fetchComment(id)
         }
     }
 }
