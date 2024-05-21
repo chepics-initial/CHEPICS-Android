@@ -1,6 +1,5 @@
 package com.chepics.chepics.feature.navigation
 
-import android.util.Log
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.height
@@ -204,15 +203,17 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.ProfileScreen.name}/{userId}",
-            arguments = listOf(navArgument("userId") {
-                type = NavType.StringType
+            "${Screens.ProfileScreen.name}/{user}",
+            arguments = listOf(navArgument("user") {
+                type = UserNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("userId")?.let {
+            backStackEntry.arguments?.getString("user")?.let {
+                Gson().fromJson(it, User::class.java)
+            }?.let {
                 ProfileScreen(
                     navController = feedNavController,
-                    userId = it,
+                    user = it,
                     showBottomNavigation = showBottomNavigation
                 )
             }
@@ -265,15 +266,17 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
     val myPageNavController = rememberNavController()
     NavHost(myPageNavController, startDestination = Screens.MyPageTopScreen.name) {
         composable(
-            "${Screens.ProfileScreen.name}/{userId}",
-            arguments = listOf(navArgument("userId") {
-                type = NavType.StringType
+            "${Screens.ProfileScreen.name}/{user}",
+            arguments = listOf(navArgument("user") {
+                type = UserNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("userId")?.let {
+            backStackEntry.arguments?.getString("user")?.let {
+                Gson().fromJson(it, User::class.java)
+            }?.let {
                 ProfileScreen(
                     navController = myPageNavController,
-                    userId = it,
+                    user = it,
                     showBottomNavigation = showBottomNavigation
                 )
             }
@@ -319,7 +322,6 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("comment")?.let {
                 Gson().fromJson(it, Comment::class.java)
             }?.let {
-                Log.d("COMMENT", "MyPageNavHost: ${it}")
                 CommentDetailScreen(
                     comment = it,
                     navController = myPageNavController,

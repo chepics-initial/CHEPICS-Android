@@ -254,8 +254,8 @@ fun ExploreTopicContentView(
                                 })
                                 showImageViewer.value = true
                             }
-                        }) { userId ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                        }) { user ->
+                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
                     }
                 }
@@ -313,8 +313,8 @@ fun ExploreCommentContentView(
                                     })
                                     showImageViewer.value = true
                                 }
-                            }) { userId ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                            }) { user ->
+                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
                     }
                 }
@@ -364,7 +364,7 @@ fun ExploreUserContentView(
                             modifier = Modifier.clickable {
                                 if (isNavigationEnabled.value) {
                                     isNavigationEnabled.value = false
-                                    navController.navigate(Screens.ProfileScreen.name + "/hello")
+                                    navController.navigate(Screens.ProfileScreen.name + "/${it}")
                                 }
                             }
                         )

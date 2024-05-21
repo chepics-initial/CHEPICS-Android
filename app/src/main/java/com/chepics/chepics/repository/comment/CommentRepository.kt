@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 interface CommentRepository {
     suspend fun fetchFollowingComments(offset: Int?): CallResult<List<Comment>>
+    suspend fun fetchUserComments(userId: String, offset: Int?): CallResult<List<Comment>>
 }
 
 internal class CommentRepositoryImpl @Inject constructor(
@@ -21,4 +22,12 @@ internal class CommentRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun fetchUserComments(
+        userId: String,
+        offset: Int?
+    ): CallResult<List<Comment>> {
+        return withContext(ioDispatcher) {
+            commentDataSource.fetchUserComments(userId = userId, offset = offset)
+        }
+    }
 }

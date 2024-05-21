@@ -88,8 +88,8 @@ fun CommentDetailScreen(
                                         })
                                     showImageViewer.value = true
                                 }
-                            }) { userId ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                            }) { user ->
+                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
 
                         Row(

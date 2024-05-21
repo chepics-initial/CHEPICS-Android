@@ -47,6 +47,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
@@ -61,7 +62,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    userId: String,
+    user: User,
     showBottomNavigation: MutableState<Boolean>,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -73,7 +74,7 @@ fun ProfileScreen(
     val commentCoroutineScope = rememberCoroutineScope()
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
-        viewModel.onAppear(userId)
+        viewModel.onAppear(user)
     }
 
     Box {
@@ -300,8 +301,8 @@ fun ProfileTopicContentView(
                             })
                             showImageViewer.value = true
                         }
-                    }) { userId ->
-                        navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                    }) { user ->
+                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
                     }
                 }
             }
@@ -343,8 +344,8 @@ fun ProfileCommentContentView(
                                 })
                                 showImageViewer.value = true
                             }
-                        }) { userId ->
-                        navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                        }) { user ->
+                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
                     }
                 }
             }

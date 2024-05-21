@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 interface TopicRepository {
     suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>>
+    suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>>
 }
 
 internal class TopicRepositoryImpl @Inject constructor(
@@ -18,6 +19,12 @@ internal class TopicRepositoryImpl @Inject constructor(
     override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
         return withContext(ioDispatcher) {
             topicDataSource.fetchFavoriteTopics(offset)
+        }
+    }
+
+    override suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>> {
+        return withContext(ioDispatcher) {
+            topicDataSource.fetchUserTopics(userId = userId, offset = offset)
         }
     }
 }

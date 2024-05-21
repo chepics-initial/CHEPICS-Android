@@ -221,8 +221,8 @@ fun FeedTopicContentView(
                                 })
                                 showImageViewer.value = true
                             }
-                        }) { userId ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                        }) { user ->
+                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
                     }
                 }
@@ -282,8 +282,8 @@ fun FeedCommentContentView(
                                         })
                                     showImageViewer.value = true
                                 }
-                            }) { userId ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${userId}")
+                            }) { user ->
+                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
                     }
                 }

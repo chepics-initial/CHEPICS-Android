@@ -39,11 +39,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.Topic
+import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
 
 @Composable
-fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (String) -> Unit) {
+fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (User) -> Unit) {
     val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -140,7 +141,7 @@ fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (String) -
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { onTapUserInfo(topic.user.id) }
+                        modifier = Modifier.clickable { onTapUserInfo(topic.user) }
                     ) {
                         UserIcon(url = topic.user.profileImageUrl, scale = IconScale.TOPIC)
 

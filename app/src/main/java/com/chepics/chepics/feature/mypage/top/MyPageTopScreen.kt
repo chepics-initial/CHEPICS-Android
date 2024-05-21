@@ -62,33 +62,34 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-//                        viewModel.user.value?.id?.let {
-//                            navController.navigate(Screens.ProfileScreen.name + "/$it")
-//                        }
-                        if (isNavigationEnabled.value) {
-                            isNavigationEnabled.value = false
-                            navController.navigate(Screens.ProfileScreen.name + "/hello")
+                        viewModel.user.value?.let {
+                            if (isNavigationEnabled.value) {
+                                isNavigationEnabled.value = false
+                                navController.navigate(Screens.ProfileScreen.name + "/${it}")
+                            }
                         }
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    UserIcon(url = null, scale = IconScale.PROFILE)
+                    UserIcon(url = viewModel.user.value?.profileImageUrl, scale = IconScale.PROFILE)
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Column {
-                        Text(
-                            text = "太郎",
-                            fontWeight = FontWeight.SemiBold
-                        )
+                    viewModel.user.value?.let {
+                        Column {
+                            Text(
+                                text = it.fullname,
+                                fontWeight = FontWeight.SemiBold
+                            )
 
-                        Text(
-                            text = "@aabbcc",
-                            color = Color.LightGray,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                            Text(
+                                text = "@${it.username}",
+                                color = Color.LightGray,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                 }
 

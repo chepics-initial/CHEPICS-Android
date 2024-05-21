@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @Composable
@@ -56,7 +57,7 @@ fun CommentCell(
     type: CommentType,
     modifier: Modifier = Modifier,
     onTapImage: (Int) -> Unit,
-    onTapUserInfo: (String) -> Unit
+    onTapUserInfo: (User) -> Unit
 ) {
     val context = LocalContext.current
     Card(
@@ -71,7 +72,7 @@ fun CommentCell(
                 UserIcon(
                     url = comment.user.profileImageUrl,
                     scale = IconScale.COMMENT,
-                    modifier = Modifier.clickable { onTapUserInfo(comment.user.id) }
+                    modifier = Modifier.clickable { onTapUserInfo(comment.user) }
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -84,7 +85,7 @@ fun CommentCell(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onTapUserInfo(comment.user.id) }
+                            modifier = Modifier.clickable { onTapUserInfo(comment.user) }
                         ) {
                             Text(
                                 text = comment.user.fullname,

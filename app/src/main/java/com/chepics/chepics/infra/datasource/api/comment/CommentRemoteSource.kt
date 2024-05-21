@@ -24,4 +24,19 @@ class CommentRemoteSource @Inject constructor(private val api: CommentApi): Comm
             mockComment6
         ))
     }
+
+    override suspend fun fetchUserComments(
+        userId: String,
+        offset: Int?
+    ): CallResult<List<Comment>> {
+        delay(1000L)
+        return CallResult.Success(data = listOf(
+            mockComment1,
+            mockComment2,
+            mockComment3,
+            mockComment4,
+            mockComment5,
+            mockComment6
+        ))
+    }
 }
