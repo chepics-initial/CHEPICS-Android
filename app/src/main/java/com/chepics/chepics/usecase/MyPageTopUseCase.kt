@@ -12,8 +12,8 @@ interface MyPageTopUseCase {
 
 internal class MyPageTopUseCaseImpl @Inject constructor(
     private val userRepository: UserRepository
-): MyPageTopUseCase {
+) : MyPageTopUseCase {
     override suspend fun fetchUser(): CallResult<User> {
-        return CallResult.Success(mockUser1)
+        return userRepository.fetchUser(userRepository.getUserId())
     }
 }
