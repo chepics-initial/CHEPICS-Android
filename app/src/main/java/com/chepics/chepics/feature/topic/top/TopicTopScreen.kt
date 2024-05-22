@@ -29,6 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -69,6 +70,8 @@ import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.ButtonType
+import com.chepics.chepics.feature.commonparts.CommentCell
+import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.ImagePager
@@ -567,13 +570,71 @@ fun TopicTopDetailView(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         viewModel.topic.value?.let { topic ->
-            LazyColumn {
-                item {
-                    DetailHeaderView(
-                        navController = navController,
-                        topic = topic
-                    ) { index, images ->
-                        onTapImage(index, images)
+            viewModel.selectedSet.value?.let { set ->
+                LazyColumn {
+                    item {
+                        DetailHeaderView(
+                            navController = navController,
+                            topic = topic
+                        ) { index, images ->
+                            onTapImage(index, images)
+                        }
+
+                        DetailSetView(set = set) {
+                            viewModel.showBottomSheet.value = true
+                        }
+
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.chat),
+                                contentDescription = "chat icon",
+                                colorFilter = ColorFilter.tint(Color.Black),
+                                modifier = Modifier.size(20.dp)
+                            )
+
+                            Spacer(modifier = Modifier.width(4.dp))
+
+                            Text(
+                                text = "コメント${set.commentCount}件",
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    when (viewModel.commentUIState.value) {
+                        UIState.LOADING -> {
+                            item {
+                                CommonProgressSpinner(Color.Transparent)
+                            }
+                        }
+
+                        UIState.SUCCESS -> {
+                            items(viewModel.comments.value) { comment ->
+                                CommentCell(
+                                    comment = comment,
+                                    type = CommentType.COMMENT,
+                                    modifier = Modifier.clickable {
+                                        navController.navigate(Screens.CommentDetailScreen.name + "/${comment}")
+                                    },
+                                    onTapImage = { index ->
+                                        comment.images?.let { images ->
+                                            onTapImage(index, images.map { it.url })
+                                        }
+                                    }
+                                ) {
+                                    navController.navigate(Screens.ProfileScreen.name + "/${comment.user}")
+                                }
+                            }
+                        }
+
+                        UIState.FAILURE -> {
+                            item {
+                                Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+                            }
+                        }
                     }
                 }
             }
@@ -771,6 +832,97 @@ fun DetailHeaderView(
                         colorFilter = ColorFilter.tint(Color.LightGray)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun DetailSetView(
+    set: PickSet,
+    onTapShowSetList: () -> Unit
+) {
+    Column {
+        Text(
+            text = "set",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Blue,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.Blue,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "check icon",
+                        colorFilter = ColorFilter.tint(Color.White),
+                        modifier = Modifier.size(16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = "参加中",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Image(
+                        painter = painterResource(id = R.drawable.black_people),
+                        contentDescription = "people icon",
+                        colorFilter = ColorFilter.tint(Color.White),
+                        modifier = Modifier.size(16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = set.votes.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White
+                    )
+                }
+
+                Text(
+                    text = set.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White,
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, Color.Blue),
+                modifier = Modifier.clickable { onTapShowSetList() }
+            ) {
+                Text(
+                    text = "全てのセットを見る",
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Blue,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }
