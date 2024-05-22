@@ -82,6 +82,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                             isLoading.value = false
                             status.value = TopicTopStatus.DETAIL
                             selectedSet.value = result.data
+                            fetchTopic()
                             fetchComments(setId = result.data.id)
                         }
 
@@ -101,6 +102,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                 comments.value = result.data
                 commentUIState.value = UIState.SUCCESS
             }
+
             is CallResult.Error -> commentUIState.value = UIState.FAILURE
         }
     }
