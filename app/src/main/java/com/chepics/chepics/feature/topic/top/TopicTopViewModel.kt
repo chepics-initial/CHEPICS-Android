@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
@@ -20,7 +21,9 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val listImages: MutableState<List<String>?> = mutableStateOf(null)
     val setListUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
+    val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val sets: MutableState<List<PickSet>> = mutableStateOf(emptyList())
+    val comments: MutableState<List<Comment>> = mutableStateOf(emptyList())
     val selectedSet: MutableState<PickSet?> = mutableStateOf(null)
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val status: MutableState<TopicTopStatus> = mutableStateOf(TopicTopStatus.TOP)
@@ -78,6 +81,8 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                         is CallResult.Success -> {
                             isLoading.value = false
                             status.value = TopicTopStatus.DETAIL
+                            selectedSet.value = result.data
+                            fetchComments(setId = result.data.id)
                         }
 
                         is CallResult.Error -> {
@@ -87,6 +92,16 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                     }
                 }
             }
+        }
+    }
+
+    private suspend fun fetchComments(setId: String) {
+        when (val result = topicTopUseCase.fetchSetComments(setId = setId, offset = null)) {
+            is CallResult.Success -> {
+                comments.value = result.data
+                commentUIState.value = UIState.SUCCESS
+            }
+            is CallResult.Error -> commentUIState.value = UIState.FAILURE
         }
     }
 }
