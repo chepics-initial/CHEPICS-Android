@@ -58,7 +58,7 @@ fun CommentDetailScreen(
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
-        viewModel.onAppear(comment)
+        viewModel.onStart(comment)
     }
 
     Box {

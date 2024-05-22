@@ -20,44 +20,52 @@ import com.chepics.chepics.mock.mockTopic9
 import com.chepics.chepics.repository.topic.TopicDataSource
 import javax.inject.Inject
 
-class TopicRemoteSource @Inject constructor(private val api: TopicApi): TopicDataSource {
+class TopicRemoteSource @Inject constructor(private val api: TopicApi) : TopicDataSource {
     override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
-        return CallResult.Success(data = listOf(
-            mockTopic1,
-            mockTopic2,
-            mockTopic3,
-            mockTopic4,
-            mockTopic5,
-            mockTopic6,
-            mockTopic7,
-            mockTopic8,
-            mockTopic9,
-            mockTopic10,
-            mockTopic11,
-            mockTopic12,
-            mockTopic13,
-            mockTopic14,
-            mockTopic15
-        ))
+        return CallResult.Success(
+            data = listOf(
+                mockTopic1,
+                mockTopic2,
+                mockTopic3,
+                mockTopic4,
+                mockTopic5,
+                mockTopic6,
+                mockTopic7,
+                mockTopic8,
+                mockTopic9,
+                mockTopic10,
+                mockTopic11,
+                mockTopic12,
+                mockTopic13,
+                mockTopic14,
+                mockTopic15
+            )
+        )
     }
 
     override suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>> {
-        return CallResult.Success(data = listOf(
-            mockTopic1,
-            mockTopic2,
-            mockTopic3,
-            mockTopic4,
-            mockTopic5,
-            mockTopic6,
-            mockTopic7,
-            mockTopic8,
-            mockTopic9,
-            mockTopic10,
-            mockTopic11,
-            mockTopic12,
-            mockTopic13,
-            mockTopic14,
-            mockTopic15
-        ))
+        return CallResult.Success(
+            data = listOf(
+                mockTopic1,
+                mockTopic2,
+                mockTopic3,
+                mockTopic4,
+                mockTopic5,
+                mockTopic6,
+                mockTopic7,
+                mockTopic8,
+                mockTopic9,
+                mockTopic10,
+                mockTopic11,
+                mockTopic12,
+                mockTopic13,
+                mockTopic14,
+                mockTopic15
+            )
+        )
+    }
+
+    override suspend fun fetchTopic(topicId: String): CallResult<Topic> {
+        return CallResult.Success(data = mockTopic15)
     }
 }

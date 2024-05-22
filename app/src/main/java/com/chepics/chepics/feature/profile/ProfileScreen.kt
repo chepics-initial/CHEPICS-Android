@@ -74,7 +74,7 @@ fun ProfileScreen(
     val commentCoroutineScope = rememberCoroutineScope()
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
-        viewModel.onAppear(user)
+        viewModel.onStart(user)
     }
 
     Box {
@@ -294,14 +294,18 @@ fun ProfileTopicContentView(
                 state = viewModel.topicScrollState.value
             ) {
                 items(viewModel.topics.value) {
-                    TopicCell(topic = it, onTapImage = { index ->
-                        it.images?.let { images ->
-                            viewModel.onTapImage(index = index, images = images.map { image ->
-                                image.url
-                            })
-                            showImageViewer.value = true
+                    TopicCell(
+                        topic = it,
+                        modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${it}") },
+                        onTapImage = { index ->
+                            it.images?.let { images ->
+                                viewModel.onTapImage(index = index, images = images.map { image ->
+                                    image.url
+                                })
+                                showImageViewer.value = true
+                            }
                         }
-                    }) { user ->
+                    ) { user ->
                         navController.navigate(Screens.ProfileScreen.name + "/${user}")
                     }
                 }

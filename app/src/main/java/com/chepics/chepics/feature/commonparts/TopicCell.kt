@@ -44,10 +44,15 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
 
 @Composable
-fun TopicCell(topic: Topic, onTapImage: (Int) -> Unit, onTapUserInfo: (User) -> Unit) {
+fun TopicCell(
+    topic: Topic,
+    modifier: Modifier = Modifier,
+    onTapImage: (Int) -> Unit,
+    onTapUserInfo: (User) -> Unit
+) {
     val context = LocalContext.current
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent

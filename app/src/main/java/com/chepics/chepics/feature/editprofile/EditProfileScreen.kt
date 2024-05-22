@@ -80,7 +80,7 @@ fun EditProfileScreen(
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         showBottomNavigation.value = false
-        viewModel.onAppear(user)
+        viewModel.onStart(user)
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
@@ -132,7 +132,11 @@ fun EditProfileScreen(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                iconImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                iconImageLauncher.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                )
                             }
                     ) {
                         if (viewModel.imageUri.value != null) {
@@ -178,9 +182,9 @@ fun EditProfileScreen(
                     }
 
                     UsernameView(viewModel = viewModel)
-                    
+
                     FullnameView(viewModel = viewModel)
-                    
+
                     BioView(viewModel = viewModel)
                 }
                 Column(modifier = Modifier.wrapContentHeight()) {

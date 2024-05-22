@@ -61,7 +61,7 @@ fun ExploreResultScreen(
     val commentCoroutineScope = rememberCoroutineScope()
     val userCoroutineScope = rememberCoroutineScope()
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
-        viewModel.onAppear(searchText)
+        viewModel.onStart(searchText)
     }
     val showImageViewer = remember {
         mutableStateOf(false)
@@ -247,14 +247,20 @@ fun ExploreTopicContentView(
                     state = viewModel.topicScrollState.value
                 ) {
                     items(viewModel.topics.value) {
-                        TopicCell(topic = it, onTapImage = { index ->
-                            it.images?.let { images ->
-                                viewModel.onTapImage(index = index, images = images.map { image ->
-                                    image.url
-                                })
-                                showImageViewer.value = true
+                        TopicCell(
+                            topic = it,
+                            modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${it}") },
+                            onTapImage = { index ->
+                                it.images?.let { images ->
+                                    viewModel.onTapImage(
+                                        index = index,
+                                        images = images.map { image ->
+                                            image.url
+                                        })
+                                    showImageViewer.value = true
+                                }
                             }
-                        }) { user ->
+                        ) { user ->
                             navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
                     }
@@ -308,9 +314,11 @@ fun ExploreCommentContentView(
                             },
                             onTapImage = { index ->
                                 it.images?.let { images ->
-                                    viewModel.onTapImage(index = index, images = images.map { image ->
-                                        image.url
-                                    })
+                                    viewModel.onTapImage(
+                                        index = index,
+                                        images = images.map { image ->
+                                            image.url
+                                        })
                                     showImageViewer.value = true
                                 }
                             }) { user ->

@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ExploreResultViewModel @Inject constructor(private val exploreResultUseCase: ExploreResultUseCase): ViewModel() {
+class ExploreResultViewModel @Inject constructor(private val exploreResultUseCase: ExploreResultUseCase) :
+    ViewModel() {
     val searchText: MutableState<String> = mutableStateOf("")
     val selectedTab: MutableState<Int> = mutableIntStateOf(0)
     val topicUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
@@ -39,7 +40,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         }
     }
 
-    fun onAppear(searchText: String) {
+    fun onStart(searchText: String) {
         initialSearchText = searchText
         this.searchText.value = searchText
     }
@@ -132,4 +133,8 @@ data class SearchTabItem(
     val title: String
 )
 
-val searchTabItems = listOf(SearchTabItem(title = "トピック"), SearchTabItem(title = "コメント"), SearchTabItem(title = "ユーザー"))
+val searchTabItems = listOf(
+    SearchTabItem(title = "トピック"),
+    SearchTabItem(title = "コメント"),
+    SearchTabItem(title = "ユーザー")
+)

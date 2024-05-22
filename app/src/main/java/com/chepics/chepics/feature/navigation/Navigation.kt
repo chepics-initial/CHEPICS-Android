@@ -33,6 +33,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.CommentNavType
+import com.chepics.chepics.domainmodel.Topic
+import com.chepics.chepics.domainmodel.TopicNavType
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.UserNavType
 import com.chepics.chepics.feature.authentication.CompletionScreen
@@ -51,6 +53,7 @@ import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
 import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
+import com.chepics.chepics.feature.topic.top.TopicTopScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.google.gson.Gson
 
@@ -186,7 +189,7 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 showBottomNavigation = showBottomNavigation
             )
         }
-        
+
         composable(Screens.ExploreTopScreen.name) {
             ExploreTopScreen(navController = feedNavController)
         }
@@ -198,7 +201,11 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
             })
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("searchText")?.let {
-                ExploreResultScreen(navController = feedNavController, searchText = it, showBottomNavigation = showBottomNavigation)
+                ExploreResultScreen(
+                    navController = feedNavController,
+                    searchText = it,
+                    showBottomNavigation = showBottomNavigation
+                )
             }
         }
 
@@ -258,6 +265,23 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 )
             }
         }
+
+        composable(
+            "${Screens.TopicTopScreen.name}/{topic}",
+            arguments = listOf(navArgument("topic") {
+                type = TopicNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("topic")?.let {
+                Gson().fromJson(it, Topic::class.java)
+            }?.let {
+                TopicTopScreen(
+                    navController = feedNavController,
+                    topic = it,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
     }
 }
 
@@ -285,7 +309,7 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         composable(Screens.MyPageTopScreen.name) {
             MyPageTopScreen(navController = myPageNavController)
         }
-        
+
         composable(
             "${Screens.EditProfileScreen.name}/{user}",
             arguments = listOf(navArgument("user") {
@@ -325,6 +349,23 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                 CommentDetailScreen(
                     comment = it,
                     navController = myPageNavController,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
+
+        composable(
+            "${Screens.TopicTopScreen.name}/{topic}",
+            arguments = listOf(navArgument("topic") {
+                type = TopicNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("topic")?.let {
+                Gson().fromJson(it, Topic::class.java)
+            }?.let {
+                TopicTopScreen(
+                    navController = myPageNavController,
+                    topic = it,
                     showBottomNavigation = showBottomNavigation
                 )
             }

@@ -29,7 +29,7 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
         commentImages.value = images
     }
 
-    fun onAppear(comment: Comment) {
+    fun onStart(comment: Comment) {
         this.comment.value = comment
         viewModelScope.launch {
             fetchComment()

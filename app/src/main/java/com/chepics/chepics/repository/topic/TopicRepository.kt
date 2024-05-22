@@ -10,12 +10,13 @@ import javax.inject.Inject
 interface TopicRepository {
     suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>>
     suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>>
+    suspend fun fetchTopic(topicId: String): CallResult<Topic>
 }
 
 internal class TopicRepositoryImpl @Inject constructor(
     private val topicDataSource: TopicDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-): TopicRepository {
+) : TopicRepository {
     override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
         return withContext(ioDispatcher) {
             topicDataSource.fetchFavoriteTopics(offset)
@@ -25,6 +26,12 @@ internal class TopicRepositoryImpl @Inject constructor(
     override suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>> {
         return withContext(ioDispatcher) {
             topicDataSource.fetchUserTopics(userId = userId, offset = offset)
+        }
+    }
+
+    override suspend fun fetchTopic(topicId: String): CallResult<Topic> {
+        return withContext(ioDispatcher) {
+            topicDataSource.fetchTopic(topicId)
         }
     }
 }

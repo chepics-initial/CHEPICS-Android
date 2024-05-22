@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
     val profileImages: MutableState<List<String>?> = mutableStateOf(null)
     val user: MutableState<User?> = mutableStateOf(null)
 
-    fun onAppear(user: User) {
+    fun onStart(user: User) {
         this.user.value = user
         viewModelScope.launch {
             fetchUser(user.id)
