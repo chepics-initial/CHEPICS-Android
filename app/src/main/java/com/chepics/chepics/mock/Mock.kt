@@ -2,6 +2,7 @@ package com.chepics.chepics.mock
 
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.CommentImage
+import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.TopicImage
 import com.chepics.chepics.domainmodel.User
@@ -557,4 +558,25 @@ val mockComment6 = Comment(
     isLiked = false,
     user = mockUser8,
     registerTime = LocalDateTime.of(2024, 3, 12, 20, 20, 20)
+)
+
+val mockSet1 = PickSet(
+    id = "1",
+    name = "猫は可愛い",
+    votes = 1234,
+    commentCount = 500
+)
+
+val mockSet2 = PickSet(
+    id = "2",
+    name = "猫より犬の方が好き",
+    votes = 3432,
+    commentCount = 400
+)
+
+val mockSet3 = PickSet(
+    id = "3",
+    name = "うちの猫だけが世界一可愛い",
+    votes = 847,
+    commentCount = 200
 )

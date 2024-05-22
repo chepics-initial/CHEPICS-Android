@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,15 +52,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.chepics.chepics.R
+import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
+import com.chepics.chepics.feature.common.UIState
+import com.chepics.chepics.feature.commonparts.ButtonType
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.ImagePager
+import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
@@ -71,6 +80,10 @@ fun TopicTopScreen(
     viewModel: TopicTopViewModel = hiltViewModel()
 ) {
     val showImageViewer = remember {
+        mutableStateOf(false)
+    }
+
+    val showBottomSheet = remember {
         mutableStateOf(false)
     }
 
@@ -91,19 +104,33 @@ fun TopicTopScreen(
                 })
             }
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = it.calculateTopPadding())
+                    .padding(it)
             ) {
-                TopicTopContentView(
-                    viewModel,
-                    navController,
-                    onTapImage = { index, images ->
-                        viewModel.onTapImage(index, images)
-                        showImageViewer.value = true
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    TopicTopContentView(
+                        viewModel,
+                        navController,
+                        onTapShowSetList = {
+                            showBottomSheet.value = true
+                        },
+                        onTapImage = { index, images ->
+                            viewModel.onTapImage(index, images)
+                            showImageViewer.value = true
+                        }
+                    )
+
+                    if (showBottomSheet.value) {
+                        viewModel.fetchSets()
+                        ModalBottomSheet(onDismissRequest = { showBottomSheet.value = false }) {
+                            TopicSetListView(viewModel = viewModel)
+                        }
                     }
-                )
+                }
             }
         }
 
@@ -121,9 +148,175 @@ fun TopicTopScreen(
 }
 
 @Composable
+fun TopicSetListView(viewModel: TopicTopViewModel) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            LazyColumn {
+                item {
+                    Column {
+                        Text(
+                            text = "set",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Blue
+                        )
+                        
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "セットを選択してください")
+                        }
+                    }
+                }
+
+                when (viewModel.setListUIState.value) {
+                    UIState.LOADING -> {
+                        item {
+                            CommonProgressSpinner(backgroundColor = Color.Transparent)
+                        }
+                    }
+
+                    UIState.SUCCESS -> {
+                        items(viewModel.sets.value) {
+                            SetCell(set = it)
+                        }
+
+                        item {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "セットを追加する",
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.Blue,
+                                    modifier = Modifier.clickable {  }
+                                )
+
+                                Spacer(modifier = Modifier.padding(16.dp))
+                            }
+                        }
+                    }
+
+                    UIState.FAILURE -> {
+                        item {
+                            Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+                        }
+                    }
+                }
+            }
+        }
+
+        HorizontalDivider()
+        
+        RoundButton(
+            text = "選択する", type = ButtonType.Fill,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            
+        }
+    }
+}
+
+@Composable
+fun SetCell(set: PickSet) {
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, Color.LightGray),
+        modifier = Modifier.padding(vertical = 16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = set.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.chat), 
+                        contentDescription = "comment icon",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    
+                    Text(
+                        text = "${set.commentCount}件",
+                        color = Color.Blue,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.black_people), 
+                    contentDescription = "set count icon",
+                    modifier = Modifier.size(16.dp),
+                    colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black)
+                )
+                
+                Spacer(modifier = Modifier.width(4.dp))
+                
+                Text(
+                    text = "${set.votes}",
+                    fontSize = 12.sp
+                )
+            }
+
+            Box {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp),
+                    color = Color.White
+                ) {
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.95f)
+                        .height(32.dp)
+                        .align(Alignment.CenterStart),
+                    color = Color.Blue
+                ) {
+
+                }
+                
+                Surface(
+                    shape = RoundedCornerShape(4.dp),
+                    color = Color.White.copy(0.8f),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 4.dp)
+                ) {
+                    Text(
+                        text = "95%",
+                        fontSize = 12.sp,
+                        color = Color.Black,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun TopicTopContentView(
     viewModel: TopicTopViewModel,
     navController: NavController,
+    onTapShowSetList: () -> Unit,
     onTapImage: (Int, List<String>) -> Unit
 ) {
     val context = LocalContext.current
@@ -300,7 +493,7 @@ fun TopicTopContentView(
                     Surface(
                         shape = RoundedCornerShape(8.dp),
                         border = BorderStroke(1.dp, Color.Blue),
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable { onTapShowSetList() }
                     ) {
                         Text(
                             text = "セット一覧を見る",
