@@ -213,6 +213,7 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
                         items(viewModel.sets.value) {
                             SetCell(
                                 set = it,
+                                isSelected = it == viewModel.selectedSet.value,
                                 modifier = Modifier.clickable { viewModel.selectSet(it) }
                             )
                         }
@@ -258,11 +259,13 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
 @Composable
 fun SetCell(
     set: PickSet,
+    isSelected: Boolean,
     modifier: Modifier
 ) {
     Surface(
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.LightGray),
+        border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) Color.Blue else Color.LightGray),
+        color = if (isSelected) Color.Blue.copy(0.4f) else Color.Transparent,
         modifier = modifier.padding(vertical = 16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
