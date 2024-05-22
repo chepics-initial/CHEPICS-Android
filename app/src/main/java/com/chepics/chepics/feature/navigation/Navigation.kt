@@ -53,6 +53,7 @@ import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
 import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
+import com.chepics.chepics.feature.topic.detail.TopicDetailScreen
 import com.chepics.chepics.feature.topic.top.TopicTopScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.google.gson.Gson
@@ -282,6 +283,23 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 )
             }
         }
+
+        composable(
+            "${Screens.TopicDetailScreen.name}/{topic}",
+            arguments = listOf(navArgument("topic") {
+                type = TopicNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("topic")?.let {
+                Gson().fromJson(it, Topic::class.java)
+            }?.let {
+                TopicDetailScreen(
+                    topic = it,
+                    navController = feedNavController,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
     }
 }
 
@@ -366,6 +384,23 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                 TopicTopScreen(
                     navController = myPageNavController,
                     topic = it,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
+
+        composable(
+            "${Screens.TopicDetailScreen.name}/{topic}",
+            arguments = listOf(navArgument("topic") {
+                type = TopicNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("topic")?.let {
+                Gson().fromJson(it, Topic::class.java)
+            }?.let {
+                TopicDetailScreen(
+                    topic = it,
+                    navController = myPageNavController,
                     showBottomNavigation = showBottomNavigation
                 )
             }

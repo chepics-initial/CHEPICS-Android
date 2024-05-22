@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -51,7 +52,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -126,7 +130,13 @@ fun TopicTopScreen(
                         }
 
                         TopicTopStatus.DETAIL -> {
-                            TopicTopDetailView()
+                            TopicTopDetailView(
+                                navController = navController,
+                                viewModel = viewModel
+                            ) { index, images ->
+                                viewModel.onTapImage(index, images)
+                                showImageViewer.value = true
+                            }
                         }
                     }
                 }
@@ -264,7 +274,10 @@ fun SetCell(
 ) {
     Surface(
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) Color.Blue else Color.LightGray),
+        border = BorderStroke(
+            if (isSelected) 2.dp else 1.dp,
+            if (isSelected) Color.Blue else Color.LightGray
+        ),
         color = if (isSelected) Color.Blue.copy(0.4f) else Color.Transparent,
         modifier = modifier.padding(vertical = 16.dp)
     ) {
@@ -547,12 +560,230 @@ fun TopicTopContentView(
 }
 
 @Composable
-fun TopicTopDetailView() {
+fun TopicTopDetailView(
+    navController: NavController,
+    viewModel: TopicTopViewModel,
+    onTapImage: (Int, List<String>) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        viewModel.topic.value?.let { topic ->
+            LazyColumn {
+                item {
+                    DetailHeaderView(
+                        navController = navController,
+                        topic = topic
+                    ) { index, images ->
+                        onTapImage(index, images)
+                    }
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun DetailHeaderView(
+    navController: NavController,
+    topic: Topic,
+    onTapImage: (Int, List<String>) -> Unit
+) {
+    val context = LocalContext.current
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "topic",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = ChepicsPrimary,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, ChepicsPrimary)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.persons),
+                            contentDescription = "chart",
+                            modifier = Modifier.size(16.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        val votesText = buildAnnotatedString {
+                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                                append(topic.votes.toString())
+                            }
+
+                            append("人が参加中")
+                        }
+
+                        Text(
+                            text = votesText,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = ChepicsPrimary
+                        )
+                    }
+
+                    Text(
+                        text = topic.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    topic.link?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .clickable {
+                                    context.startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(it)
+                                        )
+                                    )
+                                },
+                            color = Color.Blue
+                        )
+                    }
+                }
+
+                topic.images?.let { images ->
+                    val imageUrlList = images.map { it.url }
+                    if (imageUrlList.size > 1) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier
+                                .height(if (imageUrlList.size == 4) (getTopicDetailImageHeight() * 2 + 28.dp) else getTopicDetailImageHeight() + 20.dp),
+                            contentPadding = PaddingValues(
+                                top = 12.dp,
+                                start = 12.dp,
+                                end = 12.dp
+                            )
+                        ) {
+                            items(imageUrlList.size) { index ->
+                                if (!(imageUrlList.size % 2 != 0 && index == imageUrlList.size - 1)) {
+                                    AsyncImage(
+                                        model = imageUrlList[index],
+                                        contentDescription = "$index image",
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .padding(4.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .clickable { onTapImage(index, imageUrlList) },
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    if (imageUrlList.size % 2 == 1) {
+                        if (imageUrlList.size == 1) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                        AsyncImage(
+                            model = imageUrlList.last(),
+                            contentDescription = "last image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(getTopicDetailImageHeight())
+                                .padding(
+                                    top = 4.dp,
+                                    bottom = 16.dp,
+                                    start = 16.dp,
+                                    end = 16.dp
+                                )
+                                .align(Alignment.CenterHorizontally)
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    onTapImage(
+                                        imageUrlList.size - 1,
+                                        imageUrlList
+                                    )
+                                },
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { navController.navigate(Screens.ProfileScreen.name + "/${topic.user}") }
+                    ) {
+                        UserIcon(url = topic.user.profileImageUrl, scale = IconScale.TOPIC)
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = topic.user.fullname,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
+//                    Text(
+//                        text = getDateTimeString(topic.registerTime),
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        color = Color.LightGray
+//                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .clickable { navController.navigate(Screens.TopicDetailScreen.name + "/${topic}") }
+                ) {
+                    Text(
+                        text = "トピックの詳細を見る",
+                        color = Color.LightGray,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Image(
+                        imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                        contentDescription = "detail icon",
+                        modifier = Modifier.size(16.dp),
+                        colorFilter = ColorFilter.tint(Color.LightGray)
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
 private fun getTopicTopImageHeight(): Dp {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     return ((screenWidth - 40) / 2).dp
+}
+
+@Composable
+private fun getTopicDetailImageHeight(): Dp {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    return ((screenWidth - 74) / 2).dp
 }

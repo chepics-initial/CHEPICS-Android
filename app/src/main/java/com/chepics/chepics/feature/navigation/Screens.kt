@@ -22,5 +22,6 @@ enum class Screens {
     ExploreResultScreen,
     MyPageTopicListScreen,
     CommentDetailScreen,
-    TopicTopScreen
+    TopicTopScreen,
+    TopicDetailScreen
 }
