@@ -21,6 +21,11 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val listImages: MutableState<List<String>?> = mutableStateOf(null)
     val setListUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val sets: MutableState<List<PickSet>> = mutableStateOf(emptyList())
+    val selectedSet: MutableState<PickSet?> = mutableStateOf(null)
+    val isLoading: MutableState<Boolean> = mutableStateOf(false)
+    val status: MutableState<TopicTopStatus> = mutableStateOf(TopicTopStatus.TOP)
+    val showBottomSheet: MutableState<Boolean> = mutableStateOf(false)
+    val showAlert: MutableState<Boolean> = mutableStateOf(false)
 
     fun onStart(topic: Topic) {
         this.topic.value = topic
@@ -51,9 +56,42 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                         sets.value = result.data
                         setListUIState.value = UIState.SUCCESS
                     }
+
                     is CallResult.Error -> setListUIState.value = UIState.FAILURE
                 }
             }
         }
     }
+
+    fun selectSet(set: PickSet) {
+        selectedSet.value = set
+    }
+
+    fun onTapSelectButton() {
+        selectedSet.value?.let { set ->
+            topic.value?.let { topic ->
+                viewModelScope.launch {
+                    showBottomSheet.value = false
+                    isLoading.value = true
+                    when (val result =
+                        topicTopUseCase.pickSet(topicId = topic.id, setId = set.id)) {
+                        is CallResult.Success -> {
+                            isLoading.value = false
+                            status.value = TopicTopStatus.DETAIL
+                        }
+
+                        is CallResult.Error -> {
+                            isLoading.value = false
+                            showAlert.value = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+enum class TopicTopStatus {
+    TOP,
+    DETAIL
 }

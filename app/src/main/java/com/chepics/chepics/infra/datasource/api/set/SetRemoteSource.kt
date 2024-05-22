@@ -8,6 +8,7 @@ import com.chepics.chepics.mock.mockSet1
 import com.chepics.chepics.mock.mockSet2
 import com.chepics.chepics.mock.mockSet3
 import com.chepics.chepics.repository.set.SetDataSource
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class SetRemoteSource @Inject constructor(private val setApi: SetApi) : SetDataSource {
@@ -20,6 +21,7 @@ class SetRemoteSource @Inject constructor(private val setApi: SetApi) : SetDataS
     }
 
     override suspend fun pickSet(body: PickSetRequest): CallResult<PickSet> {
-        return CallResult.Success(data = mockSet1)
+        delay(1000L)
+        return CallResult.Success(mockSet1)
     }
 }

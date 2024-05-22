@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -83,10 +85,6 @@ fun TopicTopScreen(
         mutableStateOf(false)
     }
 
-    val showBottomSheet = remember {
-        mutableStateOf(false)
-    }
-
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(topic)
     }
@@ -112,26 +110,56 @@ fun TopicTopScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    TopicTopContentView(
-                        viewModel,
-                        navController,
-                        onTapShowSetList = {
-                            showBottomSheet.value = true
-                        },
-                        onTapImage = { index, images ->
-                            viewModel.onTapImage(index, images)
-                            showImageViewer.value = true
+                    when (viewModel.status.value) {
+                        TopicTopStatus.TOP -> {
+                            TopicTopContentView(
+                                viewModel,
+                                navController,
+                                onTapShowSetList = {
+                                    viewModel.showBottomSheet.value = true
+                                },
+                                onTapImage = { index, images ->
+                                    viewModel.onTapImage(index, images)
+                                    showImageViewer.value = true
+                                }
+                            )
                         }
-                    )
 
-                    if (showBottomSheet.value) {
-                        viewModel.fetchSets()
-                        ModalBottomSheet(onDismissRequest = { showBottomSheet.value = false }) {
-                            TopicSetListView(viewModel = viewModel)
+                        TopicTopStatus.DETAIL -> {
+                            TopicTopDetailView()
                         }
                     }
                 }
+
+                if (viewModel.showBottomSheet.value) {
+                    viewModel.fetchSets()
+                    ModalBottomSheet(onDismissRequest = {
+                        viewModel.showBottomSheet.value = false
+                    }) {
+                        TopicSetListView(viewModel = viewModel)
+                    }
+                }
             }
+        }
+
+        if (viewModel.isLoading.value) {
+            CommonProgressSpinner()
+        }
+
+        if (viewModel.showAlert.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "通信エラー") },
+                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.showAlert.value = false
+                        viewModel.showBottomSheet.value = true
+                    }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
         }
 
         if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.listImages.value != null) {
@@ -164,7 +192,7 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
                             fontWeight = FontWeight.SemiBold,
                             color = Color.Blue
                         )
-                        
+
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -183,7 +211,10 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
 
                     UIState.SUCCESS -> {
                         items(viewModel.sets.value) {
-                            SetCell(set = it)
+                            SetCell(
+                                set = it,
+                                modifier = Modifier.clickable { viewModel.selectSet(it) }
+                            )
                         }
 
                         item {
@@ -195,7 +226,7 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
                                     text = "セットを追加する",
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.Blue,
-                                    modifier = Modifier.clickable {  }
+                                    modifier = Modifier.clickable { }
                                 )
 
                                 Spacer(modifier = Modifier.padding(16.dp))
@@ -213,22 +244,26 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
         }
 
         HorizontalDivider()
-        
+
         RoundButton(
             text = "選択する", type = ButtonType.Fill,
+            isActive = viewModel.selectedSet.value != null,
             modifier = Modifier.padding(16.dp)
         ) {
-            
+            viewModel.onTapSelectButton()
         }
     }
 }
 
 @Composable
-fun SetCell(set: PickSet) {
+fun SetCell(
+    set: PickSet,
+    modifier: Modifier
+) {
     Surface(
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.LightGray),
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = modifier.padding(vertical = 16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -243,11 +278,11 @@ fun SetCell(set: PickSet) {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
-                        painter = painterResource(id = R.drawable.chat), 
+                        painter = painterResource(id = R.drawable.chat),
                         contentDescription = "comment icon",
                         modifier = Modifier.size(16.dp)
                     )
-                    
+
                     Text(
                         text = "${set.commentCount}件",
                         color = Color.Blue,
@@ -258,14 +293,14 @@ fun SetCell(set: PickSet) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.black_people), 
+                    painter = painterResource(id = R.drawable.black_people),
                     contentDescription = "set count icon",
                     modifier = Modifier.size(16.dp),
                     colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black)
                 )
-                
+
                 Spacer(modifier = Modifier.width(4.dp))
-                
+
                 Text(
                     text = "${set.votes}",
                     fontSize = 12.sp
@@ -292,7 +327,7 @@ fun SetCell(set: PickSet) {
                 ) {
 
                 }
-                
+
                 Surface(
                     shape = RoundedCornerShape(4.dp),
                     color = Color.White.copy(0.8f),
@@ -506,6 +541,11 @@ fun TopicTopContentView(
             }
         }
     }
+}
+
+@Composable
+fun TopicTopDetailView() {
+
 }
 
 @Composable
