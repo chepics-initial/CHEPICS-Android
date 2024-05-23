@@ -92,6 +92,10 @@ fun TopicTopScreen(
         mutableStateOf(false)
     }
 
+    val showConfirmDialog = remember {
+        mutableStateOf(false)
+    }
+
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(topic)
     }
@@ -149,7 +153,10 @@ fun TopicTopScreen(
                     ModalBottomSheet(onDismissRequest = {
                         viewModel.showBottomSheet.value = false
                     }) {
-                        TopicSetListView(viewModel = viewModel)
+                        TopicSetListView(
+                            viewModel = viewModel,
+                            showConfirmDialog = showConfirmDialog
+                        )
                     }
                 }
             }
@@ -175,6 +182,29 @@ fun TopicTopScreen(
             )
         }
 
+        if (showConfirmDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "このセットを選択しますか？") },
+                text = { Text(text = "既に他のセットを選択しているため、そのセット内で行ったコメントやいいねは削除されます。") },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showConfirmDialog.value = false
+                    }) {
+                        Text(text = "キャンセル")
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showConfirmDialog.value = false
+                        viewModel.onTapSelectButton()
+                    }) {
+                        Text(text = "選択する")
+                    }
+                }
+            )
+        }
+
         if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.listImages.value != null) {
             showBottomNavigation.value = false
             ImagePager(
@@ -189,7 +219,10 @@ fun TopicTopScreen(
 }
 
 @Composable
-fun TopicSetListView(viewModel: TopicTopViewModel) {
+fun TopicSetListView(
+    viewModel: TopicTopViewModel,
+    showConfirmDialog: MutableState<Boolean>
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
@@ -225,6 +258,7 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
                     UIState.SUCCESS -> {
                         items(viewModel.sets.value) {
                             SetCell(
+                                currentSet = viewModel.currentSet.value,
                                 set = it,
                                 isSelected = it == viewModel.selectedSet.value,
                                 modifier = Modifier.clickable { viewModel.selectSet(it) }
@@ -261,16 +295,21 @@ fun TopicSetListView(viewModel: TopicTopViewModel) {
 
         RoundButton(
             text = "選択する", type = ButtonType.Fill,
-            isActive = viewModel.selectedSet.value != null,
+            isActive = viewModel.isSelectButtonActive(),
             modifier = Modifier.padding(16.dp)
         ) {
-            viewModel.onTapSelectButton()
+            if (viewModel.isSelectButtonActive() && viewModel.currentSet.value != null) {
+                showConfirmDialog.value = true
+            } else {
+                viewModel.onTapSelectButton()
+            }
         }
     }
 }
 
 @Composable
 fun SetCell(
+    currentSet: PickSet?,
     set: PickSet,
     isSelected: Boolean,
     modifier: Modifier
@@ -285,6 +324,19 @@ fun SetCell(
         modifier = modifier.padding(vertical = 16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            if (currentSet == set) {
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = ChepicsPrimary
+                ) {
+                    Text(
+                        text = "参加中",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
+                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                    )
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween

@@ -29,6 +29,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val status: MutableState<TopicTopStatus> = mutableStateOf(TopicTopStatus.TOP)
     val showBottomSheet: MutableState<Boolean> = mutableStateOf(false)
     val showAlert: MutableState<Boolean> = mutableStateOf(false)
+    val currentSet: MutableState<PickSet?> = mutableStateOf(null)
 
     fun onStart(topic: Topic) {
         this.topic.value = topic
@@ -82,6 +83,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                             isLoading.value = false
                             status.value = TopicTopStatus.DETAIL
                             selectedSet.value = result.data
+                            currentSet.value = result.data
                             fetchTopic()
                             fetchComments(setId = result.data.id)
                         }
@@ -94,6 +96,10 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                 }
             }
         }
+    }
+
+    fun isSelectButtonActive(): Boolean {
+        return selectedSet.value != null && selectedSet.value != currentSet.value
     }
 
     private suspend fun fetchComments(setId: String) {
