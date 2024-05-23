@@ -23,5 +23,6 @@ enum class Screens {
     MyPageTopicListScreen,
     CommentDetailScreen,
     TopicTopScreen,
-    TopicDetailScreen
+    TopicDetailScreen,
+    CreateSetScreen
 }

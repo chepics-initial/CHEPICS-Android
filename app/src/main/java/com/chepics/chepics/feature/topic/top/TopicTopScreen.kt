@@ -155,6 +155,7 @@ fun TopicTopScreen(
                     }) {
                         TopicSetListView(
                             viewModel = viewModel,
+                            navController = navController,
                             showConfirmDialog = showConfirmDialog
                         )
                     }
@@ -221,6 +222,7 @@ fun TopicTopScreen(
 @Composable
 fun TopicSetListView(
     viewModel: TopicTopViewModel,
+    navController: NavController,
     showConfirmDialog: MutableState<Boolean>
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -274,7 +276,12 @@ fun TopicSetListView(
                                     text = "セットを追加する",
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.Blue,
-                                    modifier = Modifier.clickable { }
+                                    modifier = Modifier.clickable {
+                                        viewModel.topic.value?.let {
+                                            viewModel.showBottomSheet.value = false
+                                            navController.navigate(Screens.CreateSetScreen.name + "/${it}")
+                                        }
+                                    }
                                 )
 
                                 Spacer(modifier = Modifier.padding(16.dp))

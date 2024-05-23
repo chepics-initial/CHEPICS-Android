@@ -53,6 +53,7 @@ import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
 import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
+import com.chepics.chepics.feature.topic.createset.CreateSetScreen
 import com.chepics.chepics.feature.topic.detail.TopicDetailScreen
 import com.chepics.chepics.feature.topic.top.TopicTopScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
@@ -300,6 +301,27 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 )
             }
         }
+
+        composable(
+            "${Screens.CreateSetScreen.name}/{topicId}",
+            arguments = listOf(navArgument("topicId") {
+                type = NavType.StringType
+            }),
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(0, fullSize.height) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(0, fullSize.height) }
+            }
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("topicId")?.let { topicId ->
+                CreateSetScreen(
+                    topicId = topicId,
+                    navController = feedNavController,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
     }
 }
 
@@ -400,6 +422,27 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             }?.let {
                 TopicDetailScreen(
                     topic = it,
+                    navController = myPageNavController,
+                    showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
+
+        composable(
+            "${Screens.CreateSetScreen.name}/{topicId}",
+            arguments = listOf(navArgument("topicId") {
+                type = NavType.StringType
+            }),
+            enterTransition = {
+                slideIn { fullSize -> IntOffset(0, fullSize.height) }
+            },
+            popExitTransition = {
+                slideOut { fullSize -> IntOffset(0, fullSize.height) }
+            }
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("topicId")?.let { topicId ->
+                CreateSetScreen(
+                    topicId = topicId,
                     navController = myPageNavController,
                     showBottomNavigation = showBottomNavigation
                 )

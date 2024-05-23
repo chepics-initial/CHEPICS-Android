@@ -12,6 +12,7 @@ object Constants {
     const val TOPIC_IMAGE_COUNT = 4
     const val NAME_COUNT = 30
     const val BIO_COUNT = 100
+    const val SET_COUNT = 50
 }
 
 fun getDateTimeString(dateTime: LocalDateTime): String {
