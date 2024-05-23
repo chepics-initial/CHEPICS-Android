@@ -94,6 +94,7 @@ fun CreateSetScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .weight(1f)
                         .padding(16.dp)
                 ) {
                     Text(
@@ -139,7 +140,7 @@ fun CreateSetScreen(
 
                     RoundButton(
                         text = "セットを追加",
-                        isActive = viewModel.setText.value.trim().isNotBlank(),
+                        isActive = viewModel.setText.value.trim().isNotBlank() && viewModel.setText.value.length <= Constants.SET_COUNT,
                         type = ButtonType.Fill,
                         modifier = Modifier.padding(16.dp)
                     ) {
