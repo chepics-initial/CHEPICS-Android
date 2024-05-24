@@ -320,13 +320,21 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("topicId")?.let { topicId ->
                 val onBack =
                     feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                val completion =
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
                 onBack?.let {
-                    CreateSetScreen(
-                        topicId = topicId,
-                        navController = feedNavController,
-                        showBottomNavigation = showBottomNavigation
-                    ) {
-                        onBack()
+                    completion?.let {
+                        CreateSetScreen(
+                            topicId = topicId,
+                            navController = feedNavController,
+                            showBottomNavigation = showBottomNavigation,
+                            onBack = {
+                                onBack()
+                            },
+                            completion = {
+                                completion()
+                            }
+                        )
                     }
                 }
             }
@@ -468,13 +476,21 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("topicId")?.let { topicId ->
                 val onBack =
                     myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                val completion =
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
                 onBack?.let {
-                    CreateSetScreen(
-                        topicId = topicId,
-                        navController = myPageNavController,
-                        showBottomNavigation = showBottomNavigation
-                    ) {
-                        onBack()
+                    completion?.let {
+                        CreateSetScreen(
+                            topicId = topicId,
+                            navController = myPageNavController,
+                            showBottomNavigation = showBottomNavigation,
+                            onBack = {
+                                onBack()
+                            },
+                            completion = {
+                                completion()
+                            }
+                        )
                     }
                 }
             }

@@ -44,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,6 +80,7 @@ import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,8 +227,15 @@ fun TopicSetListView(
     navController: NavController,
     showConfirmDialog: MutableState<Boolean>
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val onBack: () -> Unit = {
         viewModel.showBottomSheet.value = true
+    }
+    val createSetCompletion: () -> Unit = {
+        viewModel.showBottomSheet.value = true
+        coroutineScope.launch {
+            viewModel.fetchSets()
+        }
     }
     Column(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -289,6 +298,10 @@ fun TopicSetListView(
                                                 navController.currentBackStackEntry?.savedStateHandle?.set(
                                                     "onBack",
                                                     onBack
+                                                )
+                                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                    "completion",
+                                                    createSetCompletion
                                                 )
                                             }
                                         }

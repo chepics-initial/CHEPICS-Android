@@ -50,7 +50,8 @@ fun CreateSetScreen(
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
     viewModel: CreateSetViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    completion: () -> Unit
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         showBottomNavigation.value = false
@@ -156,6 +157,7 @@ fun CreateSetScreen(
                     ) {
                         coroutineScope.launch {
                             viewModel.onTapButton {
+                                completion()
                                 navController.popBackStack()
                             }
                         }
