@@ -225,6 +225,9 @@ fun TopicSetListView(
     navController: NavController,
     showConfirmDialog: MutableState<Boolean>
 ) {
+    val onBack: () -> Unit = {
+        viewModel.showBottomSheet.value = true
+    }
     Column(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
@@ -282,7 +285,12 @@ fun TopicSetListView(
                                     modifier = Modifier.clickable {
                                         viewModel.topic.value?.let {
                                             viewModel.showBottomSheet.value = false
-                                            navController.navigate(Screens.CreateSetScreen.name + "/${it}")
+                                            navController.navigate(Screens.CreateSetScreen.name + "/${it}") {
+                                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                    "onBack",
+                                                    onBack
+                                                )
+                                            }
                                         }
                                     }
                                 )

@@ -49,7 +49,8 @@ fun CreateSetScreen(
     topicId: String,
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
-    viewModel: CreateSetViewModel = hiltViewModel()
+    viewModel: CreateSetViewModel = hiltViewModel(),
+    onBack: () -> Unit
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         showBottomNavigation.value = false
@@ -69,6 +70,7 @@ fun CreateSetScreen(
                     Box {
                         IconButton(
                             onClick = {
+                                onBack()
                                 navController.popBackStack()
                             },
                             modifier = Modifier.align(Alignment.CenterStart)
