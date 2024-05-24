@@ -3,6 +3,7 @@ package com.chepics.chepics.feature.topic.createset
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.usecase.CreateSetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,7 +20,20 @@ class CreateSetViewModel @Inject constructor(private val createSetUseCase: Creat
         this.topicId.value = topicId
     }
 
-    fun onTapButton() {
+    suspend fun onTapButton(completion: () -> Unit) {
+        topicId.value?.let {
+            isLoading.value = true
+            when (val result = createSetUseCase.createSet(topicId = it, set = setText.value)) {
+                is CallResult.Success -> {
+                    isLoading.value = false
+                    completion()
+                }
 
+                is CallResult.Error -> {
+                    isLoading.value = false
+                    showDialog.value = true
+                }
+            }
+        }
     }
 }

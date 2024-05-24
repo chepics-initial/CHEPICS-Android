@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -19,10 +20,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,9 +37,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.ButtonType
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +59,8 @@ fun CreateSetScreen(
     LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
         showBottomNavigation.value = true
     }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -140,14 +147,38 @@ fun CreateSetScreen(
 
                     RoundButton(
                         text = "セットを追加",
-                        isActive = viewModel.setText.value.trim().isNotBlank() && viewModel.setText.value.length <= Constants.SET_COUNT,
+                        isActive = viewModel.setText.value.trim()
+                            .isNotBlank() && viewModel.setText.value.length <= Constants.SET_COUNT,
                         type = ButtonType.Fill,
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        viewModel.onTapButton()
+                        coroutineScope.launch {
+                            viewModel.onTapButton {
+                                navController.popBackStack()
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        if (viewModel.isLoading.value) {
+            CommonProgressSpinner()
+        }
+
+        if (viewModel.showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "通信エラー") },
+                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.showDialog.value = false
+                    }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
         }
     }
 }
