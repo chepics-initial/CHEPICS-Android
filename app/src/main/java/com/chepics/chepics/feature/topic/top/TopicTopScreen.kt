@@ -278,7 +278,12 @@ fun TopicSetListView(
                                 modifier = Modifier.clickable { viewModel.selectSet(it) }
                             ) {
                                 viewModel.showBottomSheet.value = false
-                                navController.navigate(Screens.SetCommentScreen.name + "/${it}")
+                                navController.navigate(Screens.SetCommentScreen.name + "/${it}") {
+                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                        "onBack",
+                                        onBack
+                                    )
+                                }
                             }
                         }
 

@@ -141,6 +141,10 @@ fun CommentCell(
                         CommentType.REPLY -> {
                             Box(modifier = Modifier)
                         }
+
+                        CommentType.SET -> {
+                            Box(modifier = Modifier)
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -251,5 +255,6 @@ private fun getHeight(): Dp {
 enum class CommentType {
     COMMENT,
     DETAIL,
-    REPLY
+    REPLY,
+    SET
 }

@@ -346,13 +346,19 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 type = SetNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("set")?.let {
-                Gson().fromJson(it, PickSet::class.java)
-            }?.let {
-                SetCommentScreen(
-                    set = it,
-                    navController = feedNavController
-                )
+            backStackEntry.arguments?.getString("set")?.let { set ->
+                Gson().fromJson(set, PickSet::class.java)
+            }?.let { set ->
+                val onBack =
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                onBack?.let { onBack ->
+                    SetCommentScreen(
+                        set = set,
+                        navController = feedNavController
+                    ) {
+                        onBack()
+                    }
+                }
             }
         }
     }
@@ -504,11 +510,17 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("set")?.let {
                 Gson().fromJson(it, PickSet::class.java)
-            }?.let {
-                SetCommentScreen(
-                    set = it,
-                    navController = myPageNavController
-                )
+            }?.let { set ->
+                val onBack =
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                onBack?.let { onBack ->
+                    SetCommentScreen(
+                        set = set,
+                        navController = myPageNavController
+                    ) {
+                        onBack()
+                    }
+                }
             }
         }
     }

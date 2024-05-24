@@ -45,7 +45,8 @@ import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 fun SetCommentScreen(
     set: PickSet,
     navController: NavController,
-    viewModel: SetCommentViewModel = hiltViewModel()
+    viewModel: SetCommentViewModel = hiltViewModel(),
+    onBack: () -> Unit
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(set)
@@ -56,7 +57,11 @@ fun SetCommentScreen(
             TopAppBar(
                 title = {},
                 actions = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        onBack()
+                        navController.popBackStack()
+                    }
+                    ) {
                         Image(
                             imageVector = Icons.Default.Close,
                             contentDescription = "close icon"
@@ -130,7 +135,7 @@ fun SetCommentScreen(
                             items(viewModel.comments.value) { comment ->
                                 CommentCell(
                                     comment = comment,
-                                    type = CommentType.COMMENT,
+                                    type = CommentType.SET,
                                     onTapImage = {},
                                     onTapUserInfo = {})
                             }
