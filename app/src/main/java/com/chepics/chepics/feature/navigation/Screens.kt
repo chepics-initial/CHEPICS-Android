@@ -24,5 +24,6 @@ enum class Screens {
     CommentDetailScreen,
     TopicTopScreen,
     TopicDetailScreen,
-    CreateSetScreen
+    CreateSetScreen,
+    SetCommentScreen
 }

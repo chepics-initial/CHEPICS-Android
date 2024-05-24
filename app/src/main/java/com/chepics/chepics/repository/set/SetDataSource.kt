@@ -9,4 +9,5 @@ interface SetDataSource {
     suspend fun fetchSets(topicId: String): CallResult<List<PickSet>>
     suspend fun createSet(body: CreateSetRequest): CallResult<Unit>
     suspend fun pickSet(body: PickSetRequest): CallResult<PickSet>
+    suspend fun fetchSet(setId: String): CallResult<PickSet>
 }

@@ -33,6 +33,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.CommentNavType
+import com.chepics.chepics.domainmodel.PickSet
+import com.chepics.chepics.domainmodel.SetNavType
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.TopicNavType
 import com.chepics.chepics.domainmodel.User
@@ -53,6 +55,7 @@ import com.chepics.chepics.feature.feed.FeedScreen
 import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
 import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
+import com.chepics.chepics.feature.topic.comment.SetCommentScreen
 import com.chepics.chepics.feature.topic.createset.CreateSetScreen
 import com.chepics.chepics.feature.topic.detail.TopicDetailScreen
 import com.chepics.chepics.feature.topic.top.TopicTopScreen
@@ -322,6 +325,22 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 )
             }
         }
+
+        composable(
+            "${Screens.SetCommentScreen.name}/{set}",
+            arguments = listOf(navArgument("set") {
+                type = SetNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("set")?.let {
+                Gson().fromJson(it, PickSet::class.java)
+            }?.let {
+                SetCommentScreen(
+                    set = it,
+                    navController = feedNavController
+                )
+            }
+        }
     }
 }
 
@@ -445,6 +464,22 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                     topicId = topicId,
                     navController = myPageNavController,
                     showBottomNavigation = showBottomNavigation
+                )
+            }
+        }
+
+        composable(
+            "${Screens.SetCommentScreen.name}/{set}",
+            arguments = listOf(navArgument("set") {
+                type = SetNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("set")?.let {
+                Gson().fromJson(it, PickSet::class.java)
+            }?.let {
+                SetCommentScreen(
+                    set = it,
+                    navController = myPageNavController
                 )
             }
         }

@@ -264,7 +264,10 @@ fun TopicSetListView(
                                 set = it,
                                 isSelected = it == viewModel.selectedSet.value,
                                 modifier = Modifier.clickable { viewModel.selectSet(it) }
-                            )
+                            ) {
+                                viewModel.showBottomSheet.value = false
+                                navController.navigate(Screens.SetCommentScreen.name + "/${it}")
+                            }
                         }
 
                         item {
@@ -319,7 +322,8 @@ fun SetCell(
     currentSet: PickSet?,
     set: PickSet,
     isSelected: Boolean,
-    modifier: Modifier
+    modifier: Modifier,
+    onTapCommentButton: () -> Unit
 ) {
     Surface(
         shape = RoundedCornerShape(8.dp),
@@ -354,7 +358,10 @@ fun SetCell(
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable { onTapCommentButton() }
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.chat),
                         contentDescription = "comment icon",
@@ -650,7 +657,7 @@ fun TopicTopDetailView(
                             Image(
                                 painter = painterResource(id = R.drawable.chat),
                                 contentDescription = "chat icon",
-                                colorFilter = ColorFilter.tint(Color.Black),
+                                colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black),
                                 modifier = Modifier.size(20.dp)
                             )
 

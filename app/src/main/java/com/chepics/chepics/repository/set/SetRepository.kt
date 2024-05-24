@@ -13,6 +13,7 @@ interface SetRepository {
     suspend fun fetchSets(topicId: String): CallResult<List<PickSet>>
     suspend fun createSet(body: CreateSetRequest): CallResult<Unit>
     suspend fun pickSet(body: PickSetRequest): CallResult<PickSet>
+    suspend fun fetchSet(setId: String): CallResult<PickSet>
 }
 
 internal class SetRepositoryImpl @Inject constructor(
@@ -37,4 +38,9 @@ internal class SetRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun fetchSet(setId: String): CallResult<PickSet> {
+        return withContext(ioDispatcher) {
+            setDataSource.fetchSet(setId)
+        }
+    }
 }

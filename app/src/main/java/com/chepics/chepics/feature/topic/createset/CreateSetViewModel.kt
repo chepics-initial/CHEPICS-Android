@@ -23,7 +23,7 @@ class CreateSetViewModel @Inject constructor(private val createSetUseCase: Creat
     suspend fun onTapButton(completion: () -> Unit) {
         topicId.value?.let {
             isLoading.value = true
-            when (val result = createSetUseCase.createSet(topicId = it, set = setText.value)) {
+            when (createSetUseCase.createSet(topicId = it, set = setText.value)) {
                 is CallResult.Success -> {
                     isLoading.value = false
                     completion()

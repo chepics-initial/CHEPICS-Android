@@ -24,4 +24,8 @@ class SetRemoteSource @Inject constructor(private val setApi: SetApi) : SetDataS
         delay(1000L)
         return CallResult.Success(mockSet1)
     }
+
+    override suspend fun fetchSet(setId: String): CallResult<PickSet> {
+        return CallResult.Success(mockSet1)
+    }
 }

@@ -18,4 +18,7 @@ interface SetApi {
 
     @POST("v1/chepics/pick/set")
     suspend fun pickSet(@Body pickSetRequest: PickSetRequest): Response<PickSet>
+
+    @GET("v1/chepics/set")
+    suspend fun fetchSet(@Query("set_id") setId: String): Response<PickSet>
 }
