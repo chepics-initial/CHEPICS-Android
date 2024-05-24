@@ -56,6 +56,7 @@ import com.chepics.chepics.feature.mypage.top.MyPageTopScreen
 import com.chepics.chepics.feature.mypage.topiclist.MyPageTopicListScreen
 import com.chepics.chepics.feature.profile.ProfileScreen
 import com.chepics.chepics.feature.topic.comment.SetCommentScreen
+import com.chepics.chepics.feature.topic.commentdetail.SetCommentDetailScreen
 import com.chepics.chepics.feature.topic.createset.CreateSetScreen
 import com.chepics.chepics.feature.topic.detail.TopicDetailScreen
 import com.chepics.chepics.feature.topic.top.TopicTopScreen
@@ -357,6 +358,39 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                         navController = feedNavController
                     ) {
                         onBack()
+                    }
+                }
+            }
+        }
+
+        composable(
+            "${Screens.SetCommentDetailScreen.name}/{set}/{comment}",
+            arguments = listOf(navArgument("set") {
+                type = SetNavType()
+            },
+                navArgument("comment") {
+                    type = CommentNavType()
+                }
+            )
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("set")?.let { set ->
+                Gson().fromJson(set, PickSet::class.java)
+            }?.let { set ->
+                backStackEntry.arguments?.getString("comment")?.let { comment ->
+                    Gson().fromJson(comment, Comment::class.java)
+                }?.let { comment ->
+                    val onBack =
+                        feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                            "onBack"
+                        )
+                    onBack?.let { onBack ->
+                        SetCommentDetailScreen(
+                            set = set,
+                            comment = comment,
+                            navController = feedNavController
+                        ) {
+                            onBack()
+                        }
                     }
                 }
             }
