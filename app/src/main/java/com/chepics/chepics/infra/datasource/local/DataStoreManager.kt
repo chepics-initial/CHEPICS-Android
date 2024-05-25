@@ -20,6 +20,7 @@ class DataStoreManager(context: Context) {
 
     companion object {
         val userIdKey = stringPreferencesKey("USER_ID_KEY")
+        val accessTokenKey = stringPreferencesKey("ACCESS_TOKEN_KEY")
     }
 
     suspend fun storeUserId(userId: String) {
@@ -46,5 +47,25 @@ class DataStoreManager(context: Context) {
         return runBlocking {
             getUserId().first()
         }
+    }
+
+    suspend fun storeAccessToken(accessToken: String) {
+        dataStore.edit { pref ->
+            pref[accessTokenKey] = accessToken
+        }
+    }
+
+    suspend fun getAccessToken(): Flow<String> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { pref ->
+                pref[accessTokenKey] ?: ""
+            }
     }
 }
