@@ -663,7 +663,7 @@ fun TopicTopDetailView(
     Column(modifier = Modifier.fillMaxSize()) {
         viewModel.topic.value?.let { topic ->
             viewModel.selectedSet.value?.let { set ->
-                LazyColumn {
+                LazyColumn(modifier = Modifier.weight(1f)) {
                     item {
                         DetailHeaderView(
                             navController = navController,
@@ -732,8 +732,27 @@ fun TopicTopDetailView(
             }
         }
 
-        Row(horizontalArrangement = Arrangement.End) {
-            
+        Column(modifier = Modifier.fillMaxWidth()) {
+            HorizontalDivider()
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.chat),
+                    contentDescription = "chat icon",
+                    colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black),
+                    modifier = Modifier.size(16.dp)
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(text = "コメントする")
+            }
         }
     }
 }
