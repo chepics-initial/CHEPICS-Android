@@ -39,8 +39,6 @@ import com.chepics.chepics.feature.commonparts.CommentType
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
-import com.chepics.chepics.feature.commonparts.CreateCommentType
-import com.chepics.chepics.feature.commonparts.CreateCommentView
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.mock.mockComment1
@@ -156,14 +154,6 @@ fun CommentDetailScreen(
                         }
                     }
                 }
-
-                CreateCommentView(
-                    text = viewModel.replyText,
-                    link = viewModel.linkText,
-                    images = viewModel.images,
-                    type = CreateCommentType.REPLY,
-                    modifier = Modifier
-                )
             }
         }
 
