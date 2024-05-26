@@ -731,6 +731,10 @@ fun TopicTopDetailView(
                 }
             }
         }
+
+        Row(horizontalArrangement = Arrangement.End) {
+            
+        }
     }
 }
 
