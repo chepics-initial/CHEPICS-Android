@@ -217,14 +217,31 @@ fun CommentCell(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (type == CommentType.REPLY) {
-                    Image(
-                        painter = painterResource(id = R.drawable.reply),
-                        contentDescription = "reply icon",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clickable { }
-                    )
+                when (type) {
+                    CommentType.COMMENT -> {
+                        Box(modifier = Modifier)
+                    }
+                    CommentType.DETAIL -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.reply),
+                            contentDescription = "reply icon",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { }
+                        )
+                    }
+                    CommentType.REPLY -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.reply),
+                            contentDescription = "reply icon",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { }
+                        )
+                    }
+                    CommentType.SET -> {
+                        Box(modifier = Modifier)
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))

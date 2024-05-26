@@ -123,12 +123,15 @@ fun SetCommentDetailScreen(
                     item {
                         CommentCell(
                             comment = comment,
-                            type = CommentType.SET,
+                            type = CommentType.DETAIL,
                             onTapImage = {},
                             onTapUserInfo = {}
                         )
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
                             Image(
                                 painter = painterResource(id = R.drawable.chat),
                                 contentDescription = "chat icon",
@@ -149,7 +152,7 @@ fun SetCommentDetailScreen(
                 items(viewModel.replies.value) { reply ->
                     CommentCell(
                         comment = reply,
-                        type = CommentType.SET,
+                        type = CommentType.REPLY,
                         onTapImage = {},
                         onTapUserInfo = {}
                     )
