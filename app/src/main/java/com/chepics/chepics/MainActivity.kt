@@ -39,7 +39,7 @@ fun ChepicsApp(viewModel: MainActivityViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (true) {
+            if (viewModel.isLoggedIn.value) {
                 ServiceNavigation()
             } else {
                 AuthNavigation()

@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 object Constants {
-    const val ONE_TIME_CODE_LENGTH = 4
+    const val ONE_TIME_CODE_LENGTH = 6
     const val PASSWORD_LENGTH = 8
     const val TOPIC_TITLE_LENGTH = 100
     const val DESCRIPTION_LENGTH = 300

@@ -1,6 +1,7 @@
 package com.chepics.chepics.usecase.auth
 
 import com.chepics.chepics.domainmodel.CheckCodeRequest
+import com.chepics.chepics.domainmodel.CreateCode
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthRepository
 import javax.inject.Inject
@@ -18,6 +19,6 @@ internal class OneTimeCodeUseCaseImpl @Inject constructor(
     }
 
     override suspend fun createCode(email: String): CallResult<String> {
-        return authRepository.createCode(email)
+        return authRepository.createCode(CreateCode(email))
     }
 }

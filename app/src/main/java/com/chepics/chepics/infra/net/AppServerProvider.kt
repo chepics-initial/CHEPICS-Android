@@ -16,11 +16,11 @@ class AppServerProvider @Inject constructor(
 
     override fun provideAsBuilder(): Uri.Builder {
         return Uri.Builder()
-            .scheme(HTTP)
+            .scheme(HTTPS)
             .authority(appHostProvider.provide().hostName)
     }
 
     companion object {
-        private const val HTTP = "http"
+        private const val HTTPS = "https"
     }
 }

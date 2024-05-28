@@ -2,6 +2,7 @@ package com.chepics.chepics.repository.auth
 
 import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.CheckCodeRequest
+import com.chepics.chepics.domainmodel.CreateCode
 import com.chepics.chepics.domainmodel.CreateUserRequest
 import com.chepics.chepics.domainmodel.LoginRequest
 import com.chepics.chepics.domainmodel.common.CallResult
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 interface AuthRepository {
     suspend fun login(request: LoginRequest): CallResult<Unit>
-    suspend fun createCode(email: String): CallResult<String>
+    suspend fun createCode(request: CreateCode): CallResult<String>
     suspend fun checkCode(request: CheckCodeRequest): CallResult<Unit>
     suspend fun createUser(password: String): CallResult<Unit>
     suspend fun logout()
@@ -49,9 +50,9 @@ internal class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createCode(email: String): CallResult<String> {
+    override suspend fun createCode(request: CreateCode): CallResult<String> {
         return withContext(ioDispatcher) {
-            authDataSource.createCode(email)
+            authDataSource.createCode(request)
         }
     }
 

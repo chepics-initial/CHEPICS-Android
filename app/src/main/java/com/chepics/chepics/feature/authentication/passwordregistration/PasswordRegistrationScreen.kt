@@ -30,19 +30,22 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordRegistrationScreen(navController: NavController, viewModel: PasswordRegistrationViewModel = viewModel()) {
+fun PasswordRegistrationScreen(
+    navController: NavController,
+    viewModel: PasswordRegistrationViewModel = hiltViewModel()
+) {
     if (viewModel.isCompleted.value) {
         navController.navigate(Screens.NameRegistrationScreen.name)
         viewModel.isCompleted.value = false
@@ -57,7 +60,10 @@ fun PasswordRegistrationScreen(navController: NavController, viewModel: Password
                             onClick = { navController.popBackStack() },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
-                            Image(imageVector = Icons.Default.ArrowBack, contentDescription = "Back button")
+                            Image(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back button"
+                            )
                         }
                     }
                 )
@@ -66,15 +72,24 @@ fun PasswordRegistrationScreen(navController: NavController, viewModel: Password
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = it.calculateTopPadding(), bottom = 16.dp, start = 16.dp, end = 16.dp)
+                    .padding(
+                        top = it.calculateTopPadding(),
+                        bottom = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
             ) {
-                Column(modifier = Modifier.fillMaxSize(),
+                Column(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = 24.dp),
                     ) {
-                        HeaderView(title = "パスワード作成", description = "${Constants.PASSWORD_LENGTH}文字以上のパスワードを設定してください")
+                        HeaderView(
+                            title = "パスワード作成",
+                            description = "${Constants.PASSWORD_LENGTH}文字以上のパスワードを設定してください"
+                        )
 
                         OutlinedTextField(
                             value = viewModel.password.value,
@@ -130,7 +145,11 @@ fun PasswordRegistrationScreen(navController: NavController, viewModel: Password
                         )
                     }
 
-                    RoundButton(text = "次へ", isActive = viewModel.isActive(), type = ButtonType.Fill) {
+                    RoundButton(
+                        text = "次へ",
+                        isActive = viewModel.isActive(),
+                        type = ButtonType.Fill
+                    ) {
                         viewModel.onTapButton()
                     }
                 }
@@ -143,7 +162,7 @@ fun PasswordRegistrationScreen(navController: NavController, viewModel: Password
 
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
-                onDismissRequest = {  },
+                onDismissRequest = { },
                 title = { Text(text = "エラー") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {

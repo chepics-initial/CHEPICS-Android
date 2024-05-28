@@ -52,6 +52,7 @@ import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
+import com.chepics.chepics.utils.Constants.ONE_TIME_CODE_LENGTH
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +69,8 @@ fun OneTimeCodeScreen(
     }
 
     if (viewModel.showToast.value) {
-        Toast.makeText(LocalContext.current, "認証コードを再送信しました", Toast.LENGTH_SHORT).show()
+        Toast.makeText(LocalContext.current, "認証コードを再送信しました", Toast.LENGTH_SHORT)
+            .show()
         viewModel.showToast.value = false
     }
 
@@ -116,7 +118,7 @@ fun OneTimeCodeScreen(
 
                     RoundButton(
                         text = "次へ",
-                        isActive = viewModel.code.value.count() == 4,
+                        isActive = viewModel.code.value.count() == ONE_TIME_CODE_LENGTH,
                         type = ButtonType.Fill
                     ) {
                         viewModel.onTapButton(email)
@@ -135,7 +137,7 @@ fun OneTimeCodeScreen(
                             viewModel.code.value = value
                         }
                     ) {
-                        if (viewModel.code.value.length != 4) return@OtpTextField
+                        if (viewModel.code.value.length != ONE_TIME_CODE_LENGTH) return@OtpTextField
                         keyboardController?.hide()
                         viewModel.onTapButton(email)
                     }
@@ -184,7 +186,7 @@ fun OneTimeCodeScreen(
 fun OtpTextField(
     modifier: Modifier = Modifier,
     otpText: String,
-    otpCount: Int = 4,
+    otpCount: Int = ONE_TIME_CODE_LENGTH,
     onOtpTextChange: (String, Boolean) -> Unit,
     onDone: () -> Unit
 ) {
@@ -220,7 +222,7 @@ fun OtpTextField(
                         text = otpText,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(16.dp)
+                            .padding(8.dp)
                     )
                 }
             }

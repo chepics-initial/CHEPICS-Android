@@ -4,11 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.usecase.auth.PasswordRegistrationUseCase
 import com.chepics.chepics.utils.Constants
-import kotlinx.coroutines.delay
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PasswordRegistrationViewModel: ViewModel() {
+@HiltViewModel
+class PasswordRegistrationViewModel @Inject constructor(private val passwordRegistrationUseCase: PasswordRegistrationUseCase) :
+    ViewModel() {
     val password: MutableState<String> = mutableStateOf("")
     val confirmPassword: MutableState<String> = mutableStateOf("")
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
@@ -22,12 +27,16 @@ class PasswordRegistrationViewModel: ViewModel() {
     fun onTapButton() {
         viewModelScope.launch {
             isLoading.value = true
-            delay(1000L)
-            isLoading.value = false
-            if (password.value == "aaaaaaaa") {
-                showAlertDialog.value = true
-            } else {
-                isCompleted.value = true
+            when (passwordRegistrationUseCase.registerPassword(password.value)) {
+                is CallResult.Success -> {
+                    isLoading.value = false
+                    isCompleted.value = true
+                }
+
+                is CallResult.Error -> {
+                    isLoading.value = false
+                    showAlertDialog.value = true
+                }
             }
         }
     }
