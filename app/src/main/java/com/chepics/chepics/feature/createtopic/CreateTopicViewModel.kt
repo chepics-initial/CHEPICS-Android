@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.chepics.chepics.utils.Constants
 
-class CreateTopicViewModel: ViewModel() {
+class CreateTopicViewModel : ViewModel() {
     val title: MutableState<String> = mutableStateOf("")
     val description: MutableState<String> = mutableStateOf("")
     val link: MutableState<String> = mutableStateOf("")

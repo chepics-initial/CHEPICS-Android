@@ -47,6 +47,9 @@ import com.chepics.chepics.feature.authentication.nameregistration.NameRegistrat
 import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
 import com.chepics.chepics.feature.comment.CommentDetailScreen
+import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
+import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItemNavType
+import com.chepics.chepics.feature.createcomment.CreateCommentScreen
 import com.chepics.chepics.feature.createtopic.CreateTopicScreen
 import com.chepics.chepics.feature.editprofile.EditProfileScreen
 import com.chepics.chepics.feature.explore.result.ExploreResultScreen
@@ -395,6 +398,23 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 }
             }
         }
+
+        composable(
+            "${Screens.CreateCommentScreen.name}/{navigationItem}",
+            arguments = listOf(navArgument("navigationItem") {
+                type = CreateCommentNavigationItemNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("navigationItem")?.let { item ->
+                Gson().fromJson(item, CreateCommentNavigationItem::class.java)
+            }?.let { item ->
+                CreateCommentScreen(
+                    navController = feedNavController,
+                    showBottomNavigation = showBottomNavigation,
+                    navigationItem = item
+                )
+            }
+        }
     }
 }
 
@@ -555,6 +575,23 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                         onBack()
                     }
                 }
+            }
+        }
+
+        composable(
+            "${Screens.CreateCommentScreen.name}/{navigationItem}",
+            arguments = listOf(navArgument("navigationItem") {
+                type = CreateCommentNavigationItemNavType()
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("navigationItem")?.let { item ->
+                Gson().fromJson(item, CreateCommentNavigationItem::class.java)
+            }?.let { item ->
+                CreateCommentScreen(
+                    navController = myPageNavController,
+                    showBottomNavigation = showBottomNavigation,
+                    navigationItem = item
+                )
             }
         }
     }

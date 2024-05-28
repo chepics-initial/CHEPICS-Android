@@ -78,6 +78,8 @@ import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.commonparts.UserIcon
+import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
+import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import kotlinx.coroutines.launch
@@ -742,16 +744,35 @@ fun TopicTopDetailView(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.chat),
-                    contentDescription = "chat icon",
-                    colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black),
-                    modifier = Modifier.size(16.dp)
-                )
+                Row(
+                    modifier = Modifier.clickable {
+                        viewModel.topic.value?.let { topic ->
+                            viewModel.selectedSet.value?.let { selectedSet ->
+                                navController.navigate(
+                                    Screens.CreateCommentScreen.name + "/${
+                                        CreateCommentNavigationItem(
+                                            topicId = topic.id,
+                                            setId = selectedSet.id,
+                                            type = CreateCommentType.COMMENT
+                                        )
+                                    }"
+                                )
+                            }
+                        }
+                    },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.chat),
+                        contentDescription = "chat icon",
+                        colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black),
+                        modifier = Modifier.size(16.dp)
+                    )
 
-                Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                Text(text = "コメントする")
+                    Text(text = "コメントする")
+                }
             }
         }
     }

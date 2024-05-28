@@ -53,11 +53,11 @@ enum class IconScale {
     PROFILE;
 
     fun scaleValue(): Dp {
-        when (this) {
-            TOPIC -> return 24.dp
-            COMMENT -> return 32.dp
-            USER -> return 40.dp
-            PROFILE -> return 64.dp
+        return when (this) {
+            TOPIC -> 24.dp
+            COMMENT -> 32.dp
+            USER -> 40.dp
+            PROFILE -> 64.dp
         }
     }
 }

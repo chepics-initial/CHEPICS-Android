@@ -28,5 +28,4 @@ class TopicNavType : JsonNavType<Topic>() {
     override fun Topic.getJsonParse(): String {
         return Gson().toJson(this)
     }
-
 }
