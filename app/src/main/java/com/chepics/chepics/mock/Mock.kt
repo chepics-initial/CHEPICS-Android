@@ -9,26 +9,26 @@ import com.chepics.chepics.domainmodel.User
 import java.time.LocalDateTime
 
 val mockTopicImage1 = TopicImage(
-    id = "1",
     topicId = "1",
+    number = 1,
     url = "https://doremifahiroba.com/wp-content/uploads/2022/11/EP01_30-1024x576.jpg"
 )
 
 val mockTopicImage2 = TopicImage(
-    id = "2",
     topicId = "1",
+    number = 2,
     url = "https://realsound.jp/wp-content/uploads/2023/01/20230121-gudetama-07.jpg"
 )
 
 val mockTopicImage3 = TopicImage(
-    id = "3",
     topicId = "1",
+    number = 3,
     url = "https://eiga.k-img.com/images/anime/news/117485/photo/46fcf777bd7b0902/640.jpg?1669974887"
 )
 
 val mockTopicImage4 = TopicImage(
-    id = "4",
     topicId = "1",
+    number = 4,
     url = "https://netofuli.com/wp-content/uploads/2022/12/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88-2022-12-17-18.40.30.jpg"
 )
 
@@ -225,8 +225,7 @@ val mockTopic1 = Topic(
     user = mockUser1,
     votes = 134,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic2 = Topic(
@@ -240,8 +239,7 @@ val mockTopic2 = Topic(
     user = mockUser2,
     votes = 4232,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic3 = Topic(
@@ -258,8 +256,7 @@ val mockTopic3 = Topic(
     user = mockUser3,
     votes = 987,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic4 = Topic(
@@ -274,8 +271,7 @@ val mockTopic4 = Topic(
     user = mockUser4,
     votes = 756,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic5 = Topic(
@@ -290,8 +286,7 @@ val mockTopic5 = Topic(
     user = mockUser5,
     votes = 44,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic6 = Topic(
@@ -308,8 +303,7 @@ val mockTopic6 = Topic(
     user = mockUser6,
     votes = 90,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic7 = Topic(
@@ -325,8 +319,7 @@ val mockTopic7 = Topic(
     user = mockUser7,
     votes = 34,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic8 = Topic(
@@ -340,8 +333,7 @@ val mockTopic8 = Topic(
     user = mockUser8,
     votes = 45,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic9 = Topic(
@@ -357,8 +349,7 @@ val mockTopic9 = Topic(
     user = mockUser9,
     votes = 201,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic10 = Topic(
@@ -373,8 +364,7 @@ val mockTopic10 = Topic(
     user = mockUser10,
     votes = 1343,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic11 = Topic(
@@ -389,8 +379,7 @@ val mockTopic11 = Topic(
     user = mockUser11,
     votes = 1342,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic12 = Topic(
@@ -404,8 +393,7 @@ val mockTopic12 = Topic(
     user = mockUser12,
     votes = 1834,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic13 = Topic(
@@ -422,8 +410,7 @@ val mockTopic13 = Topic(
     user = mockUser13,
     votes = 3134,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic14 = Topic(
@@ -438,8 +425,7 @@ val mockTopic14 = Topic(
     user = mockUser14,
     votes = 4134,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockTopic15 = Topic(
@@ -454,8 +440,7 @@ val mockTopic15 = Topic(
     user = mockUser15,
     votes = 1354,
     set = null,
-    registerTime = LocalDateTime.now(),
-    updateTime = LocalDateTime.now()
+//    registerTime = LocalDateTime.now()
 )
 
 val mockCommentImage1 = CommentImage(

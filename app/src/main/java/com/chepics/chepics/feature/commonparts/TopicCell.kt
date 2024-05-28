@@ -159,11 +159,11 @@ fun TopicCell(
                     }
                 }
 
-                Text(
-                    text = getDateTimeString(topic.registerTime),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.LightGray
-                )
+//                Text(
+//                    text = getDateTimeString(topic.registerTime),
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = Color.LightGray
+//                )
             }
 
             HorizontalDivider()

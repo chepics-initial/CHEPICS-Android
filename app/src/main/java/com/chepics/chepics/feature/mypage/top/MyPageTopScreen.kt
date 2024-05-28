@@ -141,7 +141,9 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
                     Text(text = "キャンセル")
                 }
             }, confirmButton = {
-                TextButton(onClick = { }) {
+                TextButton(onClick = {
+                    viewModel.logout()
+                }) {
                     Text(text = "ログアウト")
                 }
             })

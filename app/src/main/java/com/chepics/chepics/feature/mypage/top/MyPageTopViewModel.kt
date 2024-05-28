@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPageTopUseCase): ViewModel() {
+class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPageTopUseCase) :
+    ViewModel() {
     val user: MutableState<User?> = mutableStateOf(null)
 
     init {
@@ -25,6 +26,12 @@ class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPag
         when (val result = myPageTopUseCase.fetchUser()) {
             is CallResult.Success -> user.value = result.data
             is CallResult.Error -> return
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            myPageTopUseCase.logout()
         }
     }
 }
