@@ -39,7 +39,9 @@ val mockUser1 = User(
     profileImageUrl = "https://animeanime.jp/imgs/ogp_f/303592.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser2 = User(
@@ -49,7 +51,9 @@ val mockUser2 = User(
     profileImageUrl = "https://d1uzk9o9cg136f.cloudfront.net/f/16783489/rc/2022/10/25/b86bd6fa3f0fc8c9cb3aaa5eb26bfd60066a598e.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser3 = User(
@@ -59,7 +63,9 @@ val mockUser3 = User(
     profileImageUrl = "https://static.gltjp.com/glt/prd/data/article/21000/20584/20240112_113107_c7298818_w1920.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser4 = User(
@@ -69,7 +75,9 @@ val mockUser4 = User(
     profileImageUrl = "https://img.freepik.com/free-photo/fuji-mountain-and-kawaguchiko-lake-in-morning-autumn-seasons-fuji-mountain-at-yamanachi-in-japan_335224-102.jpg?size=626&ext=jpg&ga=GA1.1.967060102.1710806400&semt=ais",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser5 = User(
@@ -79,7 +87,9 @@ val mockUser5 = User(
     profileImageUrl = "https://fujifilmsquare.jp/assets/img/column/column_39_01.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser6 = User(
@@ -89,7 +99,9 @@ val mockUser6 = User(
     profileImageUrl = "https://tabiiro.jp/auto_sysnc/images/article/2738/share_images1671604951.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser7 = User(
@@ -99,7 +111,9 @@ val mockUser7 = User(
     profileImageUrl = "https://img01.jalannews.jp/img/2023/06/202307_kanto_1_114-670x443.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser8 = User(
@@ -109,7 +123,9 @@ val mockUser8 = User(
     profileImageUrl = "https://discoverjapan-web.com/wp-content/uploads/2020/06/4ffe6b26cd5640fa352a979cc7a96dd7.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser9 = User(
@@ -119,7 +135,9 @@ val mockUser9 = User(
     profileImageUrl = "https://prtimes.jp/i/7916/471/resize/d7916-471-835089-22.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser10 = User(
@@ -129,7 +147,9 @@ val mockUser10 = User(
     profileImageUrl = "https://travel.rakuten.co.jp/mytrip/sites/mytrip/files/styles/main_image/public/migration_article_images/amazing/amazingviews-kanto-key.jpg?itok=F7xs4yDv",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser11 = User(
@@ -139,7 +159,9 @@ val mockUser11 = User(
     profileImageUrl = "https://fs.tour.ne.jp/index.php/file_manage/view/?contents_code=curation&file_name=814/27186/98ca4c60e2fcc431d31fdc8fd05c7bc3.jpg&w=1200",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser12 = User(
@@ -149,7 +171,9 @@ val mockUser12 = User(
     profileImageUrl = "https://media.vogue.co.jp/photos/64df24ddd343815066c32ece/master/w_1600%2Cc_limit/VJ-travel-world-bridge-06.jpeg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser13 = User(
@@ -159,7 +183,9 @@ val mockUser13 = User(
     profileImageUrl = "https://cdn.fujiyama-navi.jp/entries/images/000/004/668/original/6688648b-443d-4f6b-a39f-be2240ea06e3.jpg?1516586033",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser14 = User(
@@ -169,7 +195,9 @@ val mockUser14 = User(
     profileImageUrl = "https://animeanime.jp/imgs/ogp_f/303592.jpg",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockUser15 = User(
@@ -179,7 +207,9 @@ val mockUser15 = User(
     profileImageUrl = "https://www.nta.co.jp/media/tripa/static_contents/nta-tripa/item_images/images/000/066/242/medium/8c11da1d-97de-4c99-96dd-78089cc52f72.jpg?1550676731",
     bio = "技術の世界では、エンジニアや開発者は常に新しいアルゴリズムやプログラミング言語を探求し、さまざまな課題に対処するための革新的なソリューションを提供しようと努力しています。例えば、人工知能や機械学習の分野では、データの解析や予測モデルの構築に関する研究が進んでおり、これによってビジネスや科学の分野で革新的な進展が可能になっています。",
     isFollowing = false,
-    isFollowed = false
+    isFollowed = false,
+    following = 20,
+    followers = 20
 )
 
 val mockTopic1 = Topic(

@@ -7,5 +7,5 @@ import retrofit2.http.Query
 
 interface UserApi {
     @GET("v1/chepics/user")
-    suspend fun fetchFavoriteTopics(@Query("user_id") userId: String): Response<User>
+    suspend fun fetchUser(@Query("user_id") userId: String): Response<User>
 }
