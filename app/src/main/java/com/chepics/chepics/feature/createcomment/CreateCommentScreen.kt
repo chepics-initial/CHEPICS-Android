@@ -123,15 +123,17 @@ fun CreateCommentScreen(
                             )
                         }
 
-                        Text(
-                            text = "新規投稿",
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .fillMaxWidth(),
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        viewModel.type.value?.let { type ->
+                            Text(
+                                text = type.screenTitle(),
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .fillMaxWidth(),
+                                style = MaterialTheme.typography.titleMedium,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 })
             }
@@ -161,7 +163,7 @@ fun CreateCommentScreen(
                             Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
-                                text = reply.user.fullname,
+                                text = "${reply.user.fullname}さんに返信",
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
@@ -229,6 +231,8 @@ fun CreateCommentScreen(
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Column {
                         Text(

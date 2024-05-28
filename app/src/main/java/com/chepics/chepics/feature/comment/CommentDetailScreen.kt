@@ -40,8 +40,9 @@ import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.ImagePager
+import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
+import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
-import com.chepics.chepics.mock.mockComment1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,9 +97,20 @@ fun CommentDetailScreen(
                                             })
                                         showImageViewer.value = true
                                     }
-                                }) { user ->
-                                navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                            }
+                                }, onTapUserInfo = { user ->
+                                    navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                }, onTapReplyButton = {
+                                    navController.navigate(
+                                        Screens.CreateCommentScreen.name + "/${
+                                            CreateCommentNavigationItem(
+                                                topicId = rootComment.topicId,
+                                                setId = rootComment.setId,
+                                                type = CreateCommentType.REPLY
+                                            )
+                                        }"
+                                    )
+                                }
+                            )
 
                             Row(
                                 modifier = Modifier.padding(16.dp),
@@ -127,9 +139,9 @@ fun CommentDetailScreen(
                         }
 
                         UIState.SUCCESS -> {
-                            items(viewModel.replies.value) {
+                            items(viewModel.replies.value) { reply ->
                                 CommentCell(
-                                    comment = mockComment1,
+                                    comment = reply,
                                     type = CommentType.REPLY,
                                     onTapImage = { index ->
                                         comment.images?.let { images ->
@@ -140,10 +152,21 @@ fun CommentDetailScreen(
                                                 })
                                             showImageViewer.value = true
                                         }
+                                    }, onTapUserInfo = { user ->
+                                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                    }, onTapReplyButton = {
+                                        navController.navigate(
+                                            Screens.CreateCommentScreen.name + "/${
+                                                CreateCommentNavigationItem(
+                                                    topicId = reply.topicId,
+                                                    setId = reply.setId,
+                                                    type = CreateCommentType.REPLY,
+                                                    replyFor = reply
+                                                )
+                                            }"
+                                        )
                                     }
-                                ) { user ->
-                                    navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                                }
+                                )
                             }
                         }
 

@@ -717,10 +717,11 @@ fun TopicTopDetailView(
                                         comment.images?.let { images ->
                                             onTapImage(index, images.map { it.url })
                                         }
+                                    },
+                                    onTapUserInfo = { user ->
+                                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
                                     }
-                                ) {
-                                    navController.navigate(Screens.ProfileScreen.name + "/${comment.user}")
-                                }
+                                )
                             }
                         }
 

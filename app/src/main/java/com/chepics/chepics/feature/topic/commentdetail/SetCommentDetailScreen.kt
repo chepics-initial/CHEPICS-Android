@@ -39,6 +39,9 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
+import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
+import com.chepics.chepics.feature.createcomment.CreateCommentType
+import com.chepics.chepics.feature.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,7 +128,18 @@ fun SetCommentDetailScreen(
                             comment = comment,
                             type = CommentType.DETAIL,
                             onTapImage = {},
-                            onTapUserInfo = {}
+                            onTapUserInfo = {},
+                            onTapReplyButton = {
+                                navController.navigate(
+                                    Screens.CreateCommentScreen.name + "/${
+                                        CreateCommentNavigationItem(
+                                            topicId = comment.topicId,
+                                            setId = comment.setId,
+                                            type = CreateCommentType.REPLY
+                                        )
+                                    }"
+                                )
+                            }
                         )
 
                         Row(
@@ -154,7 +168,19 @@ fun SetCommentDetailScreen(
                         comment = reply,
                         type = CommentType.REPLY,
                         onTapImage = {},
-                        onTapUserInfo = {}
+                        onTapUserInfo = {},
+                        onTapReplyButton = {
+                            navController.navigate(
+                                Screens.CreateCommentScreen.name + "/${
+                                    CreateCommentNavigationItem(
+                                        topicId = comment.topicId,
+                                        setId = comment.setId,
+                                        type = CreateCommentType.REPLY,
+                                        replyFor = reply
+                                    )
+                                }"
+                            )
+                        }
                     )
                 }
             }

@@ -57,7 +57,8 @@ fun CommentCell(
     type: CommentType,
     modifier: Modifier = Modifier,
     onTapImage: (Int) -> Unit,
-    onTapUserInfo: (User) -> Unit
+    onTapUserInfo: (User) -> Unit,
+    onTapReplyButton: () -> Unit = {}
 ) {
     val context = LocalContext.current
     Card(
@@ -221,24 +222,31 @@ fun CommentCell(
                     CommentType.COMMENT -> {
                         Box(modifier = Modifier)
                     }
+
                     CommentType.DETAIL -> {
                         Image(
                             painter = painterResource(id = R.drawable.reply),
                             contentDescription = "reply icon",
                             modifier = Modifier
                                 .size(20.dp)
-                                .clickable { }
+                                .clickable {
+                                    onTapReplyButton()
+                                }
                         )
                     }
+
                     CommentType.REPLY -> {
                         Image(
                             painter = painterResource(id = R.drawable.reply),
                             contentDescription = "reply icon",
                             modifier = Modifier
                                 .size(20.dp)
-                                .clickable { }
+                                .clickable {
+                                    onTapReplyButton()
+                                }
                         )
                     }
+
                     CommentType.SET -> {
                         Box(modifier = Modifier)
                     }

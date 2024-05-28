@@ -321,9 +321,11 @@ fun ExploreCommentContentView(
                                         })
                                     showImageViewer.value = true
                                 }
-                            }) { user ->
-                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                        }
+                            },
+                            onTapUserInfo = { user ->
+                                navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                            }
+                        )
                     }
                 }
 
