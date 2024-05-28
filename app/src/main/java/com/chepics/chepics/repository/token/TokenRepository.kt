@@ -1,16 +1,16 @@
 package com.chepics.chepics.repository.token
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 interface TokenRepository {
-    fun observeAccessToken(): StateFlow<String>
+    fun observeAccessToken(): Flow<String>
 }
 
 internal class TokenRepositoryImpl @Inject constructor(
     private val tokenDataSource: TokenDataSource
 ) : TokenRepository {
-    override fun observeAccessToken(): StateFlow<String> {
+    override fun observeAccessToken(): Flow<String> {
         return tokenDataSource.observeAccessToken()
     }
 }

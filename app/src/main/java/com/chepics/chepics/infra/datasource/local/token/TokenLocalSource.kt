@@ -1,42 +1,38 @@
 package com.chepics.chepics.infra.datasource.local.token
 
 import android.content.Context
-import com.chepics.chepics.infra.datasource.local.DataStoreManager
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import com.chepics.chepics.infra.datasource.local.DataStoreType
+import com.chepics.chepics.infra.ext.getStream
+import com.chepics.chepics.infra.ext.save
 import com.chepics.chepics.repository.token.TokenDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 internal class TokenLocalSource @Inject constructor(
     @ApplicationContext private val context: Context
 ) : TokenDataSource {
-    private val dataStore = DataStoreManager(context)
-    private var accessTokenStream = MutableStateFlow("")
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
-
-    init {
-        coroutineScope.launch {
-            accessTokenStream = dataStore.getAccessToken() as MutableStateFlow<String>
-        }
-    }
+    private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = DataStoreType.TOKEN.value)
 
     override suspend fun storeToken(accessToken: String, refreshToken: String) {
-        dataStore.storeAccessToken(accessToken)
+        context.datastore.save(ACCESS_TOKEN_KEY, accessToken)
         // TODO: - Refresh Tokenの処理
     }
 
     override suspend fun removeToken() {
-        dataStore.storeAccessToken("")
+        context.datastore.save(ACCESS_TOKEN_KEY, "")
         // TODO: - Refresh Tokenの処理
     }
 
-    override fun observeAccessToken(): StateFlow<String> {
-        return accessTokenStream
+    override fun observeAccessToken(): Flow<String> {
+        return context.datastore.getStream(ACCESS_TOKEN_KEY, "")
+    }
+
+    private companion object {
+        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
     }
 }
