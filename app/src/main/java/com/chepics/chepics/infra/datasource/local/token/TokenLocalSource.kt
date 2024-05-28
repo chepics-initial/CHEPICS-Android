@@ -23,6 +23,14 @@ internal class TokenLocalSource @Inject constructor(
         // TODO: - Refresh Tokenの処理
     }
 
+    override suspend fun storeAccessToken(accessToken: String) {
+        context.datastore.save(ACCESS_TOKEN_KEY, accessToken)
+    }
+
+    override fun storeRefreshToken(refreshToken: String) {
+        // TODO: - Refresh Tokenの処理
+    }
+
     override suspend fun removeToken() {
         context.datastore.save(ACCESS_TOKEN_KEY, "")
         // TODO: - Refresh Tokenの処理
