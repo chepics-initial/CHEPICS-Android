@@ -3,9 +3,10 @@ package com.chepics.chepics
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.chepics.chepics.usecase.TokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -14,11 +15,13 @@ class MainActivityViewModel @Inject constructor(private val tokenUseCase: TokenU
     val isLoggedIn: MutableState<Boolean> = mutableStateOf(false)
 
     init {
-        observeAccessToken()
+        viewModelScope.launch {
+            observeAccessToken()
+        }
     }
 
-    private fun observeAccessToken() {
-        tokenUseCase.observeAccessToken().onEach {
+    private suspend fun observeAccessToken() {
+        tokenUseCase.observeAccessToken().collect {
             isLoggedIn.value = it.isNotBlank()
         }
     }
