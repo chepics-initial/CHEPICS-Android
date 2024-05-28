@@ -3,7 +3,6 @@ package com.chepics.chepics
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,19 +17,18 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainActivityViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CHEPICSTheme {
-                ChepicsApp(viewModel)
+                ChepicsApp()
             }
         }
     }
 }
 
 @Composable
-fun ChepicsApp(viewModel: MainActivityViewModel) {
+fun ChepicsApp() {
     // A surface container using the 'background' color from the theme
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -39,11 +37,8 @@ fun ChepicsApp(viewModel: MainActivityViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (true) {
-                ServiceNavigation()
-            } else {
-                AuthNavigation()
-            }
+//            AuthNavigation()
+            ServiceNavigation()
         }
     }
 }
