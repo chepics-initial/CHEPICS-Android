@@ -26,6 +26,8 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     val feedImages: MutableState<List<String>?> = mutableStateOf(null)
     val topicScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val commentScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
+    private var isTopicFetchStarted = false
+    private var isCommentFetchStarted = false
 
     init {
         viewModelScope.launch {
@@ -34,9 +36,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     }
 
     suspend fun fetchTopics() {
-        if (topicUIState.value != UIState.SUCCESS) {
-            topicUIState.value = UIState.LOADING
-        }
+        isTopicFetchStarted = true
         when (val result = feedUseCase.fetchFavoriteTopics(null)) {
             is CallResult.Success -> {
                 topics.value = result.data
@@ -50,9 +50,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     }
 
     suspend fun fetchComments() {
-        if (commentUIState.value != UIState.SUCCESS) {
-            commentUIState.value = UIState.LOADING
-        }
+        isCommentFetchStarted = true
         when (val result = feedUseCase.fetchComments(null)) {
             is CallResult.Success -> {
                 comments.value = result.data
@@ -69,7 +67,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         selectedTab.value = index
         when (index) {
             0 -> {
-                if (topicUIState.value != UIState.SUCCESS) {
+                if (!isTopicFetchStarted) {
                     viewModelScope.launch {
                         fetchTopics()
                     }
@@ -77,7 +75,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
             }
 
             1 -> {
-                if (commentUIState.value != UIState.SUCCESS) {
+                if (!isCommentFetchStarted) {
                     viewModelScope.launch {
                         fetchComments()
                     }

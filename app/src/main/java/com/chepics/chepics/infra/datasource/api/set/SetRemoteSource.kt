@@ -4,28 +4,24 @@ import com.chepics.chepics.domainmodel.CreateSetRequest
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.PickSetRequest
 import com.chepics.chepics.domainmodel.common.CallResult
-import com.chepics.chepics.mock.mockSet1
-import com.chepics.chepics.mock.mockSet2
-import com.chepics.chepics.mock.mockSet3
+import com.chepics.chepics.infra.datasource.api.safeApiCall
 import com.chepics.chepics.repository.set.SetDataSource
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class SetRemoteSource @Inject constructor(private val setApi: SetApi) : SetDataSource {
+class SetRemoteSource @Inject constructor(private val api: SetApi) : SetDataSource {
     override suspend fun fetchSets(topicId: String): CallResult<List<PickSet>> {
-        return CallResult.Success(data = listOf(mockSet1, mockSet2, mockSet3))
+        return safeApiCall { api.fetchSets(topicId) }.mapSuccess { it.items }
     }
 
     override suspend fun createSet(body: CreateSetRequest): CallResult<Unit> {
-        return CallResult.Success(Unit)
+        return safeApiCall { api.createSet(body) }.mapSuccess { }
     }
 
     override suspend fun pickSet(body: PickSetRequest): CallResult<PickSet> {
-        delay(1000L)
-        return CallResult.Success(mockSet1)
+        return safeApiCall { api.pickSet(body) }
     }
 
     override suspend fun fetchSet(setId: String): CallResult<PickSet> {
-        return CallResult.Success(mockSet1)
+        return safeApiCall { api.fetchSet(setId) }
     }
 }

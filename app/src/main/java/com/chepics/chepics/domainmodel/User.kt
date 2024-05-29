@@ -1,10 +1,14 @@
 package com.chepics.chepics.domainmodel
 
 import android.net.Uri
+import androidx.annotation.Keep
 import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Keep
+@Serializable
 data class User(
     @SerializedName("user_id")
     val id: String,

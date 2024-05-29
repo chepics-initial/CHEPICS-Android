@@ -241,12 +241,19 @@ fun FeedTopicContentView(
         }
 
         UIState.FAILURE -> {
-            Text(
-                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                Text(
+                    text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -309,12 +316,19 @@ fun FeedCommentContentView(
         }
 
         UIState.FAILURE -> {
-            Text(
-                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                Text(
+                    text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }

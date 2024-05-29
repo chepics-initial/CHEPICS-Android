@@ -14,7 +14,7 @@ interface TopicApi {
     suspend fun fetchUserTopics(
         @Query("user_id") userId: String,
         @Query("offset") offset: Int?
-    ): Response<List<Topic>>
+    ): Response<Items<Topic>>
 
     @GET("v1/chepics/topic")
     suspend fun fetchTopic(@Query("topic_id") topicId: String): Response<Topic>

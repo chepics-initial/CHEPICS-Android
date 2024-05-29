@@ -2,78 +2,36 @@ package com.chepics.chepics.infra.datasource.api.comment
 
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.common.CallResult
-import com.chepics.chepics.mock.mockComment1
-import com.chepics.chepics.mock.mockComment2
-import com.chepics.chepics.mock.mockComment3
-import com.chepics.chepics.mock.mockComment4
-import com.chepics.chepics.mock.mockComment5
-import com.chepics.chepics.mock.mockComment6
+import com.chepics.chepics.infra.datasource.api.safeApiCall
 import com.chepics.chepics.repository.comment.CommentDataSource
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class CommentRemoteSource @Inject constructor(private val api: CommentApi) : CommentDataSource {
     override suspend fun fetchFollowingComments(offset: Int?): CallResult<List<Comment>> {
-        delay(1000L)
-        return CallResult.Success(
-            data = listOf(
-                mockComment1,
-                mockComment2,
-                mockComment3,
-                mockComment4,
-                mockComment5,
-                mockComment6
-            )
-        )
+        return safeApiCall { api.fetchFavoriteTopics(offset) }.mapSuccess { it.items }
     }
 
     override suspend fun fetchUserComments(
         userId: String,
         offset: Int?
     ): CallResult<List<Comment>> {
-        delay(1000L)
-        return CallResult.Success(
-            data = listOf(
-                mockComment1,
-                mockComment2,
-                mockComment3,
-                mockComment4,
-                mockComment5,
-                mockComment6
+        return safeApiCall {
+            api.fetchUserComments(
+                userId = userId,
+                offset = offset
             )
-        )
+        }.mapSuccess { it.items }
     }
 
     override suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>> {
-        delay(1000L)
-        return CallResult.Success(
-            data = listOf(
-                mockComment1,
-                mockComment2,
-                mockComment3,
-                mockComment4,
-                mockComment5,
-                mockComment6
-            )
-        )
+        return safeApiCall { api.fetchSetComments(setId, offset) }.mapSuccess { it.items }
     }
 
     override suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>> {
-        delay(1000L)
-        return CallResult.Success(
-            data = listOf(
-                mockComment1,
-                mockComment2,
-                mockComment3,
-                mockComment4,
-                mockComment5,
-                mockComment6
-            )
-        )
+        return safeApiCall { api.fetchReplies(commentId, offset) }.mapSuccess { it.items }
     }
 
     override suspend fun fetchComment(id: String): CallResult<Comment> {
-        delay(1000L)
-        return CallResult.Success(mockComment2)
+        return safeApiCall { api.fetchComment(id) }
     }
 }
