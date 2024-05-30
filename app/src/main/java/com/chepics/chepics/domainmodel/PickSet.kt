@@ -1,20 +1,24 @@
 package com.chepics.chepics.domainmodel
 
 import android.net.Uri
+import androidx.annotation.Keep
 import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Keep
+@Serializable
 data class PickSet(
-    @SerializedName("set_id")
+    @SerialName("set_id")
     val id: String,
-    @SerializedName("set_name")
+    @SerialName("set_name")
     val name: String,
-    @SerializedName("user_pick_count")
+    @SerialName("user_pick_count")
     val votes: Int,
-    @SerializedName("comment_count")
+    @SerialName("comment_count")
     val commentCount: Int,
-    @SerializedName("user_pick_rate")
+    @SerialName("user_pick_rate")
     val rate: Double
 ) {
     override fun toString(): String = Uri.encode(Gson().toJson(this))

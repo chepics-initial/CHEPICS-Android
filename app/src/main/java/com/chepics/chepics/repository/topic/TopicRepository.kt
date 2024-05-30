@@ -26,21 +26,14 @@ internal class TopicRepositoryImpl @Inject constructor(
 ) : TopicRepository {
     override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
         return handleResponse(topicDataSource.fetchFavoriteTopics(offset))
-//        return withContext(ioDispatcher) {
-//            topicDataSource.fetchFavoriteTopics(offset)
-//        }
     }
 
     override suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>> {
-        return withContext(ioDispatcher) {
-            topicDataSource.fetchUserTopics(userId = userId, offset = offset)
-        }
+        return handleResponse(topicDataSource.fetchUserTopics(userId = userId, offset = offset))
     }
 
     override suspend fun fetchTopic(topicId: String): CallResult<Topic> {
-        return withContext(ioDispatcher) {
-            topicDataSource.fetchTopic(topicId)
-        }
+        return handleResponse(topicDataSource.fetchTopic(topicId))
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
@@ -52,8 +45,10 @@ internal class TopicRepositoryImpl @Inject constructor(
             is CallResult.Success -> return result
             is CallResult.Error -> {
                 if (result.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_ACCESS_TOKEN) {
-                    when (val tokenRefreshResult =
-                        authDataSource.refreshToken(TokenRefreshRequest(tokenDataSource.getRefreshToken()))) {
+                    val tokenRefreshResult = withContext(ioDispatcher) {
+                        authDataSource.refreshToken(TokenRefreshRequest(tokenDataSource.getRefreshToken()))
+                    }
+                    when (tokenRefreshResult) {
                         is CallResult.Error -> {
                             if (tokenRefreshResult.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_REFRESH_TOKEN) {
                                 tokenDataSource.removeToken()
@@ -66,7 +61,9 @@ internal class TopicRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
-                            return response
+                            return withContext(ioDispatcher) {
+                                response
+                            }
                         }
                     }
                 }

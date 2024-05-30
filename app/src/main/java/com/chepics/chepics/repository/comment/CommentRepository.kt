@@ -37,51 +37,23 @@ internal class CommentRepositoryImpl @Inject constructor(
         offset: Int?
     ): CallResult<List<Comment>> {
         return handleResponse(commentDataSource.fetchUserComments(userId = userId, offset = offset))
-//        val result = withContext(ioDispatcher) {
-//            commentDataSource.fetchUserComments(userId = userId, offset = offset)
-//        }
-//
-//        when (result) {
-//            is CallResult.Success -> return result
-//            is CallResult.Error -> {
-//                if (result.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_ACCESS_TOKEN) {
-//                    when (val tokenRefreshResult = authDataSource.refreshToken(TokenRefreshRequest(tokenDataSource.getRefreshToken()))) {
-//                        is CallResult.Error -> {
-//                            if (tokenRefreshResult.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_REFRESH_TOKEN) {
-//                                tokenDataSource.removeToken()
-//                            }
-//                        }
-//                        is CallResult.Success -> {
-//                            tokenDataSource.storeToken(
-//                                accessToken = tokenRefreshResult.data.accessToken,
-//                                refreshToken = tokenRefreshResult.data.refreshToken
-//                            )
-//                            tokenDataSource.setAccessToken()
-//                            return commentDataSource.fetchUserComments(userId = userId, offset = offset)
-//                        }
-//                    }
-//                }
-//                return result
-//            }
-//        }
     }
 
     override suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>> {
-        return withContext(ioDispatcher) {
-            commentDataSource.fetchSetComments(setId = setId, offset = offset)
-        }
+        return handleResponse(commentDataSource.fetchSetComments(setId = setId, offset = offset))
     }
 
     override suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>> {
-        return withContext(ioDispatcher) {
-            commentDataSource.fetchReplies(commentId = commentId, offset = offset)
-        }
+        return handleResponse(
+            commentDataSource.fetchReplies(
+                commentId = commentId,
+                offset = offset
+            )
+        )
     }
 
     override suspend fun fetchComment(id: String): CallResult<Comment> {
-        return withContext(ioDispatcher) {
-            commentDataSource.fetchComment(id)
-        }
+        return handleResponse(commentDataSource.fetchComment(id))
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
@@ -93,8 +65,10 @@ internal class CommentRepositoryImpl @Inject constructor(
             is CallResult.Success -> return result
             is CallResult.Error -> {
                 if (result.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_ACCESS_TOKEN) {
-                    when (val tokenRefreshResult =
-                        authDataSource.refreshToken(TokenRefreshRequest(tokenDataSource.getRefreshToken()))) {
+                    val tokenRefreshResult = withContext(ioDispatcher) {
+                        authDataSource.refreshToken(TokenRefreshRequest(tokenDataSource.getRefreshToken()))
+                    }
+                    when (tokenRefreshResult) {
                         is CallResult.Error -> {
                             if (tokenRefreshResult.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_REFRESH_TOKEN) {
                                 tokenDataSource.removeToken()
@@ -107,7 +81,9 @@ internal class CommentRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
-                            return response
+                            return withContext(ioDispatcher) {
+                                response
+                            }
                         }
                     }
                 }

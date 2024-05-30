@@ -4,6 +4,7 @@ import com.chepics.chepics.infra.net.AppServerProvider
 import com.chepics.chepics.infra.net.RequestHeaderInterceptor
 import com.chepics.chepics.repository.net.AppServerDataSource
 import com.chepics.chepics.repository.net.RequestHeaderRepository
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,6 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
-import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -68,8 +68,7 @@ internal object InfraNetModule {
         return Retrofit.Builder()
             .baseUrl(appServerDataSource.provideAsUrl())
             .addConverterFactory(
-//                json.asConverterFactory(contentType)
-                GsonConverterFactory.create()
+                json.asConverterFactory(contentType)
             )
             .client(okHttpClientBuilder.build())
             .build()

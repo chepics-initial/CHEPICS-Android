@@ -1,13 +1,16 @@
 package com.chepics.chepics.domainmodel
 
-import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-
+@Keep
+@Serializable
 data class TopicImage(
-    @SerializedName("topic_id")
+    @SerialName("topic_id")
     val topicId: String?,
-    @SerializedName("seq_no")
+    @SerialName("seq_no")
     val number: Int,
-    @SerializedName("image_url")
+    @SerialName("image_url")
     val url: String
 )

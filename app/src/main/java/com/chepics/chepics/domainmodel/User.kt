@@ -4,28 +4,28 @@ import android.net.Uri
 import androidx.annotation.Keep
 import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Keep
 @Serializable
 data class User(
-    @SerializedName("user_id")
+    @SerialName("user_id")
     val id: String,
-    @SerializedName("user_name")
+    @SerialName("user_name")
     val username: String,
-    @SerializedName("display_name")
+    @SerialName("display_name")
     val fullname: String,
-    @SerializedName("user_image_url")
+    @SerialName("user_image_url")
     val profileImageUrl: String?,
     val bio: String?,
-    @SerializedName("is_following")
+    @SerialName("is_following")
     val isFollowing: Boolean?,
-    @SerializedName("is_followed")
+    @SerialName("is_followed")
     val isFollowed: Boolean?,
-    @SerializedName("following_user_count")
+    @SerialName("following_user_count")
     val following: Int?,
-    @SerializedName("followed_user_count")
+    @SerialName("followed_user_count")
     val followers: Int?
 ) {
     override fun toString(): String = Uri.encode(Gson().toJson(this))
