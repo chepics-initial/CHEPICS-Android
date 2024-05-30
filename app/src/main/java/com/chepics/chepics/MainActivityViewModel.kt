@@ -23,6 +23,7 @@ class MainActivityViewModel @Inject constructor(private val tokenUseCase: TokenU
 
     private suspend fun observeAccessToken() {
         tokenUseCase.observeAccessToken().collect {
+            tokenUseCase.setAccessToken()
             isLoggedIn.value = it.isNotBlank()
             if (it.isNotBlank()) {
                 tokenUseCase.setHeaders(mapOf(RequestHeaderKey.AUTHORIZATION_TOKEN.key to "Bearer $it"))

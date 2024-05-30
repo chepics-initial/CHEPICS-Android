@@ -7,6 +7,7 @@ import javax.inject.Inject
 
 interface TokenUseCase {
     fun observeAccessToken(): Flow<String>
+    suspend fun setAccessToken()
     fun setHeaders(headers: Map<String, String>)
 }
 
@@ -17,6 +18,10 @@ internal class TokenUseCaseImpl @Inject constructor(
 
     override fun observeAccessToken(): Flow<String> {
         return tokenRepository.observeAccessToken()
+    }
+
+    override suspend fun setAccessToken() {
+        tokenRepository.setAccessToken()
     }
 
     override fun setHeaders(headers: Map<String, String>) {

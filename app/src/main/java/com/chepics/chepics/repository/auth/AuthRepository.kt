@@ -28,7 +28,6 @@ internal class AuthRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthRepository {
     private var email = ""
-    private var accessToken = ""
     override suspend fun login(request: LoginRequest): CallResult<Unit> {
         val result = withContext(ioDispatcher) {
             authDataSource.login(request)
@@ -41,6 +40,7 @@ internal class AuthRepositoryImpl @Inject constructor(
                     accessToken = result.data.accessToken,
                     refreshToken = result.data.refreshToken
                 )
+                tokenDataSource.setAccessToken()
                 CallResult.Success(Unit)
             }
 
@@ -77,8 +77,10 @@ internal class AuthRepositoryImpl @Inject constructor(
         return when (result) {
             is CallResult.Success -> {
                 userStoreDataSource.storeUserId(result.data.userId)
-                tokenDataSource.storeRefreshToken(result.data.refreshToken)
-                accessToken = result.data.accessToken
+                tokenDataSource.storeToken(
+                    accessToken = result.data.accessToken,
+                    refreshToken = result.data.refreshToken
+                )
                 CallResult.Success(Unit)
             }
 
@@ -91,6 +93,6 @@ internal class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun skip() {
-        tokenDataSource.storeAccessToken(accessToken)
+        tokenDataSource.setAccessToken()
     }
 }

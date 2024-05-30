@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 interface TokenRepository {
     fun observeAccessToken(): Flow<String>
+    suspend fun setAccessToken()
 }
 
 internal class TokenRepositoryImpl @Inject constructor(
@@ -12,5 +13,9 @@ internal class TokenRepositoryImpl @Inject constructor(
 ) : TokenRepository {
     override fun observeAccessToken(): Flow<String> {
         return tokenDataSource.observeAccessToken()
+    }
+
+    override suspend fun setAccessToken() {
+        tokenDataSource.setAccessToken()
     }
 }
