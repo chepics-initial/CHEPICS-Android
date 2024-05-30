@@ -53,6 +53,10 @@ internal class TokenLocalSource @Inject constructor(
         accessToken.value = context.datastore.getStream(ACCESS_TOKEN_KEY, "").first()
     }
 
+    override suspend fun getRefreshToken(): String {
+        return context.datastore.getStream(REFRESH_TOKEN_KEY, "").first()
+    }
+
     /**
      * テキストを暗号化する
      * @param context

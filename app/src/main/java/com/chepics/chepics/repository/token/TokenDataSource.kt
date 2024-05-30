@@ -7,4 +7,5 @@ interface TokenDataSource {
     suspend fun removeToken()
     fun observeAccessToken(): Flow<String>
     suspend fun setAccessToken()
+    suspend fun getRefreshToken(): String
 }

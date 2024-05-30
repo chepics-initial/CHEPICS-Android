@@ -5,6 +5,7 @@ import com.chepics.chepics.domainmodel.CheckCodeRequest
 import com.chepics.chepics.domainmodel.CreateCode
 import com.chepics.chepics.domainmodel.CreateUserRequest
 import com.chepics.chepics.domainmodel.LoginRequest
+import com.chepics.chepics.domainmodel.TokenRefreshRequest
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.infra.datasource.api.safeApiCall
 import com.chepics.chepics.repository.auth.AuthDataSource
@@ -25,5 +26,9 @@ class AuthRemoteSource @Inject constructor(private val api: AuthApi) : AuthDataS
 
     override suspend fun createUser(request: CreateUserRequest): CallResult<AuthResponse> {
         return safeApiCall { api.createUser(request) }
+    }
+
+    override suspend fun refreshToken(request: TokenRefreshRequest): CallResult<AuthResponse> {
+        return safeApiCall { api.refreshToken(request) }
     }
 }

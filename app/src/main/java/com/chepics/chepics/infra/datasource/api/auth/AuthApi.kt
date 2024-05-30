@@ -5,6 +5,7 @@ import com.chepics.chepics.domainmodel.CheckCodeRequest
 import com.chepics.chepics.domainmodel.CreateCode
 import com.chepics.chepics.domainmodel.CreateUserRequest
 import com.chepics.chepics.domainmodel.LoginRequest
+import com.chepics.chepics.domainmodel.TokenRefreshRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -21,4 +22,7 @@ interface AuthApi {
 
     @POST("v1/chepics/auth/user")
     suspend fun createUser(@Body request: CreateUserRequest): Response<AuthResponse>
+
+    @POST("v1/chepics/auth/token/refresh")
+    suspend fun refreshToken(@Body request: TokenRefreshRequest): Response<AuthResponse>
 }
