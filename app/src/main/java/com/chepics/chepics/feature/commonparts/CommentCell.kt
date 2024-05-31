@@ -188,6 +188,7 @@ fun CommentCell(
                                         .aspectRatio(1f)
                                         .padding(4.dp)
                                         .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.Gray)
                                         .clickable { onTapImage(index) },
                                     contentScale = ContentScale.Crop
                                 )
@@ -206,6 +207,7 @@ fun CommentCell(
                             .padding(top = 4.dp, bottom = 4.dp, start = 56.dp, end = 16.dp)
                             .align(Alignment.CenterHorizontally)
                             .clip(RoundedCornerShape(8.dp))
+                            .background(Color.Gray)
                             .clickable { onTapImage(imageUrlList.size - 1) },
                         contentScale = ContentScale.Crop
                     )

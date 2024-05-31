@@ -3,6 +3,7 @@ package com.chepics.chepics.feature.commonparts
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -93,6 +94,7 @@ fun TopicCell(
                                         .aspectRatio(1f)
                                         .padding(4.dp)
                                         .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.Gray)
                                         .clickable { onTapImage(index) },
                                     contentScale = ContentScale.Crop
                                 )
@@ -114,6 +116,7 @@ fun TopicCell(
                             .padding(top = 4.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                             .align(Alignment.CenterHorizontally)
                             .clip(RoundedCornerShape(8.dp))
+                            .background(Color.Gray)
                             .clickable { onTapImage(imageUrlList.size - 1) },
                         contentScale = ContentScale.Crop
                     )

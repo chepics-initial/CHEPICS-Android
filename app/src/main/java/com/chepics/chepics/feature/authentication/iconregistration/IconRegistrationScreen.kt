@@ -38,14 +38,17 @@ import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @Composable
-fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistrationViewModel = viewModel()) {
+fun IconRegistrationScreen(
+    navController: NavController,
+    viewModel: IconRegistrationViewModel = viewModel()
+) {
     val iconImageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         viewModel.imageUri.value = uri
     }
-    
+
     val isImageSelected = remember {
         mutableStateOf(false)
     }
@@ -54,15 +57,18 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp), 
+                .padding(16.dp),
         ) {
             Column(
                 modifier = Modifier
                     .padding(vertical = 24.dp)
                     .fillMaxWidth()
             ) {
-                HeaderView(title = "プロフィール画像設定", description = "プロフィール画像は後から編集することができます")
-                
+                HeaderView(
+                    title = "プロフィール画像設定",
+                    description = "プロフィール画像は後から編集することができます"
+                )
+
                 if (viewModel.imageUri.value != null) {
                     AsyncImage(
                         model = viewModel.imageUri.value,
@@ -72,7 +78,11 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                iconImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                iconImageLauncher.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                )
                             },
                         contentScale = ContentScale.Crop
                     )
@@ -81,7 +91,11 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                iconImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                iconImageLauncher.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                )
                             }
                     ) {
                         Surface(
@@ -119,7 +133,11 @@ fun IconRegistrationScreen(navController: NavController, viewModel: IconRegistra
             Column(
                 modifier = Modifier.align(Alignment.BottomCenter)
             ) {
-                RoundButton(text = "画像を登録", isActive = viewModel.imageUri.value != null, type = ButtonType.Fill) {
+                RoundButton(
+                    text = "画像を登録",
+                    isActive = viewModel.imageUri.value != null,
+                    type = ButtonType.Fill
+                ) {
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

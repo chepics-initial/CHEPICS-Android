@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -539,6 +540,7 @@ fun TopicTopContentView(
                                         .aspectRatio(1f)
                                         .padding(4.dp)
                                         .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.Gray)
                                         .clickable { onTapImage(index, imageUrlList) },
                                     contentScale = ContentScale.Crop
                                 )
@@ -565,6 +567,7 @@ fun TopicTopContentView(
                             )
                             .align(Alignment.CenterHorizontally)
                             .clip(RoundedCornerShape(8.dp))
+                            .background(Color.Gray)
                             .clickable {
                                 onTapImage(
                                     imageUrlList.size - 1,
@@ -885,6 +888,7 @@ fun DetailHeaderView(
                                             .aspectRatio(1f)
                                             .padding(4.dp)
                                             .clip(RoundedCornerShape(8.dp))
+                                            .background(Color.Gray)
                                             .clickable { onTapImage(index, imageUrlList) },
                                         contentScale = ContentScale.Crop
                                     )
@@ -911,6 +915,7 @@ fun DetailHeaderView(
                                 )
                                 .align(Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape(8.dp))
+                                .background(Color.Gray)
                                 .clickable {
                                     onTapImage(
                                         imageUrlList.size - 1,
