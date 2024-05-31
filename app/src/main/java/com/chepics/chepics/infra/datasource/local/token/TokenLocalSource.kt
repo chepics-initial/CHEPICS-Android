@@ -54,7 +54,9 @@ internal class TokenLocalSource @Inject constructor(
     }
 
     override suspend fun getRefreshToken(): String {
-        return context.datastore.getStream(REFRESH_TOKEN_KEY, "").first()
+        val decryptedRefreshToken =
+            decrypt("refreshToken", context.datastore.getStream(REFRESH_TOKEN_KEY, "").first())
+        return decryptedRefreshToken ?: ""
     }
 
     /**
@@ -92,7 +94,7 @@ internal class TokenLocalSource @Inject constructor(
      * @param encryptedText encryptで暗号化されたテキスト
      * @return 復号化された文字列
      */
-    fun decrypt(alias: String, encryptedText: String): String? {
+    private fun decrypt(alias: String, encryptedText: String): String? {
         val keyStore = KeyStore.getInstance(PROVIDER)
         keyStore.load(null)
         if (!keyStore.containsAlias(alias)) {
