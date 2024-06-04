@@ -9,8 +9,13 @@ import com.chepics.chepics.repository.set.SetDataSource
 import javax.inject.Inject
 
 class SetRemoteSource @Inject constructor(private val api: SetApi) : SetDataSource {
-    override suspend fun fetchSets(topicId: String): CallResult<List<PickSet>> {
-        return safeApiCall { api.fetchSets(topicId) }.mapSuccess { it.items }
+    override suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>> {
+        return safeApiCall {
+            api.fetchSets(
+                topicId = topicId,
+                offset = offset
+            )
+        }.mapSuccess { it.items }
     }
 
     override suspend fun createSet(body: CreateSetRequest): CallResult<Unit> {

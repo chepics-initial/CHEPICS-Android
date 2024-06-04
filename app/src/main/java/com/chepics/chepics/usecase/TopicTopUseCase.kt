@@ -13,7 +13,7 @@ import javax.inject.Inject
 interface TopicTopUseCase {
     suspend fun fetchTopic(topicId: String): CallResult<Topic>
     suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>>
-    suspend fun fetchSets(topicId: String): CallResult<List<PickSet>>
+    suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>>
     suspend fun pickSet(topicId: String, setId: String): CallResult<PickSet>
 }
 
@@ -30,8 +30,8 @@ internal class TopicTopUseCaseImpl @Inject constructor(
         return commentRepository.fetchSetComments(setId = setId, offset = offset)
     }
 
-    override suspend fun fetchSets(topicId: String): CallResult<List<PickSet>> {
-        return setRepository.fetchSets(topicId)
+    override suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>> {
+        return setRepository.fetchSets(topicId = topicId, offset = offset)
     }
 
     override suspend fun pickSet(topicId: String, setId: String): CallResult<PickSet> {

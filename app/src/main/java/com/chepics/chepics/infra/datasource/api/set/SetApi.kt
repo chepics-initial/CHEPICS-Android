@@ -13,7 +13,10 @@ import retrofit2.http.Query
 
 interface SetApi {
     @GET("v1/chepics/topic/sets")
-    suspend fun fetchSets(@Query("topic_id") topicId: String): Response<Items<PickSet>>
+    suspend fun fetchSets(
+        @Query("topic_id") topicId: String,
+        @Query("offset") offset: Int?
+    ): Response<Items<PickSet>>
 
     @POST("v1/chepics/set")
     suspend fun createSet(@Body createSetRequest: CreateSetRequest): Response<CreateSetResponse>

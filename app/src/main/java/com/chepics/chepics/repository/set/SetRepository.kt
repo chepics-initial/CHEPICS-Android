@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface SetRepository {
-    suspend fun fetchSets(topicId: String): CallResult<List<PickSet>>
+    suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>>
     suspend fun createSet(body: CreateSetRequest): CallResult<Unit>
     suspend fun pickSet(body: PickSetRequest): CallResult<PickSet>
     suspend fun fetchSet(setId: String): CallResult<PickSet>
@@ -27,8 +27,8 @@ internal class SetRepositoryImpl @Inject constructor(
     private val tokenDataSource: TokenDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SetRepository {
-    override suspend fun fetchSets(topicId: String): CallResult<List<PickSet>> {
-        return handleResponse(setDataSource.fetchSets(topicId))
+    override suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>> {
+        return handleResponse(setDataSource.fetchSets(topicId = topicId, offset = offset))
     }
 
     override suspend fun createSet(body: CreateSetRequest): CallResult<Unit> {

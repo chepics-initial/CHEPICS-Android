@@ -55,7 +55,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     fun fetchSets() {
         topic.value?.let {
             viewModelScope.launch {
-                when (val result = topicTopUseCase.fetchSets(it.id)) {
+                when (val result = topicTopUseCase.fetchSets(topicId = it.id, offset = null)) {
                     is CallResult.Success -> {
                         sets.value = result.data
                         setListUIState.value = UIState.SUCCESS
