@@ -29,9 +29,15 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
     val commentScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val profileImages: MutableState<List<String>?> = mutableStateOf(null)
     val user: MutableState<User?> = mutableStateOf(null)
+    val isFollowing: MutableState<Boolean?> = mutableStateOf(null)
+    val isCurrentUser: MutableState<Boolean> = mutableStateOf(false)
+    val isEnabled: MutableState<Boolean> = mutableStateOf(true)
+    val showDialog: MutableState<Boolean> = mutableStateOf(false)
 
     fun onStart(user: User) {
         this.user.value = user
+        isCurrentUser.value = user.id == profileUseCase.getCurrentUserId()
+        isFollowing.value = user.isFollowing
         viewModelScope.launch {
             fetchUser(user.id)
             fetchTopics()
@@ -40,7 +46,11 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
 
     private suspend fun fetchUser(userId: String) {
         when (val result = profileUseCase.fetchUser(userId)) {
-            is CallResult.Success -> user.value = result.data
+            is CallResult.Success -> {
+                user.value = result.data
+                isFollowing.value = result.data.isFollowing
+            }
+
             is CallResult.Error -> return
         }
     }
@@ -101,6 +111,22 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
     fun onTapImage(index: Int, images: List<String>) {
         selectedImageIndex.value = index
         profileImages.value = images
+    }
+
+    fun onTapFollowButton() {
+        user.value?.let { forUser ->
+            viewModelScope.launch {
+                isEnabled.value = false
+                when (val result = profileUseCase.follow(forUser.id)) {
+                    is CallResult.Success -> {
+                        isEnabled.value = true
+                        isFollowing.value = result.data
+                    }
+
+                    is CallResult.Error -> showDialog.value = true
+                }
+            }
+        }
     }
 }
 

@@ -16,16 +16,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -102,30 +106,38 @@ fun ProfileScreen(
                         ) {
                             UserIcon(url = it.profileImageUrl, scale = IconScale.PROFILE)
 
-//                    Surface(
-//                        modifier = Modifier.clickable {  },
-//                        shape = RoundedCornerShape(8.dp),
-//                        color = ChepicsPrimary
-//                    ) {
-//                        Text(
-//                            text = "フォローする",
-//                            fontWeight = FontWeight.SemiBold,
-//                            style = MaterialTheme.typography.bodyMedium,
-//                            color = Color.White,
-//                            modifier = Modifier.padding(8.dp)
-//                        )
-//                    }
-
-                            IconButton(onClick = {
-                                viewModel.user.value?.let {
-                                    navController.navigate(Screens.EditProfileScreen.name + "/${it}")
+                            if (viewModel.isCurrentUser.value) {
+                                IconButton(onClick = {
+                                    viewModel.user.value?.let {
+                                        navController.navigate(Screens.EditProfileScreen.name + "/${it}")
+                                    }
+                                }) {
+                                    Image(
+                                        imageVector = Icons.Default.Create,
+                                        contentDescription = "edit profile",
+                                        colorFilter = ColorFilter.tint(color = ChepicsPrimary)
+                                    )
                                 }
-                            }) {
-                                Image(
-                                    imageVector = Icons.Default.Create,
-                                    contentDescription = "edit profile",
-                                    colorFilter = ColorFilter.tint(color = ChepicsPrimary)
-                                )
+                            } else if (viewModel.isFollowing.value != null) {
+                                viewModel.isFollowing.value?.let { isFollowing ->
+                                    Surface(
+                                        modifier = Modifier.clickable {
+                                            if (viewModel.isEnabled.value) {
+                                                viewModel.onTapFollowButton()
+                                            }
+                                        },
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = ChepicsPrimary
+                                    ) {
+                                        Text(
+                                            text = if (isFollowing) "フォロー中" else "フォローする",
+                                            fontWeight = FontWeight.SemiBold,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -254,6 +266,19 @@ fun ProfileScreen(
                     }
                 }
             }
+        }
+
+        if (viewModel.showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "通信エラー") },
+                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
         }
 
         if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.profileImages.value != null) {

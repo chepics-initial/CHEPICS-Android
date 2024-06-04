@@ -2,6 +2,7 @@ package com.chepics.chepics.repository.user
 
 import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.APIErrorCode
+import com.chepics.chepics.domainmodel.FollowRequest
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.TokenRefreshRequest
 import com.chepics.chepics.domainmodel.User
@@ -15,6 +16,7 @@ import javax.inject.Inject
 interface UserRepository {
     fun getUserId(): String
     suspend fun fetchUser(userId: String): CallResult<User>
+    suspend fun follow(request: FollowRequest): CallResult<Boolean>
 }
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -30,6 +32,10 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override suspend fun fetchUser(userId: String): CallResult<User> {
         return handleResponse(userDataSource.fetchUser(userId))
+    }
+
+    override suspend fun follow(request: FollowRequest): CallResult<Boolean> {
+        return handleResponse(userDataSource.follow(request))
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
