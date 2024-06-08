@@ -315,7 +315,7 @@ fun TopicSetListView(
                                     modifier = Modifier.clickable {
                                         viewModel.topic.value?.let {
                                             viewModel.showBottomSheet.value = false
-                                            navController.navigate(Screens.CreateSetScreen.name + "/${it}") {
+                                            navController.navigate(Screens.CreateSetScreen.name + "/${it.id}") {
                                                 navController.currentBackStackEntry?.savedStateHandle?.set(
                                                     "onBack",
                                                     onBack
