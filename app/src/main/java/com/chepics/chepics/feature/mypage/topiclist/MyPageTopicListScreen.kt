@@ -101,7 +101,7 @@ fun MyPageTopicListScreen(
                 when (viewModel.uiState.value) {
                     UIState.LOADING -> {
                         item {
-                            CommonProgressSpinner()
+                            CommonProgressSpinner(backgroundColor = Color.Transparent)
                         }
                     }
 

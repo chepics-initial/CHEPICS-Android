@@ -120,5 +120,5 @@ dependencies {
     implementation(libs.timber)
 
     // Lottie
-    implementation("com.airbnb.android:lottie-compose:6.4.1")
+    implementation(libs.lottie.compose)
 }

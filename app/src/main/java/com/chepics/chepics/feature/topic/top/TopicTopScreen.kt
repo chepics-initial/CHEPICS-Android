@@ -153,7 +153,7 @@ fun TopicTopScreen(
                         }
 
                         TopicTopStatus.LOADING -> {
-                            CommonProgressSpinner()
+                            CommonProgressSpinner(backgroundColor = Color.Transparent)
                         }
 
                         TopicTopStatus.FAILURE -> {
