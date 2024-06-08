@@ -1,6 +1,7 @@
 package com.chepics.chepics.infra.datasource.api.set
 
 import com.chepics.chepics.domainmodel.CreateSetRequest
+import com.chepics.chepics.domainmodel.MySet
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.PickSetRequest
 import com.chepics.chepics.domainmodel.common.CallResult
@@ -28,5 +29,13 @@ class SetRemoteSource @Inject constructor(private val api: SetApi) : SetDataSour
 
     override suspend fun fetchSet(setId: String): CallResult<PickSet> {
         return safeApiCall { api.fetchSet(setId) }
+    }
+
+    override suspend fun fetchPickedSets(offset: Int?): CallResult<List<MySet>> {
+        return safeApiCall { api.fetchPickedSets(offset) }.mapSuccess { it.items }
+    }
+
+    override suspend fun fetchPickedSet(topicId: String): CallResult<PickSet> {
+        return safeApiCall { api.fetchPickedSet(topicId) }
     }
 }

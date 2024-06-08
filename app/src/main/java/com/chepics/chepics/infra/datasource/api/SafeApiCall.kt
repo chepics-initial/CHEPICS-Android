@@ -9,12 +9,12 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
 
-suspend inline fun <reified T : Any> safeApiCall(call: suspend () -> Response<T>): CallResult<T> =
+inline fun <reified T : Any> safeApiCall(call: () -> Response<T>): CallResult<T> =
     safeApiCallInternal(call) { it.body() }
 
 @Suppress("TooGenericExceptionCaught", "UNCHECKED_CAST")
-suspend inline fun <reified T : Any, U : Any> safeApiCallInternal(
-    call: suspend () -> Response<T>,
+inline fun <reified T : Any, U : Any> safeApiCallInternal(
+    call: () -> Response<T>,
     responseToBody: (Response<T>) -> U?
 ): CallResult<U> = try {
     val r = call()
@@ -24,6 +24,8 @@ suspend inline fun <reified T : Any, U : Any> safeApiCallInternal(
             CallResult.Success(body)
         } else if (Unit is T) {
             CallResult.Success(Unit as U)
+        } else if (r.code() == 204) {
+            CallResult.Error(Exception(EMPTY_RESPONSE))
         } else {
             CallResult.Error(parseErrorBody(r.errorBody()))
         }
@@ -54,3 +56,4 @@ fun parseErrorBody(errorBody: ResponseBody?): Exception {
 private const val JSON_KEY_STATUS_CODE = "status_code"
 private const val JSON_KEY_MESSAGE = "message"
 private const val JSON_KEY_ERROR_CODE = "error_code"
+const val EMPTY_RESPONSE = "EMPTY_RESPONSE"

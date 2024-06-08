@@ -15,6 +15,7 @@ interface TopicTopUseCase {
     suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>>
     suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>>
     suspend fun pickSet(topicId: String, setId: String): CallResult<PickSet>
+    suspend fun fetchPickedSet(topicId: String): CallResult<PickSet>
 }
 
 internal class TopicTopUseCaseImpl @Inject constructor(
@@ -36,5 +37,9 @@ internal class TopicTopUseCaseImpl @Inject constructor(
 
     override suspend fun pickSet(topicId: String, setId: String): CallResult<PickSet> {
         return setRepository.pickSet(PickSetRequest(topicId = topicId, setId = setId))
+    }
+
+    override suspend fun fetchPickedSet(topicId: String): CallResult<PickSet> {
+        return setRepository.fetchPickedSet(topicId)
     }
 }

@@ -9,6 +9,7 @@ import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.feature.common.UIState
+import com.chepics.chepics.infra.datasource.api.EMPTY_RESPONSE
 import com.chepics.chepics.usecase.TopicTopUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val comments: MutableState<List<Comment>> = mutableStateOf(emptyList())
     val selectedSet: MutableState<PickSet?> = mutableStateOf(null)
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
-    val status: MutableState<TopicTopStatus> = mutableStateOf(TopicTopStatus.TOP)
+    val status: MutableState<TopicTopStatus> = mutableStateOf(TopicTopStatus.LOADING)
     val showBottomSheet: MutableState<Boolean> = mutableStateOf(false)
     val showAlert: MutableState<Boolean> = mutableStateOf(false)
     val currentSet: MutableState<PickSet?> = mutableStateOf(null)
@@ -34,7 +35,25 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     fun onStart(topic: Topic) {
         this.topic.value = topic
         viewModelScope.launch {
-            fetchTopic()
+            when (val result = topicTopUseCase.fetchPickedSet(topic.id)) {
+                is CallResult.Success -> {
+                    status.value = TopicTopStatus.DETAIL
+                    selectedSet.value = result.data
+                    currentSet.value = result.data
+                    fetchTopic()
+                    fetchComments(setId = result.data.id)
+                }
+
+                is CallResult.Error -> {
+                    if (result.exception.message == EMPTY_RESPONSE) {
+                        status.value = TopicTopStatus.TOP
+                        fetchTopic()
+                        return@launch
+                    }
+
+                    status.value = TopicTopStatus.FAILURE
+                }
+            }
         }
     }
 
@@ -99,7 +118,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     }
 
     fun isSelectButtonActive(): Boolean {
-        return selectedSet.value != null && selectedSet.value != currentSet.value
+        return selectedSet.value != null && selectedSet.value?.id != currentSet.value?.id
     }
 
     private suspend fun fetchComments(setId: String) {
@@ -116,5 +135,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
 
 enum class TopicTopStatus {
     TOP,
-    DETAIL
+    DETAIL,
+    LOADING,
+    FAILURE
 }

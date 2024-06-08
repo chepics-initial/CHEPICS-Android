@@ -4,6 +4,7 @@ import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.CreateSetRequest
 import com.chepics.chepics.domainmodel.InfraException
+import com.chepics.chepics.domainmodel.MySet
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.PickSetRequest
 import com.chepics.chepics.domainmodel.TokenRefreshRequest
@@ -19,6 +20,8 @@ interface SetRepository {
     suspend fun createSet(body: CreateSetRequest): CallResult<Unit>
     suspend fun pickSet(body: PickSetRequest): CallResult<PickSet>
     suspend fun fetchSet(setId: String): CallResult<PickSet>
+    suspend fun fetchPickedSets(offset: Int?): CallResult<List<MySet>>
+    suspend fun fetchPickedSet(topicId: String): CallResult<PickSet>
 }
 
 internal class SetRepositoryImpl @Inject constructor(
@@ -41,6 +44,14 @@ internal class SetRepositoryImpl @Inject constructor(
 
     override suspend fun fetchSet(setId: String): CallResult<PickSet> {
         return handleResponse(setDataSource.fetchSet(setId))
+    }
+
+    override suspend fun fetchPickedSets(offset: Int?): CallResult<List<MySet>> {
+        return handleResponse(setDataSource.fetchPickedSets(offset))
+    }
+
+    override suspend fun fetchPickedSet(topicId: String): CallResult<PickSet> {
+        return handleResponse(setDataSource.fetchPickedSet(topicId))
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {

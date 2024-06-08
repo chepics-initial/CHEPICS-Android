@@ -154,19 +154,21 @@ fun CommentCell(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
-                        text = comment.link.toString(),
-                        modifier = Modifier
-                            .clickable {
-                                context.startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse(comment.link)
+                    comment.link?.let { link ->
+                        Text(
+                            text = link,
+                            modifier = Modifier
+                                .clickable {
+                                    context.startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(comment.link)
+                                        )
                                     )
-                                )
-                            },
-                        color = Color.Blue
-                    )
+                                },
+                            color = Color.Blue
+                        )
+                    }
                 }
             }
 

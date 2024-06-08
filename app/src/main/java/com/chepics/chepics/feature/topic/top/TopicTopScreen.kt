@@ -151,6 +151,17 @@ fun TopicTopScreen(
                                 showImageViewer.value = true
                             }
                         }
+
+                        TopicTopStatus.LOADING -> {
+                            CommonProgressSpinner()
+                        }
+
+                        TopicTopStatus.FAILURE -> {
+                            Text(
+                                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
                 }
 
@@ -279,7 +290,7 @@ fun TopicSetListView(
                             SetCell(
                                 currentSet = viewModel.currentSet.value,
                                 set = it,
-                                isSelected = it == viewModel.selectedSet.value,
+                                isSelected = it.id == viewModel.selectedSet.value?.id,
                                 modifier = Modifier.clickable { viewModel.selectSet(it) }
                             ) {
                                 viewModel.showBottomSheet.value = false
@@ -368,7 +379,7 @@ fun SetCell(
         modifier = modifier.padding(vertical = 16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            if (currentSet == set) {
+            if (currentSet?.id == set.id) {
                 Surface(
                     shape = RoundedCornerShape(50),
                     color = ChepicsPrimary
@@ -438,7 +449,7 @@ fun SetCell(
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
-                        .fillMaxWidth(fraction = 0.95f)
+                        .fillMaxWidth(fraction = (set.rate / 100).toFloat())
                         .height(32.dp)
                         .align(Alignment.CenterStart),
                     color = Color.Blue
@@ -454,7 +465,7 @@ fun SetCell(
                         .padding(end = 4.dp)
                 ) {
                     Text(
-                        text = "95%",
+                        text = "${set.rate.toInt()}%",
                         fontSize = 12.sp,
                         color = Color.Black,
                         modifier = Modifier.padding(horizontal = 4.dp)
@@ -487,6 +498,8 @@ fun TopicTopContentView(
 
         viewModel.topic.value?.let { topic ->
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
                     text = topic.title,
                     style = MaterialTheme.typography.titleLarge,
@@ -494,6 +507,8 @@ fun TopicTopContentView(
                 )
 
                 topic.description?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodyMedium
@@ -501,6 +516,8 @@ fun TopicTopContentView(
                 }
 
                 topic.link?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodyMedium,
@@ -580,6 +597,8 @@ fun TopicTopContentView(
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier
@@ -696,7 +715,7 @@ fun TopicTopDetailView(
                                 modifier = Modifier.size(20.dp)
                             )
 
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
                                 text = "コメント${set.commentCount}件",
@@ -734,7 +753,10 @@ fun TopicTopDetailView(
 
                         UIState.FAILURE -> {
                             item {
-                                Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+                                Text(
+                                    text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                                    modifier = Modifier.padding(16.dp)
+                                )
                             }
                         }
                     }
