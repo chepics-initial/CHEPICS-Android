@@ -66,15 +66,17 @@ fun TopicCell(
                 fontWeight = FontWeight.SemiBold
             )
 
-            Text(
-                text = topic.link.toString(),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clickable {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(topic.link)))
-                    },
-                color = Color.Blue
-            )
+            topic.link?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(topic.link)))
+                        },
+                    color = Color.Blue
+                )
+            }
 
             topic.images?.let { images ->
                 val imageUrlList = images.map { it.url }

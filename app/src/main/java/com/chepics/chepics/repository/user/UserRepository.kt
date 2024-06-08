@@ -1,5 +1,6 @@
 package com.chepics.chepics.repository.user
 
+import android.net.Uri
 import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.FollowRequest
@@ -17,6 +18,12 @@ interface UserRepository {
     fun getUserId(): String
     suspend fun fetchUser(userId: String): CallResult<User>
     suspend fun follow(request: FollowRequest): CallResult<Boolean>
+    suspend fun updateUser(
+        username: String,
+        fullname: String,
+        bio: String?,
+        imageUri: Uri?
+    ): CallResult<Unit>
 }
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -36,6 +43,22 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override suspend fun follow(request: FollowRequest): CallResult<Boolean> {
         return handleResponse(userDataSource.follow(request))
+    }
+
+    override suspend fun updateUser(
+        username: String,
+        fullname: String,
+        bio: String?,
+        imageUri: Uri?
+    ): CallResult<Unit> {
+        return handleResponse(
+            userDataSource.updateUser(
+                username = username,
+                fullname = fullname,
+                bio = bio,
+                imageUri = imageUri
+            )
+        )
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {

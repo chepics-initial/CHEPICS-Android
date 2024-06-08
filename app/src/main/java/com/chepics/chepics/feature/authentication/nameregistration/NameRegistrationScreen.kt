@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -29,8 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
@@ -40,7 +40,10 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistrationViewModel = viewModel()) {
+fun NameRegistrationScreen(
+    navController: NavController,
+    viewModel: NameRegistrationViewModel = hiltViewModel()
+) {
     if (viewModel.isCompleted.value) {
         navController.navigate(Screens.CompletionScreen.name) {
             popUpTo(0)
@@ -57,7 +60,10 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
                             onClick = { navController.popBackStack() },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
-                            Image(imageVector = Icons.Default.ArrowBack, contentDescription = "Back button")
+                            Image(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back button"
+                            )
                         }
                     }
                 )
@@ -66,13 +72,22 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = it.calculateTopPadding(), bottom = 16.dp, start = 16.dp, end = 16.dp)
+                    .padding(
+                        top = it.calculateTopPadding(),
+                        bottom = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
             ) {
-                Column(modifier = Modifier.fillMaxSize(),
+                Column(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(modifier = Modifier.padding(vertical = 24.dp)) {
-                        HeaderView(title = "基本設定", description = "ユーザー名と表示名は後から編集することができます")
+                        HeaderView(
+                            title = "基本設定",
+                            description = "ユーザー名と表示名は後から編集することができます"
+                        )
 
                         Column {
                             Text(
@@ -94,7 +109,7 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
                                     .padding(vertical = 8.dp)
                                     .fillMaxWidth(),
                                 maxLines = 1,
-                                label = { Text(text = "ユーザー名を入力")},
+                                label = { Text(text = "ユーザー名を入力") },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Email,
                                     imeAction = ImeAction.Done
@@ -127,7 +142,7 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
                                     .padding(vertical = 8.dp)
                                     .fillMaxWidth(),
                                 maxLines = 1,
-                                label = { Text(text = "表示名を入力")},
+                                label = { Text(text = "表示名を入力") },
                                 keyboardOptions = KeyboardOptions(
                                     imeAction = ImeAction.Done
                                 ),
@@ -142,7 +157,11 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
                         }
                     }
 
-                    RoundButton(text = "次へ", isActive = viewModel.isActive(), type = ButtonType.Fill) {
+                    RoundButton(
+                        text = "次へ",
+                        isActive = viewModel.isActive(),
+                        type = ButtonType.Fill
+                    ) {
                         viewModel.onTapButton()
                     }
                 }
@@ -155,9 +174,9 @@ fun NameRegistrationScreen(navController: NavController, viewModel: NameRegistra
 
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
-                onDismissRequest = {  },
+                onDismissRequest = { },
                 title = { Text(text = "このユーザー名は使用されています") },
-                text = { Text(text = "他のユーザー名を使用してください")},
+                text = { Text(text = "他のユーザー名を使用してください") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
                         Text(text = "OK")

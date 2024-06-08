@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -31,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -46,9 +48,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.chepics.chepics.domainmodel.User
@@ -64,7 +66,7 @@ fun EditProfileScreen(
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
     user: User,
-    viewModel: EditProfileViewModel = viewModel()
+    viewModel: EditProfileViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
     val isEnabled = remember {
@@ -74,6 +76,7 @@ fun EditProfileScreen(
     val iconImageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
+        isEnabled.value = true
         if (uri == null) return@rememberLauncherForActivityResult
         viewModel.imageUri.value = uri
     }
@@ -132,11 +135,14 @@ fun EditProfileScreen(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                iconImageLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                if (isEnabled.value) {
+                                    isEnabled.value = false
+                                    iconImageLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                        )
                                     )
-                                )
+                                }
                             }
                     ) {
                         if (viewModel.imageUri.value != null) {
@@ -196,11 +202,26 @@ fun EditProfileScreen(
                         isActive = true,
                         type = ButtonType.Fill
                     ) {
+                        viewModel.onTapButton(completion = {
+                            navController.popBackStack()
+                        })
                     }
                 }
             }
             if (viewModel.isLoading.value) {
                 CommonProgressSpinner()
+            }
+            if (viewModel.showAlertDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = { Text(text = "通信エラー") },
+                    text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
+                    confirmButton = {
+                        TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
+                            Text(text = "OK")
+                        }
+                    }
+                )
             }
         }
     }

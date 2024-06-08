@@ -4,10 +4,15 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.usecase.auth.NameRegistrationUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NameRegistrationViewModel: ViewModel() {
+@HiltViewModel
+class NameRegistrationViewModel @Inject constructor(private val nameRegistrationUseCase: NameRegistrationUseCase) :
+    ViewModel() {
     val username: MutableState<String> = mutableStateOf("")
     val fullname: MutableState<String> = mutableStateOf("")
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
@@ -21,12 +26,19 @@ class NameRegistrationViewModel: ViewModel() {
     fun onTapButton() {
         viewModelScope.launch {
             isLoading.value = true
-            delay(1000L)
-            isLoading.value = false
-            if (username.value == "aaa") {
-                showAlertDialog.value = true
-            } else {
-                isCompleted.value = true
+            when (nameRegistrationUseCase.registerName(
+                username = username.value,
+                fullname = fullname.value
+            )) {
+                is CallResult.Success -> {
+                    isLoading.value = false
+                    isCompleted.value = true
+                }
+
+                is CallResult.Error -> {
+                    isLoading.value = false
+                    showAlertDialog.value = true
+                }
             }
         }
     }
