@@ -116,5 +116,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
+    // Timber
     implementation(libs.timber)
+
+    // Lottie
+    implementation("com.airbnb.android:lottie-compose:6.4.1")
 }

@@ -14,6 +14,7 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(private val tokenUseCase: TokenUseCase) :
     ViewModel() {
     val isLoggedIn: MutableState<Boolean> = mutableStateOf(false)
+    val isSplashProgress: MutableState<Boolean> = mutableStateOf(true)
 
     init {
         viewModelScope.launch {

@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.chepics.chepics.feature.navigation.AuthNavigation
 import com.chepics.chepics.feature.navigation.ServiceNavigation
+import com.chepics.chepics.feature.splash.SplashScreen
 import com.chepics.chepics.ui.theme.CHEPICSTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,7 +40,9 @@ fun ChepicsApp(viewModel: MainActivityViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (viewModel.isLoggedIn.value) {
+            if (viewModel.isSplashProgress.value) {
+                SplashScreen(isSplashProgress = viewModel.isSplashProgress)
+            } else if (viewModel.isLoggedIn.value) {
                 ServiceNavigation()
             } else {
                 AuthNavigation()
