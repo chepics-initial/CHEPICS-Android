@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -37,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -54,19 +56,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.RoundButton
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.chepics.chepics.feature.commonparts.ButtonType
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTopicScreen(navController: NavController, showBottomNavigation: MutableState<Boolean>, viewModel: CreateTopicViewModel = viewModel()) {
+fun CreateTopicScreen(
+    navController: NavController,
+    showBottomNavigation: MutableState<Boolean>,
+    viewModel: CreateTopicViewModel = hiltViewModel()
+) {
     val scrollState = rememberScrollState()
     val isEnabled = remember {
         mutableStateOf(true)
@@ -82,7 +89,7 @@ fun CreateTopicScreen(navController: NavController, showBottomNavigation: Mutabl
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         showBottomNavigation.value = false
     }
-    
+
     LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
         showBottomNavigation.value = true
     }
@@ -116,47 +123,70 @@ fun CreateTopicScreen(navController: NavController, showBottomNavigation: Mutabl
             })
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = it.calculateTopPadding())
+                .padding(it)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .weight(1f)
-                    .verticalScroll(scrollState)
+                    .fillMaxSize()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .weight(1f)
+                        .verticalScroll(scrollState)
                 ) {
-                TitleView(viewModel = viewModel)
+                    TitleView(viewModel = viewModel)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                DescriptionView(viewModel = viewModel)
+                    DescriptionView(viewModel = viewModel)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                LinkView(viewModel = viewModel)
+                    LinkView(viewModel = viewModel)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                ImagesView(viewModel = viewModel, isEnabled = isEnabled) {
-                    isEnabled.value = false
-                    imagesLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    ImagesView(viewModel = viewModel, isEnabled = isEnabled) {
+                        isEnabled.value = false
+                        imagesLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    }
+                }
+
+                Column(modifier = Modifier.wrapContentHeight()) {
+                    HorizontalDivider()
+
+                    RoundButton(
+                        modifier = Modifier.padding(16.dp),
+                        text = "投稿",
+                        isActive = viewModel.isActive(),
+                        type = ButtonType.Fill
+                    ) {
+                        viewModel.onTapButton(completion = {
+                            navController.popBackStack()
+                        })
+                    }
                 }
             }
 
-            Column(modifier = Modifier.wrapContentHeight()) {
-                HorizontalDivider()
-
-                RoundButton(
-                    modifier = Modifier.padding(16.dp),
-                    text = "投稿",
-                    isActive = viewModel.isActive(),
-                    type = ButtonType.Fill
-                ) {
-                    viewModel.onTapButton()
-                }
+            if (viewModel.isLoading.value) {
+                CommonProgressSpinner()
+            }
+            if (viewModel.showAlertDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = { Text(text = "通信エラー") },
+                    text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
+                    confirmButton = {
+                        TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
+                            Text(text = "OK")
+                        }
+                    }
+                )
             }
         }
     }
@@ -201,11 +231,11 @@ fun TitleView(viewModel: CreateTopicViewModel) {
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            modifier = Modifier.align(Alignment.End), 
+            modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
@@ -296,7 +326,11 @@ fun LinkView(viewModel: CreateTopicViewModel) {
 }
 
 @Composable
-fun ImagesView(viewModel: CreateTopicViewModel, isEnabled: MutableState<Boolean>, onClick: () -> Unit) {
+fun ImagesView(
+    viewModel: CreateTopicViewModel,
+    isEnabled: MutableState<Boolean>,
+    onClick: () -> Unit
+) {
     val scrollState = rememberScrollState()
 
     Column {
@@ -348,7 +382,7 @@ fun ImagesView(viewModel: CreateTopicViewModel, isEnabled: MutableState<Boolean>
                         )
                     }
                 }
-                
+
                 if (index != Constants.TOPIC_IMAGE_COUNT - 1) {
                     Spacer(modifier = Modifier.width(16.dp))
                 }

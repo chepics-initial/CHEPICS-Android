@@ -199,7 +199,7 @@ fun EditProfileScreen(
                     RoundButton(
                         modifier = Modifier.padding(16.dp),
                         text = "保存",
-                        isActive = true,
+                        isActive = viewModel.isActive(),
                         type = ButtonType.Fill
                     ) {
                         viewModel.onTapButton(completion = {

@@ -23,16 +23,33 @@ class EditProfileViewModel @Inject constructor(private val editProfileUseCase: E
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val showAlertDialog: MutableState<Boolean> = mutableStateOf(false)
     private var initialImageUri: Uri? = null
+    private var initialUsername = ""
+    private var initialFullname = ""
+    private var initialBio = ""
+
+    fun isActive(): Boolean {
+        return username.value.isNotEmpty()
+                && fullname.value.isNotEmpty()
+                && (
+                initialUsername != username.value
+                        || initialFullname != fullname.value
+                        || initialBio != bio.value
+                        || initialImageUri != imageUri.value
+                )
+    }
 
     fun onStart(user: User) {
+        initialUsername = user.username
+        initialFullname = user.fullname
         username.value = user.username
         fullname.value = user.fullname
         user.bio?.let {
+            initialBio = it
             bio.value = it
         }
         user.profileImageUrl?.let {
-            imageUri.value = it.toUri()
             initialImageUri = it.toUri()
+            imageUri.value = it.toUri()
         }
     }
 

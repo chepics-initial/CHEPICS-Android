@@ -1,5 +1,6 @@
 package com.chepics.chepics.repository.topic
 
+import android.net.Uri
 import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.InfraException
@@ -16,6 +17,12 @@ interface TopicRepository {
     suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>>
     suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>>
     suspend fun fetchTopic(topicId: String): CallResult<Topic>
+    suspend fun createTopic(
+        title: String,
+        link: String?,
+        description: String?,
+        images: List<Uri>?
+    ): CallResult<Unit>
 }
 
 internal class TopicRepositoryImpl @Inject constructor(
@@ -34,6 +41,22 @@ internal class TopicRepositoryImpl @Inject constructor(
 
     override suspend fun fetchTopic(topicId: String): CallResult<Topic> {
         return handleResponse(topicDataSource.fetchTopic(topicId))
+    }
+
+    override suspend fun createTopic(
+        title: String,
+        link: String?,
+        description: String?,
+        images: List<Uri>?
+    ): CallResult<Unit> {
+        return handleResponse(
+            topicDataSource.createTopic(
+                title = title,
+                link = link,
+                description = description,
+                images = images
+            )
+        )
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
