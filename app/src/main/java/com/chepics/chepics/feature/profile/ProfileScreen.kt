@@ -163,34 +163,38 @@ fun ProfileScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        it.followers?.let { followers ->
+                            it.following?.let { following ->
+                                Spacer(modifier = Modifier.height(16.dp))
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "20",
-                                fontWeight = FontWeight.SemiBold,
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "$following",
+                                        fontWeight = FontWeight.SemiBold,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
 
-                            Text(
-                                text = "フォロー",
-                                color = Color.LightGray,
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                                    Text(
+                                        text = "フォロー",
+                                        color = Color.LightGray,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
 
-                            Spacer(modifier = Modifier.width(16.dp))
+                                    Spacer(modifier = Modifier.width(16.dp))
 
-                            Text(
-                                text = "20",
-                                fontWeight = FontWeight.SemiBold,
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                                    Text(
+                                        text = "$followers",
+                                        fontWeight = FontWeight.SemiBold,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
 
-                            Text(
-                                text = "フォロワー",
-                                color = Color.LightGray,
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                                    Text(
+                                        text = "フォロワー",
+                                        color = Color.LightGray,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -330,7 +334,10 @@ fun ProfileTopicContentView(
         }
 
         UIState.FAILURE -> {
-            Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+            Text(
+                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
@@ -375,7 +382,10 @@ fun ProfileCommentContentView(
         }
 
         UIState.FAILURE -> {
-            Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+            Text(
+                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
