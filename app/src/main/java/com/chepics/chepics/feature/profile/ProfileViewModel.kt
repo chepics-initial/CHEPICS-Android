@@ -33,14 +33,18 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
     val isCurrentUser: MutableState<Boolean> = mutableStateOf(false)
     val isEnabled: MutableState<Boolean> = mutableStateOf(true)
     val showDialog: MutableState<Boolean> = mutableStateOf(false)
+    private var isInitialOnStart = true
 
     fun onStart(user: User) {
         this.user.value = user
         isCurrentUser.value = user.id == profileUseCase.getCurrentUserId()
         isFollowing.value = user.isFollowing
-        viewModelScope.launch {
-            fetchUser(user.id)
-            fetchTopics()
+        if (isInitialOnStart) {
+            isInitialOnStart = false
+            viewModelScope.launch {
+                fetchUser(user.id)
+                fetchTopics()
+            }
         }
     }
 
