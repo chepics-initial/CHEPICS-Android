@@ -28,9 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.RoundButton
@@ -38,19 +37,17 @@ import com.chepics.chepics.feature.authentication.HeaderView
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @Composable
-fun IconRegistrationScreen(
-    navController: NavController,
-    viewModel: IconRegistrationViewModel = viewModel()
-) {
+fun IconRegistrationScreen(viewModel: IconRegistrationViewModel = hiltViewModel()) {
+    val isEnabled = remember {
+        mutableStateOf(true)
+    }
+
     val iconImageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
+        isEnabled.value = true
         if (uri == null) return@rememberLauncherForActivityResult
         viewModel.imageUri.value = uri
-    }
-
-    val isImageSelected = remember {
-        mutableStateOf(false)
     }
 
     Box {
@@ -78,11 +75,14 @@ fun IconRegistrationScreen(
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                iconImageLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                if (isEnabled.value) {
+                                    isEnabled.value = false
+                                    iconImageLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                        )
                                     )
-                                )
+                                }
                             },
                         contentScale = ContentScale.Crop
                     )
@@ -91,11 +91,14 @@ fun IconRegistrationScreen(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                iconImageLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                if (isEnabled.value) {
+                                    isEnabled.value = false
+                                    iconImageLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                        )
                                     )
-                                )
+                                }
                             }
                     ) {
                         Surface(
@@ -138,12 +141,13 @@ fun IconRegistrationScreen(
                     isActive = viewModel.imageUri.value != null,
                     type = ButtonType.Fill
                 ) {
+                    viewModel.onTapRegisterButton()
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 RoundButton(text = "スキップ", type = ButtonType.Border) {
-
+                    viewModel.onTapSkipButton()
                 }
             }
         }

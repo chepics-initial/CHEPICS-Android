@@ -39,7 +39,7 @@ import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.TopicNavType
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.UserNavType
-import com.chepics.chepics.feature.authentication.CompletionScreen
+import com.chepics.chepics.feature.authentication.completion.CompletionScreen
 import com.chepics.chepics.feature.authentication.emailregistration.EmailRegistrationScreen
 import com.chepics.chepics.feature.authentication.iconregistration.IconRegistrationScreen
 import com.chepics.chepics.feature.authentication.login.LoginScreen
@@ -102,7 +102,7 @@ fun AuthNavigation() {
         }
 
         composable(Screens.IconRegistrationScreen.name) {
-            IconRegistrationScreen(navController = navController)
+            IconRegistrationScreen()
         }
     }
 }

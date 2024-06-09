@@ -7,6 +7,7 @@ import com.chepics.chepics.domainmodel.FollowRequest
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.TokenRefreshRequest
 import com.chepics.chepics.domainmodel.User
+import com.chepics.chepics.domainmodel.UserData
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthDataSource
 import com.chepics.chepics.repository.token.TokenDataSource
@@ -24,6 +25,8 @@ interface UserRepository {
         bio: String?,
         imageUri: Uri?
     ): CallResult<Unit>
+
+    fun getUserData(): UserData?
 }
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -51,14 +54,33 @@ internal class UserRepositoryImpl @Inject constructor(
         bio: String?,
         imageUri: Uri?
     ): CallResult<Unit> {
-        return handleResponse(
-            userDataSource.updateUser(
-                username = username,
-                fullname = fullname,
-                bio = bio,
-                imageUri = imageUri
+        when (
+            val result = handleResponse(
+                userDataSource.updateUser(
+                    username = username,
+                    fullname = fullname,
+                    bio = bio,
+                    imageUri = imageUri
+                )
             )
-        )
+        ) {
+            is CallResult.Success -> {
+                userStoreDataSource.storeUserData(
+                    UserData(
+                        username = username,
+                        fullname = fullname,
+                        bio = bio
+                    )
+                )
+                return result
+            }
+
+            is CallResult.Error -> return result
+        }
+    }
+
+    override fun getUserData(): UserData? {
+        return userStoreDataSource.getUserData()
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {

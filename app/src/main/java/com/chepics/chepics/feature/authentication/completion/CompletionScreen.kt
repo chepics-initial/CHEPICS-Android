@@ -1,4 +1,4 @@
-package com.chepics.chepics.feature.authentication
+package com.chepics.chepics.feature.authentication.completion
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,13 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.navigation.Screens
 
 @Composable
-fun CompletionScreen(navController: NavController) {
+fun CompletionScreen(
+    navController: NavController,
+    viewModel: CompletionViewModel = hiltViewModel()
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -42,7 +46,7 @@ fun CompletionScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             RoundButton(text = "スキップ", type = ButtonType.Border) {
-
+                viewModel.onTapSkipButton()
             }
         }
     }

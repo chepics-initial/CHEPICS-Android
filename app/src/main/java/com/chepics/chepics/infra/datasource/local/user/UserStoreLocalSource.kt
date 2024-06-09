@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.chepics.chepics.domainmodel.UserData
 import com.chepics.chepics.infra.datasource.local.DataStoreType
 import com.chepics.chepics.infra.ext.getStream
 import com.chepics.chepics.infra.ext.save
@@ -18,6 +19,7 @@ internal class UserStoreLocalSource @Inject constructor(
     @ApplicationContext private val context: Context
 ) : UserStoreDataSource {
     private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = DataStoreType.USER.value)
+    private var userData: UserData? = null
     override fun getUserId(): String {
         return runBlocking {
             context.datastore.getStream(USER_ID_KEY, "").first()
@@ -26,6 +28,14 @@ internal class UserStoreLocalSource @Inject constructor(
 
     override suspend fun storeUserId(userId: String) {
         context.datastore.save(USER_ID_KEY, userId)
+    }
+
+    override fun storeUserData(data: UserData) {
+        userData = data
+    }
+
+    override fun getUserData(): UserData? {
+        return userData
     }
 
     private companion object {
