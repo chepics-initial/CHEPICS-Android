@@ -121,4 +121,6 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie.compose)
+
+    implementation(libs.androidx.security.crypto)
 }
