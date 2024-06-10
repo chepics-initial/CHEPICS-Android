@@ -3,8 +3,8 @@ package com.chepics.chepics.domainmodel
 import android.net.Uri
 import androidx.annotation.Keep
 import com.chepics.chepics.domainmodel.common.JsonNavType
+import com.chepics.chepics.domainmodel.serializer.LocalDateTimeSerializer
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
@@ -27,9 +27,9 @@ data class Topic(
     @SerialName("user_pick_count")
     val votes: Int,
     val set: List<PickSet>?,
-//    @Serializable(with = LocalDateTimeSerializer::class)
-//    @SerialName("register_time")
-//    val registerTime: LocalDateTime
+    @Serializable(with = LocalDateTimeSerializer::class)
+    @SerialName("register_time")
+    val registerTime: LocalDateTime
 ) {
     override fun toString(): String = Uri.encode(Gson().toJson(this))
 }
