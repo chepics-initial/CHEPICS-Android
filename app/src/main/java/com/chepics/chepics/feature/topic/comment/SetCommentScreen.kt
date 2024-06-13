@@ -61,7 +61,7 @@ fun SetCommentScreen(
                 actions = {
                     IconButton(onClick = {
                         onBack()
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }
                     ) {
                         Image(

@@ -92,7 +92,7 @@ fun ExploreResultScreen(
             viewModel.searchText.value = viewModel.initialSearchText
             focusManager.clearFocus()
         } else {
-            navController.popBackStack()
+            navController.navigateUp()
         }
     }
 
@@ -112,7 +112,7 @@ fun ExploreResultScreen(
                             viewModel.searchText.value = viewModel.initialSearchText
                             focusManager.clearFocus()
                         } else {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }
                     }
                 ) {

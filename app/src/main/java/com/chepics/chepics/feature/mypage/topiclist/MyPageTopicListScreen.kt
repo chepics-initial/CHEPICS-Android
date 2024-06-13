@@ -74,7 +74,7 @@ fun MyPageTopicListScreen(
                         contentDescription = "Logo Icon",
                         modifier = Modifier
                             .align(Alignment.CenterStart)
-                            .clickable { navController.popBackStack() },
+                            .clickable { navController.navigateUp() },
                         colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
 

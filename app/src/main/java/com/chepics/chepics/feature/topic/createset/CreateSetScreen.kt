@@ -72,7 +72,7 @@ fun CreateSetScreen(
                         IconButton(
                             onClick = {
                                 onBack()
-                                navController.popBackStack()
+                                navController.navigateUp()
                             },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
@@ -158,7 +158,7 @@ fun CreateSetScreen(
                         coroutineScope.launch {
                             viewModel.onTapButton {
                                 completion()
-                                navController.popBackStack()
+                                navController.navigateUp()
                             }
                         }
                     }

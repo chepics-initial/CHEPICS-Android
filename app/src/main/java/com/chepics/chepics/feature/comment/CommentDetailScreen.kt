@@ -67,7 +67,7 @@ fun CommentDetailScreen(
                     Image(
                         imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                         contentDescription = "Logo Icon",
-                        modifier = Modifier.clickable { navController.popBackStack() },
+                        modifier = Modifier.clickable { navController.navigateUp() },
                         colorFilter = ColorFilter.tint(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
                     )
                 })

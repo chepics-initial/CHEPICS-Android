@@ -100,7 +100,7 @@ fun CreateTopicScreen(
                 Box {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         },
                         modifier = Modifier.align(Alignment.CenterStart)
                     ) {
@@ -167,7 +167,7 @@ fun CreateTopicScreen(
                         type = ButtonType.Fill
                     ) {
                         viewModel.onTapButton(completion = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         })
                     }
                 }

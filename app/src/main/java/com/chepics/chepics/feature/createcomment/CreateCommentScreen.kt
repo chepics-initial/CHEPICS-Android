@@ -113,7 +113,7 @@ fun CreateCommentScreen(
                     Box {
                         IconButton(
                             onClick = {
-                                navController.popBackStack()
+                                navController.navigateUp()
                             },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {

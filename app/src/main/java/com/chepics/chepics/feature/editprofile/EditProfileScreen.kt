@@ -96,7 +96,7 @@ fun EditProfileScreen(
                 Box {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         },
                         modifier = Modifier.align(Alignment.CenterStart)
                     ) {
@@ -202,9 +202,7 @@ fun EditProfileScreen(
                         isActive = viewModel.isActive(),
                         type = ButtonType.Fill
                     ) {
-                        viewModel.onTapButton(completion = {
-                            navController.popBackStack()
-                        })
+                        viewModel.onTapButton(completion = { navController.navigateUp() })
                     }
                 }
             }

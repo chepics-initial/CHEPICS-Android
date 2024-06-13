@@ -37,7 +37,10 @@ import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegistrationViewModel = hiltViewModel()) {
+fun EmailRegistrationScreen(
+    navController: NavController,
+    viewModel: EmailRegistrationViewModel = hiltViewModel()
+) {
     if (viewModel.isCompleted.value) {
         navController.navigate(Screens.OneTimeCodeScreen.name + "/${viewModel.email.value}")
         viewModel.isCompleted.value = false
@@ -49,10 +52,13 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
                 TopAppBar(
                     title = {
                         IconButton(
-                            onClick = { navController.popBackStack() },
+                            onClick = { navController.navigateUp() },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
-                            Image(imageVector = Icons.Default.ArrowBack, contentDescription = "Back button")
+                            Image(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back button"
+                            )
                         }
                     }
                 )
@@ -61,15 +67,24 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = it.calculateTopPadding(), bottom = 16.dp, start = 16.dp, end = 16.dp)
+                    .padding(
+                        top = it.calculateTopPadding(),
+                        bottom = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
             ) {
-                Column(modifier = Modifier.fillMaxSize(),
+                Column(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = 24.dp),
                     ) {
-                        HeaderView(title = "メールアドレス登録", description = "ログイン時に使用するメールアドレスを入力してください")
+                        HeaderView(
+                            title = "メールアドレス登録",
+                            description = "ログイン時に使用するメールアドレスを入力してください"
+                        )
 
                         OutlinedTextField(
                             value = viewModel.email.value,
@@ -78,7 +93,7 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
                                 .padding(vertical = 8.dp)
                                 .fillMaxWidth(),
                             maxLines = 1,
-                            label = { Text(text = "メールアドレスを入力")},
+                            label = { Text(text = "メールアドレスを入力") },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Email,
                                 imeAction = ImeAction.Done
@@ -93,7 +108,11 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
                         )
                     }
 
-                    RoundButton(text = "次へ", isActive = viewModel.email.value.isNotEmpty(), type = ButtonType.Fill) {
+                    RoundButton(
+                        text = "次へ",
+                        isActive = viewModel.email.value.isNotEmpty(),
+                        type = ButtonType.Fill
+                    ) {
                         viewModel.onTapButton()
                     }
                 }
@@ -106,7 +125,7 @@ fun EmailRegistrationScreen(navController: NavController, viewModel: EmailRegist
 
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
-                onDismissRequest = {  },
+                onDismissRequest = { },
                 title = { Text(text = "エラー") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {

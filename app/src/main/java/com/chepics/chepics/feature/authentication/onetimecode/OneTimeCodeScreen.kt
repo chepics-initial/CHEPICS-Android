@@ -80,7 +80,7 @@ fun OneTimeCodeScreen(
                 TopAppBar(
                     title = {
                         IconButton(
-                            onClick = { navController.popBackStack() },
+                            onClick = { navController.navigateUp() },
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
                             Image(

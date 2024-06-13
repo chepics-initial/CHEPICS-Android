@@ -39,7 +39,7 @@ fun ExploreTopScreen(navController: NavController) {
 
     BackHandler {
         focusManager.clearFocus()
-        navController.popBackStack()
+        navController.navigateUp()
     }
 
     Scaffold(
@@ -50,7 +50,7 @@ fun ExploreTopScreen(navController: NavController) {
                 showTrailingIcon = searchText.value.isNotEmpty(),
                 onTapBackButton = {
                     focusManager.clearFocus()
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }) {
                 navController.navigate(Screens.ExploreResultScreen.name + "/${searchText.value}")
             }
