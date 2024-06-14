@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -274,7 +275,23 @@ fun ExploreTopicContentView(
         }
 
         UIState.FAILURE -> {
-            Text(text = "通信に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        Text(
+                            text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -337,7 +354,23 @@ fun ExploreCommentContentView(
         }
 
         UIState.FAILURE -> {
-            Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        Text(
+                            text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -389,7 +422,23 @@ fun ExploreUserContentView(
         }
 
         UIState.FAILURE -> {
-            Text(text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        Text(
+                            text = "ユーザーの取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
+
+                PullToRefreshContainer(
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.google.gson.Gson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
 
 @Keep
 @Serializable
@@ -32,7 +31,8 @@ data class Comment(
     val isLiked: Boolean,
     @SerialName("create_user")
     val user: User,
-//    val registerTime: LocalDateTime
+    @SerialName("register_time")
+    val registerTime: String
 ) {
     override fun toString(): String = Uri.encode(Gson().toJson(this))
 }

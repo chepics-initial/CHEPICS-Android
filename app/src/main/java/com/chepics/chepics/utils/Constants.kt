@@ -1,6 +1,7 @@
 package com.chepics.chepics.utils
 
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -15,7 +16,10 @@ object Constants {
     const val SET_COUNT = 50
 }
 
-fun getDateTimeString(dateTime: LocalDateTime): String {
+fun getDateTimeString(dateString: String): String {
+    val dateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+    val zonedDateTime = ZonedDateTime.parse(dateString, dateTimeFormatter)
+    val dateTime = zonedDateTime.toLocalDateTime()
     val now = LocalDateTime.now()
 
     if (ChronoUnit.SECONDS.between(dateTime, now) < 60) {

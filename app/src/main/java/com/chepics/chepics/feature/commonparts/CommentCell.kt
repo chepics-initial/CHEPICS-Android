@@ -50,6 +50,7 @@ import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.chepics.chepics.utils.getDateTimeString
 
 @Composable
 fun CommentCell(
@@ -101,10 +102,10 @@ fun CommentCell(
                             )
                         }
 
-//                        Text(
-//                            text = getDateTimeString(comment.registerTime),
-//                            color = Color.LightGray
-//                        )
+                        Text(
+                            text = getDateTimeString(comment.registerTime),
+                            color = Color.LightGray
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))

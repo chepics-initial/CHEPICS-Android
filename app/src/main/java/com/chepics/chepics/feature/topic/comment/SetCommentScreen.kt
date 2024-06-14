@@ -153,7 +153,12 @@ fun SetCommentScreen(
                     }
 
                     UIState.FAILURE -> {
-                        Text(text = "通信に失敗しました。インターネット環境を確認して、もう一度お試しください。")
+                        Text(
+                            text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
                     }
                 }
             }

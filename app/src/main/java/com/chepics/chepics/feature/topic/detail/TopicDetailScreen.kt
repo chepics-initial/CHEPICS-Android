@@ -56,6 +56,7 @@ import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.chepics.chepics.utils.getDateTimeString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -217,11 +218,11 @@ fun TopicDetailScreen(
                         }
                     }
 
-//                    Text(
-//                        text = getDateTimeString(topic.registerTime),
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        color = Color.LightGray
-//                    )
+                    Text(
+                        text = getDateTimeString(topic.registerTime),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.LightGray
+                    )
                 }
             }
         }

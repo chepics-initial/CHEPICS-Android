@@ -84,6 +84,7 @@ import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.chepics.chepics.utils.getDateTimeString
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -641,11 +642,11 @@ fun TopicTopContentView(
                     }
                 }
 
-//                Text(
-//                    text = getDateTimeString(topic.registerTime),
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    color = Color.LightGray
-//                )
+                Text(
+                    text = getDateTimeString(topic.registerTime),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.LightGray
+                )
             }
 
             HorizontalDivider()
@@ -975,11 +976,11 @@ fun DetailHeaderView(
                         )
                     }
 
-//                    Text(
-//                        text = getDateTimeString(topic.registerTime),
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        color = Color.LightGray
-//                    )
+                    Text(
+                        text = getDateTimeString(topic.registerTime),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.LightGray
+                    )
                 }
 
                 Row(

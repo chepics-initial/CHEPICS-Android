@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -242,12 +243,16 @@ fun FeedTopicContentView(
 
         UIState.FAILURE -> {
             Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
-                Text(
-                    text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        Text(
+                            text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
 
                 PullToRefreshContainer(
                     state = refreshState,
@@ -265,6 +270,7 @@ fun FeedCommentContentView(
     showImageViewer: MutableState<Boolean>,
     navController: NavController
 ) {
+    val scrollState = rememberScrollState()
     val refreshState = rememberPullToRefreshState()
     if (refreshState.isRefreshing) {
         LaunchedEffect(true) {
@@ -317,12 +323,16 @@ fun FeedCommentContentView(
 
         UIState.FAILURE -> {
             Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
-                Text(
-                    text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        Text(
+                            text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+                    }
+                }
 
                 PullToRefreshContainer(
                     state = refreshState,
