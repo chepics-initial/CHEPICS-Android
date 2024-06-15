@@ -10,6 +10,7 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthDataSource
 import com.chepics.chepics.repository.token.TokenDataSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -84,6 +85,7 @@ internal class TopicRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
+                            delay(1000L)
                             return withContext(ioDispatcher) {
                                 response
                             }
