@@ -40,7 +40,7 @@ class CreateTopicViewModel @Inject constructor(private val createTopicUseCase: C
                     description = if (description.value.trim()
                             .isNotEmpty()
                     ) description.value else null,
-                    images = if (imageUris.value.isNotEmpty()) imageUris.value else null
+                    images = imageUris.value.ifEmpty { null }
                 )
             ) {
                 is CallResult.Success -> {

@@ -5,7 +5,6 @@ import com.chepics.chepics.domainmodel.CommentImage
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.TopicImage
 import com.chepics.chepics.domainmodel.User
-import java.time.LocalDateTime
 
 val mockTopicImage1 = TopicImage(
     topicId = "1",
@@ -483,6 +482,8 @@ val mockComment1 = Comment(
     votes = 4232,
     isLiked = true,
     user = mockUser1,
+    replyCount = 1,
+    replyFor = null,
     registerTime = "2024-06-05T09:24:51+09:00"
 )
 
@@ -502,6 +503,8 @@ val mockComment2 = Comment(
     votes = 654,
     isLiked = false,
     user = mockUser2,
+    replyCount = 1,
+    replyFor = null,
     registerTime = "2024-06-05T09:24:51+09:00"
 )
 
@@ -517,6 +520,8 @@ val mockComment3 = Comment(
     votes = 11111,
     isLiked = true,
     user = mockUser6,
+    replyCount = 1,
+    replyFor = null,
     registerTime = "2024-06-05T09:24:51+09:00"
 )
 
@@ -535,6 +540,8 @@ val mockComment4 = Comment(
     votes = 909,
     isLiked = false,
     user = mockUser9,
+    replyCount = 1,
+    replyFor = null,
     registerTime = "2024-06-05T09:24:51+09:00"
 )
 
@@ -554,6 +561,8 @@ val mockComment5 = Comment(
     votes = 54,
     isLiked = true,
     user = mockUser12,
+    replyCount = 1,
+    replyFor = null,
     registerTime = "2024-06-05T09:24:51+09:00"
 )
 
@@ -571,5 +580,7 @@ val mockComment6 = Comment(
     votes = 38,
     isLiked = false,
     user = mockUser8,
+    replyCount = 1,
+    replyFor = null,
     registerTime = "2024-06-05T09:24:51+09:00"
 )

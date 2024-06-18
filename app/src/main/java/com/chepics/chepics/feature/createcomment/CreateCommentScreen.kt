@@ -29,6 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -38,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -65,6 +67,7 @@ import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.chepics.chepics.feature.commonparts.ButtonType
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
@@ -97,6 +100,7 @@ fun CreateCommentScreen(
         viewModel.onStart(
             topicId = navigationItem.topicId,
             setId = navigationItem.setId,
+            parentId = navigationItem.parentId,
             type = navigationItem.type,
             replyFor = navigationItem.replyFor
         )
@@ -334,9 +338,55 @@ fun CreateCommentScreen(
                         isActive = viewModel.isActive(),
                         type = ButtonType.Fill
                     ) {
+                        viewModel.onTapSubmitButton {
+                            navController.navigateUp()
+                        }
                     }
                 }
             }
+        }
+
+        if (viewModel.isLoading.value) {
+            CommonProgressSpinner()
+        }
+
+        if (viewModel.showCommentRestrictionDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "このセットではコメントできません") },
+                text = { Text(text = "選択しているセット内でのみコメントが可能です") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showCommentRestrictionDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
+        }
+
+        if (viewModel.showReplyRestrictionDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "このトピックではリプライできません") },
+                text = { Text(text = "トピック内でセットを選択することでリプライが可能になります") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showReplyRestrictionDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
+        }
+
+        if (viewModel.showNetworkErrorDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "通信エラー") },
+                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showNetworkErrorDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
         }
     }
 }
@@ -357,6 +407,7 @@ fun linkTextColor(link: MutableState<String>): Color {
 data class CreateCommentNavigationItem(
     val topicId: String,
     val setId: String,
+    val parentId: String?,
     val type: CreateCommentType,
     val replyFor: Comment? = null
 ) {
@@ -371,5 +422,4 @@ class CreateCommentNavigationItemNavType : JsonNavType<CreateCommentNavigationIt
     override fun CreateCommentNavigationItem.getJsonParse(): String {
         return Gson().toJson(this)
     }
-
 }

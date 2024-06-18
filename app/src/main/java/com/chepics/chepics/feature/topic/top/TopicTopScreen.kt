@@ -788,6 +788,7 @@ fun TopicTopDetailView(
                                         CreateCommentNavigationItem(
                                             topicId = topic.id,
                                             setId = selectedSet.id,
+                                            parentId = null,
                                             type = CreateCommentType.COMMENT
                                         )
                                     }"

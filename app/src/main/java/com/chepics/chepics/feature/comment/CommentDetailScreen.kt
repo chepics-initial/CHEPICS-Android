@@ -105,6 +105,7 @@ fun CommentDetailScreen(
                                             CreateCommentNavigationItem(
                                                 topicId = rootComment.topicId,
                                                 setId = rootComment.setId,
+                                                parentId = rootComment.id,
                                                 type = CreateCommentType.REPLY
                                             )
                                         }"
@@ -123,11 +124,13 @@ fun CommentDetailScreen(
 
                                 Spacer(modifier = Modifier.width(16.dp))
 
-                                Text(
-                                    text = "4件の返信",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = Color.LightGray
-                                )
+                                rootComment.replyCount?.let { replyCount ->
+                                    Text(
+                                        text = "$replyCount 件の返信",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = Color.LightGray
+                                    )
+                                }
                             }
                         }
                     }
@@ -160,6 +163,7 @@ fun CommentDetailScreen(
                                                 CreateCommentNavigationItem(
                                                     topicId = reply.topicId,
                                                     setId = reply.setId,
+                                                    parentId = viewModel.comment.value?.id,
                                                     type = CreateCommentType.REPLY,
                                                     replyFor = reply
                                                 )

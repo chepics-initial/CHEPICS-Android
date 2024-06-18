@@ -23,7 +23,7 @@ data class Comment(
     val comment: String,
     @SerialName("comment_link")
     val link: String?,
-    @SerialName("comment_image")
+    @SerialName("comment_images")
     val images: List<CommentImage>?,
     @SerialName("comment_like_count")
     val votes: Int,
@@ -31,6 +31,10 @@ data class Comment(
     val isLiked: Boolean,
     @SerialName("create_user")
     val user: User,
+    @SerialName("comment_reply_count")
+    val replyCount: Int?,
+    @SerialName("to_users")
+    val replyFor: List<User>?,
     @SerialName("register_time")
     val registerTime: String
 ) {

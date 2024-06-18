@@ -1,5 +1,6 @@
 package com.chepics.chepics.repository.comment
 
+import android.net.Uri
 import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.Comment
@@ -18,6 +19,15 @@ interface CommentRepository {
     suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>>
     suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>>
     suspend fun fetchComment(id: String): CallResult<Comment>
+    suspend fun createComment(
+        parentId: String?,
+        topicId: String,
+        setId: String,
+        comment: String,
+        link: String?,
+        replyFor: List<String>?,
+        images: List<Uri>?
+    ): CallResult<Unit>
 }
 
 internal class CommentRepositoryImpl @Inject constructor(
@@ -54,6 +64,28 @@ internal class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun fetchComment(id: String): CallResult<Comment> {
         return handleResponse(commentDataSource.fetchComment(id))
+    }
+
+    override suspend fun createComment(
+        parentId: String?,
+        topicId: String,
+        setId: String,
+        comment: String,
+        link: String?,
+        replyFor: List<String>?,
+        images: List<Uri>?
+    ): CallResult<Unit> {
+        return handleResponse(
+            commentDataSource.createComment(
+                parentId = parentId,
+                topicId = topicId,
+                setId = setId,
+                comment = comment,
+                link = link,
+                replyFor = replyFor,
+                images = images
+            )
+        )
     }
 
     private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {

@@ -219,56 +219,80 @@ fun CommentCell(
 
             Row(
                 modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 8.dp, start = 56.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                when (type) {
-                    CommentType.COMMENT -> {
-                        Box(modifier = Modifier)
-                    }
-
-                    CommentType.DETAIL -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.reply),
-                            contentDescription = "reply icon",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    onTapReplyButton()
-                                }
-                        )
-                    }
-
-                    CommentType.REPLY -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.reply),
-                            contentDescription = "reply icon",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    onTapReplyButton()
-                                }
-                        )
-                    }
-
-                    CommentType.SET -> {
-                        Box(modifier = Modifier)
+                comment.replyCount?.let {
+                    if (type != CommentType.DETAIL) {
+                        if (it == 1) {
+                            Text(
+                                text = "1 reply",
+                                color = ChepicsPrimary
+                            )
+                        } else if (it > 1) {
+                            Text(
+                                text = "$it replies",
+                                color = ChepicsPrimary
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Box(modifier = Modifier)
 
-                Image(
-                    imageVector = if (comment.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "like icon",
-                    colorFilter = ColorFilter.tint(color = if (comment.isLiked) Color.Red else if (isSystemInDarkTheme()) Color.White else Color.Black),
-                    modifier = Modifier.clickable { }
-                )
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    when (type) {
+                        CommentType.COMMENT -> {
+                            Box(modifier = Modifier)
+                        }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                        CommentType.DETAIL -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.reply),
+                                contentDescription = "reply icon",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable {
+                                        onTapReplyButton()
+                                    }
+                            )
+                        }
 
-                Text(text = "${comment.votes}")
+                        CommentType.REPLY -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.reply),
+                                contentDescription = "reply icon",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable {
+                                        onTapReplyButton()
+                                    }
+                            )
+                        }
+
+                        CommentType.SET -> {
+                            Box(modifier = Modifier)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Image(
+                        imageVector = if (comment.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "like icon",
+                        colorFilter = ColorFilter.tint(color = if (comment.isLiked) Color.Red else if (isSystemInDarkTheme()) Color.White else Color.Black),
+                        modifier = Modifier.clickable { }
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(text = "${comment.votes}")
+                }
             }
 
             HorizontalDivider()

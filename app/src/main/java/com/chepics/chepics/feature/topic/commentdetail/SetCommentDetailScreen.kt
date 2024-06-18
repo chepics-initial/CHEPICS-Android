@@ -135,6 +135,7 @@ fun SetCommentDetailScreen(
                                         CreateCommentNavigationItem(
                                             topicId = comment.topicId,
                                             setId = comment.setId,
+                                            parentId = comment.id,
                                             type = CreateCommentType.REPLY
                                         )
                                     }"
@@ -142,23 +143,25 @@ fun SetCommentDetailScreen(
                             }
                         )
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.chat),
-                                contentDescription = "chat icon",
-                                colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black),
-                                modifier = Modifier.size(20.dp)
-                            )
+                        comment.replyCount?.let { replyCount ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.chat),
+                                    contentDescription = "chat icon",
+                                    colorFilter = ColorFilter.tint(if (isSystemInDarkTheme()) Color.White else Color.Black),
+                                    modifier = Modifier.size(20.dp)
+                                )
 
-                            Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
 
-                            Text(
-                                text = "リプライ2件",
-                                fontWeight = FontWeight.SemiBold
-                            )
+                                Text(
+                                    text = "リプライ $replyCount 件",
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     }
                 }
@@ -175,6 +178,7 @@ fun SetCommentDetailScreen(
                                     CreateCommentNavigationItem(
                                         topicId = comment.topicId,
                                         setId = comment.setId,
+                                        parentId = viewModel.comment.value?.id,
                                         type = CreateCommentType.REPLY,
                                         replyFor = reply
                                     )

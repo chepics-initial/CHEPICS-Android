@@ -579,6 +579,39 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
+            "${Screens.SetCommentDetailScreen.name}/{set}/{comment}",
+            arguments = listOf(navArgument("set") {
+                type = SetNavType()
+            },
+                navArgument("comment") {
+                    type = CommentNavType()
+                }
+            )
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("set")?.let { set ->
+                Gson().fromJson(set, PickSet::class.java)
+            }?.let { set ->
+                backStackEntry.arguments?.getString("comment")?.let { comment ->
+                    Gson().fromJson(comment, Comment::class.java)
+                }?.let { comment ->
+                    val onBack =
+                        myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                            "onBack"
+                        )
+                    onBack?.let { onBack ->
+                        SetCommentDetailScreen(
+                            set = set,
+                            comment = comment,
+                            navController = myPageNavController
+                        ) {
+                            onBack()
+                        }
+                    }
+                }
+            }
+        }
+
+        composable(
             "${Screens.CreateCommentScreen.name}/{navigationItem}",
             arguments = listOf(navArgument("navigationItem") {
                 type = CreateCommentNavigationItemNavType()
