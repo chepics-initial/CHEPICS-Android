@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.topic.commentdetail
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,8 +40,10 @@ import androidx.navigation.NavController
 import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.PickSet
+import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
+import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
@@ -54,6 +59,26 @@ fun SetCommentDetailScreen(
 ) {
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(set = set, comment = comment)
+    }
+
+    if (viewModel.showLikeCommentFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "選択していないセットのコメントにはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeCommentFailureDialog.value = false
+    }
+
+    if (viewModel.showLikeReplyFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "参加していないトピックの返信にはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeReplyFailureDialog.value = false
     }
 
     Scaffold(
@@ -122,13 +147,16 @@ fun SetCommentDetailScreen(
             }
 
             LazyColumn {
-                viewModel.comment.value?.let { comment ->
+                viewModel.rootComment.value?.let { comment ->
                     item {
                         CommentCell(
                             comment = comment,
                             type = CommentType.DETAIL,
                             onTapImage = {},
                             onTapUserInfo = {},
+                            onTapLikeButton = {
+                                viewModel.onTapLikeButton(comment)
+                            },
                             onTapReplyButton = {
                                 navController.navigate(
                                     Screens.CreateCommentScreen.name + "/${
@@ -166,26 +194,50 @@ fun SetCommentDetailScreen(
                     }
                 }
 
-                items(viewModel.replies.value) { reply ->
-                    CommentCell(
-                        comment = reply,
-                        type = CommentType.REPLY,
-                        onTapImage = {},
-                        onTapUserInfo = {},
-                        onTapReplyButton = {
-                            navController.navigate(
-                                Screens.CreateCommentScreen.name + "/${
-                                    CreateCommentNavigationItem(
-                                        topicId = comment.topicId,
-                                        setId = comment.setId,
-                                        parentId = viewModel.comment.value?.id,
-                                        type = CreateCommentType.REPLY,
-                                        replyFor = reply
+                when (viewModel.uiState.value) {
+                    UIState.LOADING -> {
+                        item {
+                            CommonProgressSpinner(Color.Transparent)
+                        }
+                    }
+
+                    UIState.SUCCESS -> {
+                        items(viewModel.replies.value) { reply ->
+                            CommentCell(
+                                comment = reply,
+                                type = CommentType.REPLY,
+                                onTapImage = {},
+                                onTapUserInfo = {},
+                                onTapLikeButton = {
+                                    viewModel.onTapLikeButton(reply)
+                                },
+                                onTapReplyButton = {
+                                    navController.navigate(
+                                        Screens.CreateCommentScreen.name + "/${
+                                            CreateCommentNavigationItem(
+                                                topicId = comment.topicId,
+                                                setId = comment.setId,
+                                                parentId = viewModel.rootComment.value?.id,
+                                                type = CreateCommentType.REPLY,
+                                                replyFor = reply
+                                            )
+                                        }"
                                     )
-                                }"
+                                }
                             )
                         }
-                    )
+                    }
+
+                    UIState.FAILURE -> {
+                        item {
+                            Text(
+                                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

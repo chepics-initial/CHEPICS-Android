@@ -2,6 +2,7 @@ package com.chepics.chepics.feature.topic.top
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -105,6 +106,26 @@ fun TopicTopScreen(
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(topic)
+    }
+
+    if (viewModel.showLikeCommentFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "選択していないセットのコメントにはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeCommentFailureDialog.value = false
+    }
+
+    if (viewModel.showLikeReplyFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "参加していないトピックの返信にはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeReplyFailureDialog.value = false
     }
 
     Box {
@@ -751,6 +772,9 @@ fun TopicTopDetailView(
                                     },
                                     onTapUserInfo = { user ->
                                         navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                    },
+                                    onTapLikeButton = {
+                                        viewModel.onTapLikeButton(comment)
                                     }
                                 )
                             }

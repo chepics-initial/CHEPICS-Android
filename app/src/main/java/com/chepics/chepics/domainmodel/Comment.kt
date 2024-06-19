@@ -26,9 +26,9 @@ data class Comment(
     @SerialName("comment_images")
     val images: List<CommentImage>?,
     @SerialName("comment_like_count")
-    val votes: Int,
+    var votes: Int,
     @SerialName("has_user_liked_comment")
-    val isLiked: Boolean,
+    var isLiked: Boolean,
     @SerialName("create_user")
     val user: User,
     @SerialName("comment_reply_count")

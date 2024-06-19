@@ -1,6 +1,8 @@
 package com.chepics.chepics.usecase
 
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.LikeRequest
+import com.chepics.chepics.domainmodel.LikeResponse
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.comment.CommentRepository
 import javax.inject.Inject
@@ -8,6 +10,7 @@ import javax.inject.Inject
 interface CommentDetailUseCase {
     suspend fun fetchComment(id: String): CallResult<Comment>
     suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>>
+    suspend fun like(setId: String, commentId: String): CallResult<LikeResponse>
 }
 
 internal class CommentDetailUseCaseImpl @Inject constructor(
@@ -21,4 +24,7 @@ internal class CommentDetailUseCaseImpl @Inject constructor(
         return commentRepository.fetchReplies(commentId = commentId, offset = offset)
     }
 
+    override suspend fun like(setId: String, commentId: String): CallResult<LikeResponse> {
+        return commentRepository.like(LikeRequest(setId = setId, commentId = commentId))
+    }
 }

@@ -5,6 +5,8 @@ import com.chepics.chepics.common.di.IoDispatcher
 import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.InfraException
+import com.chepics.chepics.domainmodel.LikeRequest
+import com.chepics.chepics.domainmodel.LikeResponse
 import com.chepics.chepics.domainmodel.TokenRefreshRequest
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthDataSource
@@ -19,6 +21,7 @@ interface CommentRepository {
     suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>>
     suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>>
     suspend fun fetchComment(id: String): CallResult<Comment>
+    suspend fun like(request: LikeRequest): CallResult<LikeResponse>
     suspend fun createComment(
         parentId: String?,
         topicId: String,
@@ -64,6 +67,10 @@ internal class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun fetchComment(id: String): CallResult<Comment> {
         return handleResponse(commentDataSource.fetchComment(id))
+    }
+
+    override suspend fun like(request: LikeRequest): CallResult<LikeResponse> {
+        return handleResponse(commentDataSource.like(request))
     }
 
     override suspend fun createComment(

@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -76,6 +78,26 @@ fun ProfileScreen(
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(user)
+    }
+
+    if (viewModel.showLikeCommentFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "選択していないセットのコメントにはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeCommentFailureDialog.value = false
+    }
+
+    if (viewModel.showLikeReplyFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "参加していないトピックの返信にはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeReplyFailureDialog.value = false
     }
 
     Box {
@@ -375,6 +397,9 @@ fun ProfileCommentContentView(
                         },
                         onTapUserInfo = { user ->
                             navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                        },
+                        onTapLikeButton = {
+                            viewModel.onTapLikeButton(it)
                         }
                     )
                 }

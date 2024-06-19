@@ -1,6 +1,8 @@
 package com.chepics.chepics.usecase
 
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.LikeRequest
+import com.chepics.chepics.domainmodel.LikeResponse
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.PickSetRequest
 import com.chepics.chepics.domainmodel.Topic
@@ -16,6 +18,7 @@ interface TopicTopUseCase {
     suspend fun fetchSets(topicId: String, offset: Int?): CallResult<List<PickSet>>
     suspend fun pickSet(topicId: String, setId: String): CallResult<PickSet>
     suspend fun fetchPickedSet(topicId: String): CallResult<PickSet>
+    suspend fun like(setId: String, commentId: String): CallResult<LikeResponse>
 }
 
 internal class TopicTopUseCaseImpl @Inject constructor(
@@ -41,5 +44,9 @@ internal class TopicTopUseCaseImpl @Inject constructor(
 
     override suspend fun fetchPickedSet(topicId: String): CallResult<PickSet> {
         return setRepository.fetchPickedSet(topicId)
+    }
+
+    override suspend fun like(setId: String, commentId: String): CallResult<LikeResponse> {
+        return commentRepository.like(LikeRequest(setId = setId, commentId = commentId))
     }
 }

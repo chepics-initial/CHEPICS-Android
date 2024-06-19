@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.common.CallResult
@@ -33,6 +35,8 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
     val isCurrentUser: MutableState<Boolean> = mutableStateOf(false)
     val isEnabled: MutableState<Boolean> = mutableStateOf(true)
     val showDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     private var isInitialOnStart = true
 
     fun onStart(user: User) {
@@ -128,6 +132,32 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                     }
 
                     is CallResult.Error -> showDialog.value = true
+                }
+            }
+        }
+    }
+
+    fun onTapLikeButton(comment: Comment) {
+        viewModelScope.launch {
+            when (val result = profileUseCase.like(setId = comment.setId, commentId = comment.id)) {
+                is CallResult.Success -> {
+                    comments.value.first { it.id == result.data.commentId }.votes =
+                        result.data.count
+                    comments.value.first { it.id == result.data.commentId }.isLiked =
+                        result.data.isLiked
+                }
+
+                is CallResult.Error -> {
+                    if (result.exception is InfraException.Server) {
+                        if (result.exception.errorCode == APIErrorCode.ERROR_SET_NOT_PICKED) {
+                            showLikeCommentFailureDialog.value = true
+                            return@launch
+                        }
+                        if (result.exception.errorCode == APIErrorCode.ERROR_TOPIC_NOT_PICKED) {
+                            showLikeReplyFailureDialog.value = true
+                            return@launch
+                        }
+                    }
                 }
             }
         }

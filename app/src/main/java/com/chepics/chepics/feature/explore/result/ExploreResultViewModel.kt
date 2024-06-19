@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.common.CallResult
@@ -32,6 +34,8 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val userScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val searchImages: MutableState<List<String>?> = mutableStateOf(null)
+    val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     var initialSearchText: String = ""
 
     init {
@@ -126,6 +130,33 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     fun onTapImage(index: Int, images: List<String>) {
         selectedImageIndex.value = index
         searchImages.value = images
+    }
+
+    fun onTapLikeButton(comment: Comment) {
+        viewModelScope.launch {
+            when (val result =
+                exploreResultUseCase.like(setId = comment.setId, commentId = comment.id)) {
+                is CallResult.Success -> {
+                    comments.value.first { it.id == result.data.commentId }.votes =
+                        result.data.count
+                    comments.value.first { it.id == result.data.commentId }.isLiked =
+                        result.data.isLiked
+                }
+
+                is CallResult.Error -> {
+                    if (result.exception is InfraException.Server) {
+                        if (result.exception.errorCode == APIErrorCode.ERROR_SET_NOT_PICKED) {
+                            showLikeCommentFailureDialog.value = true
+                            return@launch
+                        }
+                        if (result.exception.errorCode == APIErrorCode.ERROR_TOPIC_NOT_PICKED) {
+                            showLikeReplyFailureDialog.value = true
+                            return@launch
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.comment
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,6 +62,26 @@ fun CommentDetailScreen(
         viewModel.onStart(comment)
     }
 
+    if (viewModel.showLikeCommentFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "選択していないセットのコメントにはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeCommentFailureDialog.value = false
+    }
+
+    if (viewModel.showLikeReplyFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "参加していないトピックの返信にはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeReplyFailureDialog.value = false
+    }
+
     Box {
         Scaffold(
             topBar = {
@@ -84,7 +106,7 @@ fun CommentDetailScreen(
                         .weight(1f)
                 ) {
                     item {
-                        viewModel.comment.value?.let { rootComment ->
+                        viewModel.rootComment.value?.let { rootComment ->
                             CommentCell(
                                 comment = rootComment,
                                 type = CommentType.DETAIL,
@@ -99,6 +121,8 @@ fun CommentDetailScreen(
                                     }
                                 }, onTapUserInfo = { user ->
                                     navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                }, onTapLikeButton = {
+                                    viewModel.onTapLikeButton(rootComment)
                                 }, onTapReplyButton = {
                                     navController.navigate(
                                         Screens.CreateCommentScreen.name + "/${
@@ -157,13 +181,16 @@ fun CommentDetailScreen(
                                         }
                                     }, onTapUserInfo = { user ->
                                         navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                    },
+                                    onTapLikeButton = {
+                                        viewModel.onTapLikeButton(reply)
                                     }, onTapReplyButton = {
                                         navController.navigate(
                                             Screens.CreateCommentScreen.name + "/${
                                                 CreateCommentNavigationItem(
                                                     topicId = reply.topicId,
                                                     setId = reply.setId,
-                                                    parentId = viewModel.comment.value?.id,
+                                                    parentId = viewModel.rootComment.value?.id,
                                                     type = CreateCommentType.REPLY,
                                                     replyFor = reply
                                                 )

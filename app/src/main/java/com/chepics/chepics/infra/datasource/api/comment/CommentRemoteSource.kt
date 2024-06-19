@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.LikeRequest
+import com.chepics.chepics.domainmodel.LikeResponse
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.infra.datasource.api.safeApiCall
 import com.chepics.chepics.repository.comment.CommentDataSource
@@ -47,6 +49,10 @@ class CommentRemoteSource @Inject constructor(
 
     override suspend fun fetchComment(id: String): CallResult<Comment> {
         return safeApiCall { api.fetchComment(id) }
+    }
+
+    override suspend fun like(request: LikeRequest): CallResult<LikeResponse> {
+        return safeApiCall { api.like(request) }
     }
 
     override suspend fun createComment(

@@ -1,5 +1,6 @@
 package com.chepics.chepics.feature.explore.result
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -30,6 +31,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -85,6 +87,26 @@ fun ExploreResultScreen(
 
     val focusRequester = remember {
         FocusRequester()
+    }
+
+    if (viewModel.showLikeCommentFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "選択していないセットのコメントにはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeCommentFailureDialog.value = false
+    }
+
+    if (viewModel.showLikeReplyFailureDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "参加していないトピックの返信にはいいねをすることができません",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showLikeReplyFailureDialog.value = false
     }
 
     BackHandler {
@@ -341,6 +363,9 @@ fun ExploreCommentContentView(
                             },
                             onTapUserInfo = { user ->
                                 navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                            },
+                            onTapLikeButton = {
+                                viewModel.onTapLikeButton(it)
                             }
                         )
                     }

@@ -30,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +52,8 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun CommentCell(
@@ -59,9 +62,12 @@ fun CommentCell(
     modifier: Modifier = Modifier,
     onTapImage: (Int) -> Unit,
     onTapUserInfo: (User) -> Unit,
+    onTapLikeButton: () -> Unit,
     onTapReplyButton: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    var isLikeButtonEnabled = true
+    val coroutineScope = rememberCoroutineScope()
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
@@ -286,7 +292,16 @@ fun CommentCell(
                         imageVector = if (comment.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "like icon",
                         colorFilter = ColorFilter.tint(color = if (comment.isLiked) Color.Red else if (isSystemInDarkTheme()) Color.White else Color.Black),
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable {
+                            if (isLikeButtonEnabled) {
+                                isLikeButtonEnabled = false
+                                coroutineScope.launch {
+                                    onTapLikeButton()
+                                    delay(2000L)
+                                    isLikeButtonEnabled = true
+                                }
+                            }
+                        }
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))

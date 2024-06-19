@@ -4,7 +4,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.Comment
+import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.feature.common.UIState
@@ -17,16 +19,50 @@ import javax.inject.Inject
 class SetCommentDetailViewModel @Inject constructor(private val setCommentDetailUseCase: SetCommentDetailUseCase) :
     ViewModel() {
     val set: MutableState<PickSet?> = mutableStateOf(null)
-    val comment: MutableState<Comment?> = mutableStateOf(null)
+    val rootComment: MutableState<Comment?> = mutableStateOf(null)
     val uiState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val replies: MutableState<List<Comment>> = mutableStateOf(emptyList())
+    val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     fun onStart(set: PickSet, comment: Comment) {
         this.set.value = set
-        this.comment.value = comment
+        this.rootComment.value = comment
         viewModelScope.launch {
             fetchSet()
             fetchComment()
             fetchReplies()
+        }
+    }
+
+    fun onTapLikeButton(comment: Comment) {
+        viewModelScope.launch {
+            when (val result =
+                setCommentDetailUseCase.like(setId = comment.setId, commentId = comment.id)) {
+                is CallResult.Success -> {
+                    rootComment.value?.let {
+                        if (it.id == result.data.commentId) {
+                            rootComment.value?.votes = result.data.count
+                            rootComment.value?.isLiked = result.data.isLiked
+                        }
+                    }
+                    replies.value.first { it.id == result.data.commentId }.votes = result.data.count
+                    replies.value.first { it.id == result.data.commentId }.isLiked =
+                        result.data.isLiked
+                }
+
+                is CallResult.Error -> {
+                    if (result.exception is InfraException.Server) {
+                        if (result.exception.errorCode == APIErrorCode.ERROR_SET_NOT_PICKED) {
+                            showLikeCommentFailureDialog.value = true
+                            return@launch
+                        }
+                        if (result.exception.errorCode == APIErrorCode.ERROR_TOPIC_NOT_PICKED) {
+                            showLikeReplyFailureDialog.value = true
+                            return@launch
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -40,16 +76,16 @@ class SetCommentDetailViewModel @Inject constructor(private val setCommentDetail
     }
 
     private suspend fun fetchComment() {
-        comment.value?.let {
+        rootComment.value?.let {
             when (val result = setCommentDetailUseCase.fetchComment(it.id)) {
-                is CallResult.Success -> comment.value = result.data
+                is CallResult.Success -> rootComment.value = result.data
                 is CallResult.Error -> return
             }
         }
     }
 
     private suspend fun fetchReplies() {
-        comment.value?.let {
+        rootComment.value?.let {
             when (val result =
                 setCommentDetailUseCase.fetchReplies(commentId = it.id, offset = null)) {
                 is CallResult.Success -> {

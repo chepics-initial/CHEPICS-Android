@@ -3,9 +3,12 @@ package com.chepics.chepics.infra.datasource.api.comment
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.CreateCommentResponse
 import com.chepics.chepics.domainmodel.Items
+import com.chepics.chepics.domainmodel.LikeRequest
+import com.chepics.chepics.domainmodel.LikeResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -36,6 +39,9 @@ interface CommentApi {
 
     @GET("v1/chepics/comment")
     suspend fun fetchComment(@Query("comment_id") commentId: String): Response<Comment>
+
+    @POST("v1/chepics/comment/like")
+    suspend fun like(@Body request: LikeRequest): Response<LikeResponse>
 
     @Multipart
     @POST("v1/chepics/comment")
