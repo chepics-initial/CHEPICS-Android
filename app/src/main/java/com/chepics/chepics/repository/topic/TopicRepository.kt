@@ -74,9 +74,10 @@ internal class TopicRepositoryImpl @Inject constructor(
                     }
                     when (tokenRefreshResult) {
                         is CallResult.Error -> {
-                            if (tokenRefreshResult.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.INVALID_REFRESH_TOKEN) {
+                            if (tokenRefreshResult.exception is InfraException.Server && tokenRefreshResult.exception.errorCode == APIErrorCode.INVALID_REFRESH_TOKEN) {
                                 tokenDataSource.removeToken()
                             }
+                            return tokenRefreshResult
                         }
 
                         is CallResult.Success -> {
@@ -85,7 +86,6 @@ internal class TopicRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
-                            delay(1000L)
                             return withContext(ioDispatcher) {
                                 response
                             }

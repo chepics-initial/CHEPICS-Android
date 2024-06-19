@@ -157,6 +157,31 @@ fun CommentCell(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    comment.replyFor?.let { replies ->
+                        if (replies.isNotEmpty() && type == CommentType.REPLY) {
+                            val user = replies.first()
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(
+                                        id = R.drawable.reply_cell
+                                    ),
+                                    contentDescription = "reply icon",
+                                    modifier = Modifier.size(16.dp)
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    text = user.fullname,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = ChepicsPrimary
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(text = comment.comment)
 
                     Spacer(modifier = Modifier.height(8.dp))
