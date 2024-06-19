@@ -58,6 +58,10 @@ fun CommentDetailScreen(
         mutableStateOf(false)
     }
 
+    val replyFor: MutableState<Comment?> = remember {
+        mutableStateOf(null)
+    }
+
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
         viewModel.onStart(comment)
     }
@@ -80,6 +84,33 @@ fun CommentDetailScreen(
         )
             .show()
         viewModel.showLikeReplyFailureDialog.value = false
+    }
+
+    if (viewModel.showReplyRestrictionDialog.value) {
+        Toast.makeText(
+            LocalContext.current,
+            "トピック内でセットを選択することでリプライが可能になります",
+            Toast.LENGTH_SHORT
+        )
+            .show()
+        viewModel.showReplyRestrictionDialog.value = false
+    }
+
+    if (viewModel.showCreateCommentScreen.value) {
+        viewModel.rootComment.value?.let { repliedComment ->
+            navController.navigate(
+                Screens.CreateCommentScreen.name + "/${
+                    CreateCommentNavigationItem(
+                        topicId = repliedComment.topicId,
+                        setId = repliedComment.setId,
+                        parentId = repliedComment.id,
+                        type = CreateCommentType.REPLY,
+                        replyFor = replyFor.value
+                    )
+                }"
+            )
+        }
+        viewModel.showCreateCommentScreen.value = false
     }
 
     Box {
@@ -124,16 +155,8 @@ fun CommentDetailScreen(
                                 }, onTapLikeButton = {
                                     viewModel.onTapLikeButton(rootComment)
                                 }, onTapReplyButton = {
-                                    navController.navigate(
-                                        Screens.CreateCommentScreen.name + "/${
-                                            CreateCommentNavigationItem(
-                                                topicId = rootComment.topicId,
-                                                setId = rootComment.setId,
-                                                parentId = rootComment.id,
-                                                type = CreateCommentType.REPLY
-                                            )
-                                        }"
-                                    )
+                                    replyFor.value = null
+                                    viewModel.onTapReplyButton(rootComment)
                                 }
                             )
 
@@ -185,17 +208,8 @@ fun CommentDetailScreen(
                                     onTapLikeButton = {
                                         viewModel.onTapLikeButton(reply)
                                     }, onTapReplyButton = {
-                                        navController.navigate(
-                                            Screens.CreateCommentScreen.name + "/${
-                                                CreateCommentNavigationItem(
-                                                    topicId = reply.topicId,
-                                                    setId = reply.setId,
-                                                    parentId = viewModel.rootComment.value?.id,
-                                                    type = CreateCommentType.REPLY,
-                                                    replyFor = reply
-                                                )
-                                            }"
-                                        )
+                                        replyFor.value = reply
+                                        viewModel.onTapReplyButton(reply)
                                     }
                                 )
                             }

@@ -24,6 +24,8 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     val replies: MutableState<List<Comment>> = mutableStateOf(emptyList())
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showReplyRestrictionDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showCreateCommentScreen: MutableState<Boolean> = mutableStateOf(false)
     fun onTapImage(index: Int, images: List<String>) {
         selectedImageIndex.value = index
         commentImages.value = images
@@ -64,6 +66,24 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
                             return@launch
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun onTapReplyButton(replyFor: Comment?) {
+        rootComment.value?.let {
+            viewModelScope.launch {
+                when (val result = commentDetailUseCase.isSetPicked(it.topicId)) {
+                    is CallResult.Success -> {
+                        if (result.data) {
+                            showCreateCommentScreen.value = true
+                            return@launch
+                        }
+                        showReplyRestrictionDialog.value = true
+                    }
+
+                    is CallResult.Error -> return@launch
                 }
             }
         }
