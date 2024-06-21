@@ -189,29 +189,31 @@ fun CommentDetailScreen(
                         }
 
                         UIState.SUCCESS -> {
-                            items(viewModel.replies.value) { reply ->
-                                CommentCell(
-                                    comment = reply,
-                                    type = CommentType.REPLY,
-                                    onTapImage = { index ->
-                                        comment.images?.let { images ->
-                                            viewModel.onTapImage(
-                                                index = index,
-                                                images = images.map { image ->
-                                                    image.url
-                                                })
-                                            showImageViewer.value = true
+                            viewModel.replies?.let { replies ->
+                                items(replies) { reply ->
+                                    CommentCell(
+                                        comment = reply,
+                                        type = CommentType.REPLY,
+                                        onTapImage = { index ->
+                                            comment.images?.let { images ->
+                                                viewModel.onTapImage(
+                                                    index = index,
+                                                    images = images.map { image ->
+                                                        image.url
+                                                    })
+                                                showImageViewer.value = true
+                                            }
+                                        }, onTapUserInfo = { user ->
+                                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                        },
+                                        onTapLikeButton = {
+                                            viewModel.onTapLikeButton(reply)
+                                        }, onTapReplyButton = {
+                                            replyFor.value = reply
+                                            viewModel.onTapReplyButton(reply)
                                         }
-                                    }, onTapUserInfo = { user ->
-                                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                                    },
-                                    onTapLikeButton = {
-                                        viewModel.onTapLikeButton(reply)
-                                    }, onTapReplyButton = {
-                                        replyFor.value = reply
-                                        viewModel.onTapReplyButton(reply)
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
 

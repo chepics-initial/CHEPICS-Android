@@ -123,4 +123,6 @@ dependencies {
     implementation(libs.lottie.compose)
 
     implementation(libs.androidx.security.crypto)
+
+    implementation(libs.kotlinx.collections.immutable)
 }
