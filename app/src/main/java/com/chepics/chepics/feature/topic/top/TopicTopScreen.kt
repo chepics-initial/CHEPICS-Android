@@ -758,25 +758,27 @@ fun TopicTopDetailView(
                         }
 
                         UIState.SUCCESS -> {
-                            items(viewModel.comments.value) { comment ->
-                                CommentCell(
-                                    comment = comment,
-                                    type = CommentType.COMMENT,
-                                    modifier = Modifier.clickable {
-                                        navController.navigate(Screens.CommentDetailScreen.name + "/${comment}")
-                                    },
-                                    onTapImage = { index ->
-                                        comment.images?.let { images ->
-                                            onTapImage(index, images.map { it.url })
+                            viewModel.comments.value?.let { comments ->
+                                items(comments) { comment ->
+                                    CommentCell(
+                                        comment = comment,
+                                        type = CommentType.COMMENT,
+                                        modifier = Modifier.clickable {
+                                            navController.navigate(Screens.CommentDetailScreen.name + "/${comment}")
+                                        },
+                                        onTapImage = { index ->
+                                            comment.images?.let { images ->
+                                                onTapImage(index, images.map { it.url })
+                                            }
+                                        },
+                                        onTapUserInfo = { user ->
+                                            navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                        },
+                                        onTapLikeButton = {
+                                            viewModel.onTapLikeButton(comment)
                                         }
-                                    },
-                                    onTapUserInfo = { user ->
-                                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                                    },
-                                    onTapLikeButton = {
-                                        viewModel.onTapLikeButton(comment)
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
 

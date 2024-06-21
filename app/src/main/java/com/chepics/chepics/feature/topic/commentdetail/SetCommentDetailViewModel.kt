@@ -12,6 +12,8 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.SetCommentDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +23,7 @@ class SetCommentDetailViewModel @Inject constructor(private val setCommentDetail
     val set: MutableState<PickSet?> = mutableStateOf(null)
     val rootComment: MutableState<Comment?> = mutableStateOf(null)
     val uiState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
-    val replies: MutableState<List<Comment>> = mutableStateOf(emptyList())
+    val replies: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     fun onStart(set: PickSet, comment: Comment) {
@@ -41,13 +43,19 @@ class SetCommentDetailViewModel @Inject constructor(private val setCommentDetail
                 is CallResult.Success -> {
                     rootComment.value?.let {
                         if (it.id == result.data.commentId) {
-                            rootComment.value?.votes = result.data.count
-                            rootComment.value?.isLiked = result.data.isLiked
+                            rootComment.value = rootComment.value!!.copy(
+                                votes = result.data.count,
+                                isLiked = result.data.isLiked
+                            )
+                            return@launch
                         }
                     }
-                    replies.value.first { it.id == result.data.commentId }.votes = result.data.count
-                    replies.value.first { it.id == result.data.commentId }.isLiked =
-                        result.data.isLiked
+                    replies.value = replies.value?.map {
+                        if (it.id == result.data.commentId) it.copy(
+                            votes = result.data.count,
+                            isLiked = result.data.isLiked
+                        ) else it
+                    }?.toImmutableList()
                 }
 
                 is CallResult.Error -> {
@@ -89,7 +97,7 @@ class SetCommentDetailViewModel @Inject constructor(private val setCommentDetail
             when (val result =
                 setCommentDetailUseCase.fetchReplies(commentId = it.id, offset = null)) {
                 is CallResult.Success -> {
-                    replies.value = result.data
+                    replies.value = result.data.toImmutableList()
                     uiState.value = UIState.SUCCESS
                 }
 

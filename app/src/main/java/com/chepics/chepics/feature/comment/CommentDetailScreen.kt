@@ -189,7 +189,7 @@ fun CommentDetailScreen(
                         }
 
                         UIState.SUCCESS -> {
-                            viewModel.replies?.let { replies ->
+                            viewModel.replies.value?.let { replies ->
                                 items(replies) { reply ->
                                     CommentCell(
                                         comment = reply,

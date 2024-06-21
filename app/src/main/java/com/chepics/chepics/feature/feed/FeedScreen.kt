@@ -310,30 +310,32 @@ fun FeedCommentContentView(
                     modifier = Modifier.fillMaxSize(),
                     state = viewModel.commentScrollState.value
                 ) {
-                    items(viewModel.comments.value) {
-                        CommentCell(
-                            comment = it,
-                            type = CommentType.COMMENT,
-                            modifier = Modifier.clickable {
-                                navController.navigate(Screens.CommentDetailScreen.name + "/${it}")
-                            },
-                            onTapImage = { index ->
-                                it.images?.let { images ->
-                                    viewModel.onTapImage(
-                                        index = index,
-                                        images = images.map { image ->
-                                            image.url
-                                        })
-                                    showImageViewer.value = true
+                    viewModel.comments.value?.let { comments ->
+                        items(comments) {
+                            CommentCell(
+                                comment = it,
+                                type = CommentType.COMMENT,
+                                modifier = Modifier.clickable {
+                                    navController.navigate(Screens.CommentDetailScreen.name + "/${it}")
+                                },
+                                onTapImage = { index ->
+                                    it.images?.let { images ->
+                                        viewModel.onTapImage(
+                                            index = index,
+                                            images = images.map { image ->
+                                                image.url
+                                            })
+                                        showImageViewer.value = true
+                                    }
+                                },
+                                onTapUserInfo = { user ->
+                                    navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                },
+                                onTapLikeButton = {
+                                    viewModel.onTapLikeButton(it)
                                 }
-                            },
-                            onTapUserInfo = { user ->
-                                navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                            },
-                            onTapLikeButton = {
-                                viewModel.onTapLikeButton(it)
-                            }
-                        )
+                            )
+                        }
                     }
                 }
 

@@ -1,9 +1,7 @@
 package com.chepics.chepics.feature.comment
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chepics.chepics.domainmodel.APIErrorCode
@@ -25,8 +23,7 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     val commentImages: MutableState<List<String>?> = mutableStateOf(null)
     val rootComment: MutableState<Comment?> = mutableStateOf(null)
     val uiState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
-    var replies: ImmutableList<Comment>? by mutableStateOf(null)
-        private set
+    val replies: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showReplyRestrictionDialog: MutableState<Boolean> = mutableStateOf(false)
@@ -51,12 +48,14 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
                 is CallResult.Success -> {
                     rootComment.value?.let {
                         if (it.id == result.data.commentId) {
-                            rootComment.value?.votes = result.data.count
-                            rootComment.value?.isLiked = result.data.isLiked
+                            rootComment.value = rootComment.value!!.copy(
+                                votes = result.data.count,
+                                isLiked = result.data.isLiked
+                            )
                             return@launch
                         }
                     }
-                    replies = replies?.map {
+                    replies.value = replies.value?.map {
                         if (it.id == result.data.commentId) it.copy(
                             votes = result.data.count,
                             isLiked = result.data.isLiked
@@ -112,7 +111,7 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
             when (val result =
                 commentDetailUseCase.fetchReplies(commentId = it.id, offset = null)) {
                 is CallResult.Success -> {
-                    replies = result.data.toImmutableList()
+                    replies.value = result.data.toImmutableList()
                     uiState.value = UIState.SUCCESS
                 }
 

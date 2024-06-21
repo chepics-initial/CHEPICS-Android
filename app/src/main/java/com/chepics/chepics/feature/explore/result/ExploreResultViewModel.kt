@@ -15,6 +15,8 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.ExploreResultUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +29,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val userUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val topics: MutableState<List<Topic>> = mutableStateOf(emptyList())
-    val comments: MutableState<List<Comment>> = mutableStateOf(emptyList())
+    val comments: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val users: MutableState<List<User>> = mutableStateOf(emptyList())
     val topicScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val commentScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
@@ -100,7 +102,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         }
         when (val result = exploreResultUseCase.fetchComments(initialSearchText)) {
             is CallResult.Success -> {
-                comments.value = result.data
+                comments.value = result.data.toImmutableList()
                 commentUIState.value = UIState.SUCCESS
             }
 
@@ -137,10 +139,12 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             when (val result =
                 exploreResultUseCase.like(setId = comment.setId, commentId = comment.id)) {
                 is CallResult.Success -> {
-                    comments.value.first { it.id == result.data.commentId }.votes =
-                        result.data.count
-                    comments.value.first { it.id == result.data.commentId }.isLiked =
-                        result.data.isLiked
+                    comments.value = comments.value?.map {
+                        if (it.id == result.data.commentId) it.copy(
+                            votes = result.data.count,
+                            isLiked = result.data.isLiked
+                        ) else it
+                    }?.toImmutableList()
                 }
 
                 is CallResult.Error -> {

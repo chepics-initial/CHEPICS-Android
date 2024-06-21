@@ -202,29 +202,31 @@ fun SetCommentDetailScreen(
                     }
 
                     UIState.SUCCESS -> {
-                        items(viewModel.replies.value) { reply ->
-                            CommentCell(
-                                comment = reply,
-                                type = CommentType.REPLY,
-                                onTapImage = {},
-                                onTapUserInfo = {},
-                                onTapLikeButton = {
-                                    viewModel.onTapLikeButton(reply)
-                                },
-                                onTapReplyButton = {
-                                    navController.navigate(
-                                        Screens.CreateCommentScreen.name + "/${
-                                            CreateCommentNavigationItem(
-                                                topicId = comment.topicId,
-                                                setId = comment.setId,
-                                                parentId = viewModel.rootComment.value?.id,
-                                                type = CreateCommentType.REPLY,
-                                                replyFor = reply
-                                            )
-                                        }"
-                                    )
-                                }
-                            )
+                        viewModel.replies.value?.let { replies ->
+                            items(replies) { reply ->
+                                CommentCell(
+                                    comment = reply,
+                                    type = CommentType.REPLY,
+                                    onTapImage = {},
+                                    onTapUserInfo = {},
+                                    onTapLikeButton = {
+                                        viewModel.onTapLikeButton(reply)
+                                    },
+                                    onTapReplyButton = {
+                                        navController.navigate(
+                                            Screens.CreateCommentScreen.name + "/${
+                                                CreateCommentNavigationItem(
+                                                    topicId = comment.topicId,
+                                                    setId = comment.setId,
+                                                    parentId = viewModel.rootComment.value?.id,
+                                                    type = CreateCommentType.REPLY,
+                                                    replyFor = reply
+                                                )
+                                            }"
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
 

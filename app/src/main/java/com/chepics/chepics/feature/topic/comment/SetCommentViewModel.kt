@@ -12,6 +12,8 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.SetCommentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +22,7 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
     ViewModel() {
     val set: MutableState<PickSet?> = mutableStateOf(null)
     val uiState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
-    val comments: MutableState<List<Comment>> = mutableStateOf(emptyList())
+    val comments: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     fun onStart(set: PickSet) {
@@ -36,10 +38,12 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
             when (val result =
                 setCommentUseCase.like(setId = comment.setId, commentId = comment.id)) {
                 is CallResult.Success -> {
-                    comments.value.first { it.id == result.data.commentId }.votes =
-                        result.data.count
-                    comments.value.first { it.id == result.data.commentId }.isLiked =
-                        result.data.isLiked
+                    comments.value = comments.value?.map {
+                        if (it.id == result.data.commentId) it.copy(
+                            votes = result.data.count,
+                            isLiked = result.data.isLiked
+                        ) else it
+                    }?.toImmutableList()
                 }
 
                 is CallResult.Error -> {
@@ -71,7 +75,7 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
         set.value?.let {
             when (val result = setCommentUseCase.fetchComments(setId = it.id, offset = null)) {
                 is CallResult.Success -> {
-                    comments.value = result.data
+                    comments.value = result.data.toImmutableList()
                     uiState.value = UIState.SUCCESS
                 }
 

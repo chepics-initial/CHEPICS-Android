@@ -14,6 +14,8 @@ import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.infra.datasource.api.EMPTY_RESPONSE
 import com.chepics.chepics.usecase.TopicTopUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,7 +28,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val setListUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val commentUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val sets: MutableState<List<PickSet>> = mutableStateOf(emptyList())
-    val comments: MutableState<List<Comment>> = mutableStateOf(emptyList())
+    val comments: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val selectedSet: MutableState<PickSet?> = mutableStateOf(null)
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val status: MutableState<TopicTopStatus> = mutableStateOf(TopicTopStatus.LOADING)
@@ -66,10 +68,12 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
             when (val result =
                 topicTopUseCase.like(setId = comment.setId, commentId = comment.id)) {
                 is CallResult.Success -> {
-                    comments.value.first { it.id == result.data.commentId }.votes =
-                        result.data.count
-                    comments.value.first { it.id == result.data.commentId }.isLiked =
-                        result.data.isLiked
+                    comments.value = comments.value?.map {
+                        if (it.id == result.data.commentId) it.copy(
+                            votes = result.data.count,
+                            isLiked = result.data.isLiked
+                        ) else it
+                    }?.toImmutableList()
                 }
 
                 is CallResult.Error -> {
@@ -155,7 +159,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     private suspend fun fetchComments(setId: String) {
         when (val result = topicTopUseCase.fetchSetComments(setId = setId, offset = null)) {
             is CallResult.Success -> {
-                comments.value = result.data
+                comments.value = result.data.toImmutableList()
                 commentUIState.value = UIState.SUCCESS
             }
 

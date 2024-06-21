@@ -156,24 +156,26 @@ fun SetCommentScreen(
 
                     UIState.SUCCESS -> {
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                            items(viewModel.comments.value) { comment ->
-                                CommentCell(
-                                    comment = comment,
-                                    type = CommentType.SET,
-                                    modifier = Modifier.clickable {
-                                        navController.navigate(Screens.SetCommentDetailScreen.name + "/${selectedSet}/${comment}") {
-                                            navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                "onBack",
-                                                onBack
-                                            )
+                            viewModel.comments.value?.let { comments ->
+                                items(comments) { comment ->
+                                    CommentCell(
+                                        comment = comment,
+                                        type = CommentType.SET,
+                                        modifier = Modifier.clickable {
+                                            navController.navigate(Screens.SetCommentDetailScreen.name + "/${selectedSet}/${comment}") {
+                                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                    "onBack",
+                                                    onBack
+                                                )
+                                            }
+                                        },
+                                        onTapImage = {},
+                                        onTapUserInfo = {},
+                                        onTapLikeButton = {
+                                            viewModel.onTapLikeButton(comment)
                                         }
-                                    },
-                                    onTapImage = {},
-                                    onTapUserInfo = {},
-                                    onTapLikeButton = {
-                                        viewModel.onTapLikeButton(comment)
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
                     }
