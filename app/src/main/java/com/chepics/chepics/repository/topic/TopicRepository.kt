@@ -33,15 +33,21 @@ internal class TopicRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : TopicRepository {
     override suspend fun fetchFavoriteTopics(offset: Int?): CallResult<List<Topic>> {
-        return handleResponse(topicDataSource.fetchFavoriteTopics(offset))
+        return handleResponse {
+            topicDataSource.fetchFavoriteTopics(offset)
+        }
     }
 
     override suspend fun fetchUserTopics(userId: String, offset: Int?): CallResult<List<Topic>> {
-        return handleResponse(topicDataSource.fetchUserTopics(userId = userId, offset = offset))
+        return handleResponse {
+            topicDataSource.fetchUserTopics(userId = userId, offset = offset)
+        }
     }
 
     override suspend fun fetchTopic(topicId: String): CallResult<Topic> {
-        return handleResponse(topicDataSource.fetchTopic(topicId))
+        return handleResponse {
+            topicDataSource.fetchTopic(topicId)
+        }
     }
 
     override suspend fun createTopic(
@@ -50,19 +56,19 @@ internal class TopicRepositoryImpl @Inject constructor(
         description: String?,
         images: List<Uri>?
     ): CallResult<Unit> {
-        return handleResponse(
+        return handleResponse {
             topicDataSource.createTopic(
                 title = title,
                 link = link,
                 description = description,
                 images = images
             )
-        )
+        }
     }
 
-    private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
+    private suspend fun <T : Any> handleResponse(request: suspend () -> CallResult<T>): CallResult<T> {
         val result = withContext(ioDispatcher) {
-            response
+            request()
         }
 
         when (result) {
@@ -86,8 +92,9 @@ internal class TopicRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
+                            delay(1000L)
                             return withContext(ioDispatcher) {
-                                response
+                                request()
                             }
                         }
                     }

@@ -11,6 +11,7 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthDataSource
 import com.chepics.chepics.repository.token.TokenDataSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -27,20 +28,26 @@ internal class SearchRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SearchRepository {
     override suspend fun fetchSearchedTopics(word: String): CallResult<List<Topic>> {
-        return handleResponse(searchDataSource.fetchSearchedTopics(word))
+        return handleResponse {
+            searchDataSource.fetchSearchedTopics(word)
+        }
     }
 
     override suspend fun fetchSearchedComments(word: String): CallResult<List<Comment>> {
-        return handleResponse(searchDataSource.fetchSearchedComments(word))
+        return handleResponse {
+            searchDataSource.fetchSearchedComments(word)
+        }
     }
 
     override suspend fun fetchSearchedUsers(word: String): CallResult<List<User>> {
-        return handleResponse(searchDataSource.fetchSearchedUsers(word))
+        return handleResponse {
+            searchDataSource.fetchSearchedUsers(word)
+        }
     }
 
-    private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
+    private suspend fun <T : Any> handleResponse(request: suspend () -> CallResult<T>): CallResult<T> {
         val result = withContext(ioDispatcher) {
-            response
+            request()
         }
 
         when (result) {
@@ -64,8 +71,9 @@ internal class SearchRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
+                            delay(1000L)
                             return withContext(ioDispatcher) {
-                                response
+                                request()
                             }
                         }
                     }

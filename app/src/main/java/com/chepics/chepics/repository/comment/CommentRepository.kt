@@ -12,6 +12,7 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthDataSource
 import com.chepics.chepics.repository.token.TokenDataSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ internal class CommentRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : CommentRepository {
     override suspend fun fetchFollowingComments(offset: Int?): CallResult<List<Comment>> {
-        return withContext(ioDispatcher) {
+        return handleResponse {
             commentDataSource.fetchFollowingComments(offset)
         }
     }
@@ -49,28 +50,36 @@ internal class CommentRepositoryImpl @Inject constructor(
         userId: String,
         offset: Int?
     ): CallResult<List<Comment>> {
-        return handleResponse(commentDataSource.fetchUserComments(userId = userId, offset = offset))
+        return handleResponse {
+            commentDataSource.fetchUserComments(userId = userId, offset = offset)
+        }
     }
 
     override suspend fun fetchSetComments(setId: String, offset: Int?): CallResult<List<Comment>> {
-        return handleResponse(commentDataSource.fetchSetComments(setId = setId, offset = offset))
+        return handleResponse {
+            commentDataSource.fetchSetComments(setId = setId, offset = offset)
+        }
     }
 
     override suspend fun fetchReplies(commentId: String, offset: Int?): CallResult<List<Comment>> {
-        return handleResponse(
+        return handleResponse {
             commentDataSource.fetchReplies(
                 commentId = commentId,
                 offset = offset
             )
-        )
+        }
     }
 
     override suspend fun fetchComment(id: String): CallResult<Comment> {
-        return handleResponse(commentDataSource.fetchComment(id))
+        return handleResponse {
+            commentDataSource.fetchComment(id)
+        }
     }
 
     override suspend fun like(request: LikeRequest): CallResult<LikeResponse> {
-        return handleResponse(commentDataSource.like(request))
+        return handleResponse {
+            commentDataSource.like(request)
+        }
     }
 
     override suspend fun createComment(
@@ -82,7 +91,7 @@ internal class CommentRepositoryImpl @Inject constructor(
         replyFor: List<String>?,
         images: List<Uri>?
     ): CallResult<Unit> {
-        return handleResponse(
+        return handleResponse {
             commentDataSource.createComment(
                 parentId = parentId,
                 topicId = topicId,
@@ -92,12 +101,12 @@ internal class CommentRepositoryImpl @Inject constructor(
                 replyFor = replyFor,
                 images = images
             )
-        )
+        }
     }
 
-    private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
+    private suspend fun <T : Any> handleResponse(request: suspend () -> CallResult<T>): CallResult<T> {
         val result = withContext(ioDispatcher) {
-            response
+            request()
         }
 
         when (result) {
@@ -121,8 +130,9 @@ internal class CommentRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
+                            delay(1000L)
                             return withContext(ioDispatcher) {
-                                response
+                                request()
                             }
                         }
                     }

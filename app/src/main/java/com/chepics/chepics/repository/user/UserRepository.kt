@@ -12,6 +12,7 @@ import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.repository.auth.AuthDataSource
 import com.chepics.chepics.repository.token.TokenDataSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -41,11 +42,15 @@ internal class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchUser(userId: String): CallResult<User> {
-        return handleResponse(userDataSource.fetchUser(userId))
+        return handleResponse {
+            userDataSource.fetchUser(userId)
+        }
     }
 
     override suspend fun follow(request: FollowRequest): CallResult<Boolean> {
-        return handleResponse(userDataSource.follow(request))
+        return handleResponse {
+            userDataSource.follow(request)
+        }
     }
 
     override suspend fun updateUser(
@@ -55,14 +60,14 @@ internal class UserRepositoryImpl @Inject constructor(
         imageUri: Uri?
     ): CallResult<Unit> {
         when (
-            val result = handleResponse(
+            val result = handleResponse {
                 userDataSource.updateUser(
                     username = username,
                     fullname = fullname,
                     bio = bio,
                     imageUri = imageUri
                 )
-            )
+            }
         ) {
             is CallResult.Success -> {
                 userStoreDataSource.storeUserData(
@@ -83,9 +88,9 @@ internal class UserRepositoryImpl @Inject constructor(
         return userStoreDataSource.getUserData()
     }
 
-    private suspend fun <T : Any> handleResponse(response: CallResult<T>): CallResult<T> {
+    private suspend fun <T : Any> handleResponse(request: suspend () -> CallResult<T>): CallResult<T> {
         val result = withContext(ioDispatcher) {
-            response
+            request()
         }
 
         when (result) {
@@ -109,8 +114,9 @@ internal class UserRepositoryImpl @Inject constructor(
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
                             tokenDataSource.setAccessToken()
+                            delay(1000L)
                             return withContext(ioDispatcher) {
-                                response
+                                request()
                             }
                         }
                     }
