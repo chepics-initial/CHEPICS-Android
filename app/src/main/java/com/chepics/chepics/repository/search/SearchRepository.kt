@@ -16,9 +16,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface SearchRepository {
-    suspend fun fetchSearchedTopics(word: String): CallResult<List<Topic>>
-    suspend fun fetchSearchedComments(word: String): CallResult<List<Comment>>
-    suspend fun fetchSearchedUsers(word: String): CallResult<List<User>>
+    suspend fun fetchSearchedTopics(word: String, offset: Int?): CallResult<List<Topic>>
+    suspend fun fetchSearchedComments(word: String, offset: Int?): CallResult<List<Comment>>
+    suspend fun fetchSearchedUsers(word: String, offset: Int?): CallResult<List<User>>
 }
 
 internal class SearchRepositoryImpl @Inject constructor(
@@ -27,21 +27,24 @@ internal class SearchRepositoryImpl @Inject constructor(
     private val tokenDataSource: TokenDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SearchRepository {
-    override suspend fun fetchSearchedTopics(word: String): CallResult<List<Topic>> {
+    override suspend fun fetchSearchedTopics(word: String, offset: Int?): CallResult<List<Topic>> {
         return handleResponse {
-            searchDataSource.fetchSearchedTopics(word)
+            searchDataSource.fetchSearchedTopics(word = word, offset = offset)
         }
     }
 
-    override suspend fun fetchSearchedComments(word: String): CallResult<List<Comment>> {
+    override suspend fun fetchSearchedComments(
+        word: String,
+        offset: Int?
+    ): CallResult<List<Comment>> {
         return handleResponse {
-            searchDataSource.fetchSearchedComments(word)
+            searchDataSource.fetchSearchedComments(word = word, offset = offset)
         }
     }
 
-    override suspend fun fetchSearchedUsers(word: String): CallResult<List<User>> {
+    override suspend fun fetchSearchedUsers(word: String, offset: Int?): CallResult<List<User>> {
         return handleResponse {
-            searchDataSource.fetchSearchedUsers(word)
+            searchDataSource.fetchSearchedUsers(word = word, offset = offset)
         }
     }
 

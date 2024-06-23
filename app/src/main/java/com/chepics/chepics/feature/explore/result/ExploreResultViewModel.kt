@@ -39,16 +39,39 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     var initialSearchText: String = ""
-
-    init {
-        viewModelScope.launch {
-            fetchTopics()
-        }
-    }
+    private var isInitialOnStart = true
 
     fun onStart(searchText: String) {
         initialSearchText = searchText
         this.searchText.value = searchText
+        if (isInitialOnStart) {
+            isInitialOnStart = false
+            when (selectedTab.value) {
+                0 -> {
+                    if (topicUIState.value != UIState.SUCCESS) {
+                        viewModelScope.launch {
+                            fetchTopics()
+                        }
+                    }
+                }
+
+                1 -> {
+                    if (commentUIState.value != UIState.SUCCESS) {
+                        viewModelScope.launch {
+                            fetchComments()
+                        }
+                    }
+                }
+
+                2 -> {
+                    if (userUIState.value != UIState.SUCCESS) {
+                        viewModelScope.launch {
+                            fetchUsers()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun selectTab(index: Int) {
@@ -84,7 +107,8 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         if (topicUIState.value != UIState.SUCCESS) {
             topicUIState.value = UIState.LOADING
         }
-        when (val result = exploreResultUseCase.fetchTopics(initialSearchText)) {
+        when (val result =
+            exploreResultUseCase.fetchTopics(word = initialSearchText, offset = null)) {
             is CallResult.Success -> {
                 topics.value = result.data
                 topicUIState.value = UIState.SUCCESS
@@ -100,7 +124,8 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         if (commentUIState.value != UIState.SUCCESS) {
             commentUIState.value = UIState.LOADING
         }
-        when (val result = exploreResultUseCase.fetchComments(initialSearchText)) {
+        when (val result =
+            exploreResultUseCase.fetchComments(word = initialSearchText, offset = null)) {
             is CallResult.Success -> {
                 comments.value = result.data.toImmutableList()
                 commentUIState.value = UIState.SUCCESS
@@ -117,7 +142,8 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             userUIState.value = UIState.LOADING
         }
 
-        when (val result = exploreResultUseCase.fetchUsers(initialSearchText)) {
+        when (val result =
+            exploreResultUseCase.fetchUsers(word = initialSearchText, offset = null)) {
             is CallResult.Success -> {
                 users.value = result.data
                 userUIState.value = UIState.SUCCESS
