@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,6 +78,7 @@ import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.RoundButton
@@ -323,6 +325,14 @@ fun TopicSetListView(
                                     )
                                 }
                             }
+                        }
+
+                        item {
+                            LaunchedEffect(Unit) {
+                                viewModel.onReachSetFooterView()
+                            }
+
+                            FooterView(status = viewModel.setFooterStatus.value)
                         }
 
                         item {
@@ -778,6 +788,14 @@ fun TopicTopDetailView(
                                             viewModel.onTapLikeButton(comment)
                                         }
                                     )
+                                }
+
+                                item {
+                                    LaunchedEffect(Unit) {
+                                        viewModel.onReachCommentFooterView()
+                                    }
+
+                                    FooterView(status = viewModel.commentFooterStatus.value)
                                 }
                             }
                         }

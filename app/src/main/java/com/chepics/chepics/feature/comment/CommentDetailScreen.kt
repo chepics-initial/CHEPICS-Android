@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import com.chepics.chepics.feature.commonparts.CommentType
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
@@ -213,6 +215,14 @@ fun CommentDetailScreen(
                                             viewModel.onTapReplyButton(reply)
                                         }
                                     )
+                                }
+
+                                item {
+                                    LaunchedEffect(Unit) {
+                                        viewModel.onReachFooterView()
+                                    }
+
+                                    FooterView(status = viewModel.footerStatus.value)
                                 }
                             }
                         }

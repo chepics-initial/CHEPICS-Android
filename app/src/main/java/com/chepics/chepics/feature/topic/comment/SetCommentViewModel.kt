@@ -9,8 +9,10 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.feature.common.FooterStatus
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.SetCommentUseCase
+import com.chepics.chepics.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -25,6 +27,7 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
     val comments: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val footerStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
     fun onStart(set: PickSet) {
         this.set.value = set
         viewModelScope.launch {
@@ -62,6 +65,41 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
         }
     }
 
+    fun onReachFooterView() {
+        set.value?.let {
+            if (footerStatus.value == FooterStatus.LOADINGSTOPPED || footerStatus.value == FooterStatus.FAILURE) {
+                footerStatus.value = FooterStatus.LOADINGSTARTED
+                viewModelScope.launch {
+                    when (val result = setCommentUseCase.fetchComments(
+                        setId = it.id,
+                        offset = comments.value?.size
+                    )) {
+                        is CallResult.Success -> {
+                            val updatedComments = comments.value?.toMutableList()
+                            for (additionalComment in result.data) {
+                                val index =
+                                    comments.value?.indexOfFirst { it.id == additionalComment.id }
+                                if (index != null && index != -1) {
+                                    updatedComments?.set(index, additionalComment)
+                                } else {
+                                    updatedComments?.add(additionalComment)
+                                }
+                            }
+                            comments.value = updatedComments?.toImmutableList()
+                            if (result.data.size < Constants.ARRAY_LIMIT) {
+                                footerStatus.value = FooterStatus.ALLFETCHED
+                            } else {
+                                footerStatus.value = FooterStatus.LOADINGSTOPPED
+                            }
+                        }
+
+                        is CallResult.Error -> footerStatus.value = FooterStatus.FAILURE
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun fetchSet() {
         set.value?.let {
             when (val result = setCommentUseCase.fetchSet(it.id)) {
@@ -76,6 +114,11 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
             when (val result = setCommentUseCase.fetchComments(setId = it.id, offset = null)) {
                 is CallResult.Success -> {
                     comments.value = result.data.toImmutableList()
+                    if (result.data.size < Constants.ARRAY_LIMIT) {
+                        footerStatus.value = FooterStatus.ALLFETCHED
+                    } else {
+                        footerStatus.value = FooterStatus.LOADINGSTOPPED
+                    }
                     uiState.value = UIState.SUCCESS
                 }
 

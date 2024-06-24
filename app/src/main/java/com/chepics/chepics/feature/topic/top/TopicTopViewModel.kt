@@ -10,9 +10,11 @@ import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.feature.common.FooterStatus
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.infra.datasource.api.EMPTY_RESPONSE
 import com.chepics.chepics.usecase.TopicTopUseCase
+import com.chepics.chepics.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -37,6 +39,9 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val currentSet: MutableState<PickSet?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val commentFooterStatus: MutableState<FooterStatus> =
+        mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val setFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
 
     fun onStart(topic: Topic) {
         this.topic.value = topic
@@ -112,6 +117,11 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                 when (val result = topicTopUseCase.fetchSets(topicId = it.id, offset = null)) {
                     is CallResult.Success -> {
                         sets.value = result.data
+                        if (result.data.size < Constants.ARRAY_LIMIT) {
+                            setFooterStatus.value = FooterStatus.ALLFETCHED
+                        } else {
+                            setFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        }
                         setListUIState.value = UIState.SUCCESS
                     }
 
@@ -156,10 +166,82 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
         return selectedSet.value != null && selectedSet.value?.id != currentSet.value?.id
     }
 
+    fun onReachCommentFooterView() {
+        currentSet.value?.let {
+            if (commentFooterStatus.value == FooterStatus.LOADINGSTOPPED || commentFooterStatus.value == FooterStatus.FAILURE) {
+                commentFooterStatus.value = FooterStatus.LOADINGSTARTED
+                viewModelScope.launch {
+                    when (val result = topicTopUseCase.fetchSetComments(
+                        setId = it.id,
+                        offset = comments.value?.size
+                    )) {
+                        is CallResult.Success -> {
+                            val updatedComments = comments.value?.toMutableList()
+                            for (additionalComment in result.data) {
+                                val index =
+                                    comments.value?.indexOfFirst { it.id == additionalComment.id }
+                                if (index != null && index != -1) {
+                                    updatedComments?.set(index, additionalComment)
+                                } else {
+                                    updatedComments?.add(additionalComment)
+                                }
+                            }
+                            comments.value = updatedComments?.toImmutableList()
+                            if (result.data.size < Constants.ARRAY_LIMIT) {
+                                commentFooterStatus.value = FooterStatus.ALLFETCHED
+                            } else {
+                                commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            }
+                        }
+
+                        is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE
+                    }
+                }
+            }
+        }
+    }
+
+    fun onReachSetFooterView() {
+        topic.value?.let {
+            if (setFooterStatus.value == FooterStatus.LOADINGSTOPPED || setFooterStatus.value == FooterStatus.FAILURE) {
+                setFooterStatus.value = FooterStatus.LOADINGSTARTED
+                viewModelScope.launch {
+                    when (val result =
+                        topicTopUseCase.fetchSets(topicId = it.id, offset = sets.value.size)) {
+                        is CallResult.Success -> {
+                            val updatedSets = sets.value.toMutableList()
+                            for (additionalSet in result.data) {
+                                val index = sets.value.indexOfFirst { it.id == additionalSet.id }
+                                if (index != -1) {
+                                    updatedSets[index] = additionalSet
+                                } else {
+                                    updatedSets.add(additionalSet)
+                                }
+                            }
+                            sets.value = updatedSets
+                            if (result.data.size < Constants.ARRAY_LIMIT) {
+                                setFooterStatus.value = FooterStatus.ALLFETCHED
+                            } else {
+                                setFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            }
+                        }
+
+                        is CallResult.Error -> setFooterStatus.value = FooterStatus.FAILURE
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun fetchComments(setId: String) {
         when (val result = topicTopUseCase.fetchSetComments(setId = setId, offset = null)) {
             is CallResult.Success -> {
                 comments.value = result.data.toImmutableList()
+                if (result.data.size < Constants.ARRAY_LIMIT) {
+                    commentFooterStatus.value = FooterStatus.ALLFETCHED
+                } else {
+                    commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                }
                 commentUIState.value = UIState.SUCCESS
             }
 

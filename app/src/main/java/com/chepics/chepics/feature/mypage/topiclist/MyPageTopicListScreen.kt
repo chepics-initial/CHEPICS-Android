@@ -45,6 +45,7 @@ import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.MySet
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
@@ -111,6 +112,14 @@ fun MyPageTopicListScreen(
                                 set = pickedSet,
                                 modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${pickedSet.topic}") }
                             )
+                        }
+
+                        item {
+                            LaunchedEffect(Unit) {
+                                viewModel.onReachFooterView()
+                            }
+
+                            FooterView(status = viewModel.footerStatus.value)
                         }
                     }
 

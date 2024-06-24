@@ -44,6 +44,7 @@ import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserCell
@@ -287,6 +288,14 @@ fun ExploreTopicContentView(
                             navController.navigate(Screens.ProfileScreen.name + "/${user}")
                         }
                     }
+
+                    item {
+                        LaunchedEffect(Unit) {
+                            viewModel.onReachTopicFooterView()
+                        }
+
+                        FooterView(status = viewModel.topicFooterStatus.value)
+                    }
                 }
 
                 PullToRefreshContainer(
@@ -370,6 +379,14 @@ fun ExploreCommentContentView(
                                 }
                             )
                         }
+
+                        item {
+                            LaunchedEffect(Unit) {
+                                viewModel.onReachCommentFooterView()
+                            }
+
+                            FooterView(status = viewModel.commentFooterStatus.value)
+                        }
                     }
                 }
 
@@ -438,6 +455,14 @@ fun ExploreUserContentView(
                                 }
                             }
                         )
+                    }
+
+                    item {
+                        LaunchedEffect(Unit) {
+                            viewModel.onReachUserFooterView()
+                        }
+
+                        FooterView(status = viewModel.userFooterStatus.value)
                     }
                 }
 

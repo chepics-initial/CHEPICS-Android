@@ -8,8 +8,10 @@ import com.chepics.chepics.domainmodel.APIErrorCode
 import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.feature.common.FooterStatus
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.CommentDetailUseCase
+import com.chepics.chepics.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -28,6 +30,8 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showReplyRestrictionDialog: MutableState<Boolean> = mutableStateOf(false)
     val showCreateCommentScreen: MutableState<Boolean> = mutableStateOf(false)
+    val footerStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+
     fun onTapImage(index: Int, images: List<String>) {
         selectedImageIndex.value = index
         commentImages.value = images
@@ -97,6 +101,41 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
         }
     }
 
+    fun onReachFooterView() {
+        rootComment.value?.let {
+            if (footerStatus.value == FooterStatus.LOADINGSTOPPED || footerStatus.value == FooterStatus.FAILURE) {
+                footerStatus.value = FooterStatus.LOADINGSTARTED
+                viewModelScope.launch {
+                    when (val result = commentDetailUseCase.fetchReplies(
+                        commentId = it.id,
+                        offset = replies.value?.size
+                    )) {
+                        is CallResult.Success -> {
+                            val updatedReplies = replies.value?.toMutableList()
+                            for (additionalReply in result.data) {
+                                val index =
+                                    replies.value?.indexOfFirst { it.id == additionalReply.id }
+                                if (index != null && index != -1) {
+                                    updatedReplies?.set(index, additionalReply)
+                                } else {
+                                    updatedReplies?.add(additionalReply)
+                                }
+                            }
+                            replies.value = updatedReplies?.toImmutableList()
+                            if (result.data.size < Constants.ARRAY_LIMIT) {
+                                footerStatus.value = FooterStatus.ALLFETCHED
+                            } else {
+                                footerStatus.value = FooterStatus.LOADINGSTOPPED
+                            }
+                        }
+
+                        is CallResult.Error -> footerStatus.value = FooterStatus.FAILURE
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun fetchComment() {
         rootComment.value?.let {
             when (val result = commentDetailUseCase.fetchComment(it.id)) {
@@ -112,6 +151,11 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
                 commentDetailUseCase.fetchReplies(commentId = it.id, offset = null)) {
                 is CallResult.Success -> {
                     replies.value = result.data.toImmutableList()
+                    if (result.data.size < Constants.ARRAY_LIMIT) {
+                        footerStatus.value = FooterStatus.ALLFETCHED
+                    } else {
+                        footerStatus.value = FooterStatus.LOADINGSTOPPED
+                    }
                     uiState.value = UIState.SUCCESS
                 }
 

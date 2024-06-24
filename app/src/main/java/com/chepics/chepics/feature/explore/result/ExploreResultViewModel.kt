@@ -12,8 +12,10 @@ import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.feature.common.FooterStatus
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.ExploreResultUseCase
+import com.chepics.chepics.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -38,6 +40,10 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val searchImages: MutableState<List<String>?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val topicFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val commentFooterStatus: MutableState<FooterStatus> =
+        mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val userFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
     var initialSearchText: String = ""
     private var isInitialOnStart = true
 
@@ -111,6 +117,11 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             exploreResultUseCase.fetchTopics(word = initialSearchText, offset = null)) {
             is CallResult.Success -> {
                 topics.value = result.data
+                if (result.data.size < Constants.ARRAY_LIMIT) {
+                    topicFooterStatus.value = FooterStatus.ALLFETCHED
+                } else {
+                    topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                }
                 topicUIState.value = UIState.SUCCESS
             }
 
@@ -128,6 +139,11 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             exploreResultUseCase.fetchComments(word = initialSearchText, offset = null)) {
             is CallResult.Success -> {
                 comments.value = result.data.toImmutableList()
+                if (result.data.size < Constants.ARRAY_LIMIT) {
+                    commentFooterStatus.value = FooterStatus.ALLFETCHED
+                } else {
+                    commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                }
                 commentUIState.value = UIState.SUCCESS
             }
 
@@ -146,6 +162,11 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             exploreResultUseCase.fetchUsers(word = initialSearchText, offset = null)) {
             is CallResult.Success -> {
                 users.value = result.data
+                if (result.data.size < Constants.ARRAY_LIMIT) {
+                    userFooterStatus.value = FooterStatus.ALLFETCHED
+                } else {
+                    userFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                }
                 userUIState.value = UIState.SUCCESS
             }
 
@@ -184,6 +205,103 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                             return@launch
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun onReachTopicFooterView() {
+        if (topicFooterStatus.value == FooterStatus.LOADINGSTOPPED || topicFooterStatus.value == FooterStatus.FAILURE) {
+            topicFooterStatus.value = FooterStatus.LOADINGSTARTED
+            viewModelScope.launch {
+                when (val result = exploreResultUseCase.fetchTopics(
+                    word = initialSearchText,
+                    offset = topics.value.size
+                )) {
+                    is CallResult.Success -> {
+                        val updatedTopics = topics.value.toMutableList()
+                        for (additionalTopic in result.data) {
+                            val index = topics.value.indexOfFirst { it.id == additionalTopic.id }
+                            if (index != -1) {
+                                updatedTopics[index] = additionalTopic
+                            } else {
+                                updatedTopics.add(additionalTopic)
+                            }
+                        }
+                        topics.value = updatedTopics
+                        if (result.data.size < Constants.ARRAY_LIMIT) {
+                            topicFooterStatus.value = FooterStatus.ALLFETCHED
+                        } else {
+                            topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        }
+                    }
+
+                    is CallResult.Error -> topicFooterStatus.value = FooterStatus.FAILURE
+                }
+            }
+        }
+    }
+
+    fun onReachCommentFooterView() {
+        if (commentFooterStatus.value == FooterStatus.LOADINGSTOPPED || commentFooterStatus.value == FooterStatus.FAILURE) {
+            commentFooterStatus.value = FooterStatus.LOADINGSTARTED
+            viewModelScope.launch {
+                when (val result = exploreResultUseCase.fetchComments(
+                    word = initialSearchText,
+                    offset = comments.value?.size
+                )) {
+                    is CallResult.Success -> {
+                        val updatedComments = comments.value?.toMutableList()
+                        for (additionalComment in result.data) {
+                            val index =
+                                comments.value?.indexOfFirst { it.id == additionalComment.id }
+                            if (index != null && index != -1) {
+                                updatedComments?.set(index, additionalComment)
+                            } else {
+                                updatedComments?.add(additionalComment)
+                            }
+                        }
+                        comments.value = updatedComments?.toImmutableList()
+                        if (result.data.size < Constants.ARRAY_LIMIT) {
+                            commentFooterStatus.value = FooterStatus.ALLFETCHED
+                        } else {
+                            commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        }
+                    }
+
+                    is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE
+                }
+            }
+        }
+    }
+
+    fun onReachUserFooterView() {
+        if (userFooterStatus.value == FooterStatus.LOADINGSTOPPED || userFooterStatus.value == FooterStatus.FAILURE) {
+            userFooterStatus.value = FooterStatus.LOADINGSTARTED
+            viewModelScope.launch {
+                when (val result = exploreResultUseCase.fetchUsers(
+                    word = initialSearchText,
+                    offset = users.value.size
+                )) {
+                    is CallResult.Success -> {
+                        val updatedUsers = users.value.toMutableList()
+                        for (additionalUser in result.data) {
+                            val index = users.value.indexOfFirst { it.id == additionalUser.id }
+                            if (index != -1) {
+                                updatedUsers[index] = additionalUser
+                            } else {
+                                updatedUsers.add(additionalUser)
+                            }
+                        }
+                        users.value = updatedUsers
+                        if (result.data.size < Constants.ARRAY_LIMIT) {
+                            userFooterStatus.value = FooterStatus.ALLFETCHED
+                        } else {
+                            userFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        }
+                    }
+
+                    is CallResult.Error -> userFooterStatus.value = FooterStatus.FAILURE
                 }
             }
         }

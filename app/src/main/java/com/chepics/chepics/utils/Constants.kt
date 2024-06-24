@@ -14,6 +14,7 @@ object Constants {
     const val NAME_COUNT = 30
     const val BIO_COUNT = 100
     const val SET_COUNT = 50
+    const val ARRAY_LIMIT = 30
 }
 
 fun getDateTimeString(dateString: String): String {

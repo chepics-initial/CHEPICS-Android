@@ -11,8 +11,10 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.Topic
 import com.chepics.chepics.domainmodel.common.CallResult
+import com.chepics.chepics.feature.common.FooterStatus
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.usecase.feed.FeedUseCase
+import com.chepics.chepics.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -32,6 +34,9 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     val commentScrollState: MutableState<LazyListState> = mutableStateOf(LazyListState())
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
+    val topicFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val commentFooterStatus: MutableState<FooterStatus> =
+        mutableStateOf(FooterStatus.LOADINGSTOPPED)
     private var isTopicFetchStarted = false
     private var isCommentFetchStarted = false
 
@@ -46,6 +51,11 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         when (val result = feedUseCase.fetchFavoriteTopics(null)) {
             is CallResult.Success -> {
                 topics.value = result.data
+                if (result.data.size < Constants.ARRAY_LIMIT) {
+                    topicFooterStatus.value = FooterStatus.ALLFETCHED
+                } else {
+                    topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                }
                 topicUIState.value = UIState.SUCCESS
             }
 
@@ -60,6 +70,11 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         when (val result = feedUseCase.fetchComments(null)) {
             is CallResult.Success -> {
                 comments.value = result.data.toImmutableList()
+                if (result.data.size < Constants.ARRAY_LIMIT) {
+                    commentFooterStatus.value = FooterStatus.ALLFETCHED
+                } else {
+                    commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                }
                 commentUIState.value = UIState.SUCCESS
             }
 
@@ -118,6 +133,65 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
                             return@launch
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun onReachTopicFooterView() {
+        if (topicFooterStatus.value == FooterStatus.LOADINGSTOPPED || topicFooterStatus.value == FooterStatus.FAILURE) {
+            topicFooterStatus.value = FooterStatus.LOADINGSTARTED
+            viewModelScope.launch {
+                when (val result = feedUseCase.fetchFavoriteTopics(topics.value.size)) {
+                    is CallResult.Success -> {
+                        val updatedTopics = topics.value.toMutableList()
+                        for (additionalTopic in result.data) {
+                            val index = topics.value.indexOfFirst { it.id == additionalTopic.id }
+                            if (index != -1) {
+                                updatedTopics[index] = additionalTopic
+                            } else {
+                                updatedTopics.add(additionalTopic)
+                            }
+                        }
+                        topics.value = updatedTopics
+                        if (result.data.size < Constants.ARRAY_LIMIT) {
+                            topicFooterStatus.value = FooterStatus.ALLFETCHED
+                        } else {
+                            topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        }
+                    }
+
+                    is CallResult.Error -> topicFooterStatus.value = FooterStatus.FAILURE
+                }
+            }
+        }
+    }
+
+    fun onReachCommentFooterView() {
+        if (commentFooterStatus.value == FooterStatus.LOADINGSTOPPED || commentFooterStatus.value == FooterStatus.FAILURE) {
+            commentFooterStatus.value = FooterStatus.LOADINGSTARTED
+            viewModelScope.launch {
+                when (val result = feedUseCase.fetchComments(comments.value?.size)) {
+                    is CallResult.Success -> {
+                        val updatedComments = comments.value?.toMutableList()
+                        for (additionalComment in result.data) {
+                            val index =
+                                comments.value?.indexOfFirst { it.id == additionalComment.id }
+                            if (index != null && index != -1) {
+                                updatedComments?.set(index, additionalComment)
+                            } else {
+                                updatedComments?.add(additionalComment)
+                            }
+                        }
+                        comments.value = updatedComments?.toImmutableList()
+                        if (result.data.size < Constants.ARRAY_LIMIT) {
+                            commentFooterStatus.value = FooterStatus.ALLFETCHED
+                        } else {
+                            commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        }
+                    }
+
+                    is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE
                 }
             }
         }
