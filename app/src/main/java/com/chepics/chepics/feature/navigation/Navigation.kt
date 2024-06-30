@@ -64,6 +64,8 @@ import com.chepics.chepics.feature.topic.comment.SetCommentScreen
 import com.chepics.chepics.feature.topic.commentdetail.SetCommentDetailScreen
 import com.chepics.chepics.feature.topic.createset.CreateSetScreen
 import com.chepics.chepics.feature.topic.detail.TopicDetailScreen
+import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
+import com.chepics.chepics.feature.topic.top.TopicTopNavigationItemNavType
 import com.chepics.chepics.feature.topic.top.TopicTopScreen
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.google.gson.Gson
@@ -278,17 +280,17 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.TopicTopScreen.name}/{topic}",
-            arguments = listOf(navArgument("topic") {
-                type = TopicNavType()
+            "${Screens.TopicTopScreen.name}/{navigationItem}",
+            arguments = listOf(navArgument("navigationItem") {
+                type = TopicTopNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("topic")?.let {
-                Gson().fromJson(it, Topic::class.java)
+            backStackEntry.arguments?.getString("navigationItem")?.let {
+                Gson().fromJson(it, TopicTopNavigationItem::class.java)
             }?.let {
                 TopicTopScreen(
                     navController = feedNavController,
-                    topic = it,
+                    navigationItem = it,
                     showBottomNavigation = showBottomNavigation
                 )
             }
@@ -410,11 +412,17 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("navigationItem")?.let { item ->
                 Gson().fromJson(item, CreateCommentNavigationItem::class.java)
             }?.let { item ->
-                CreateCommentScreen(
-                    navController = feedNavController,
-                    showBottomNavigation = showBottomNavigation,
-                    navigationItem = item
-                )
+                val completion =
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        "completion"
+                    )
+                completion?.let {
+                    CreateCommentScreen(
+                        navController = feedNavController,
+                        showBottomNavigation = showBottomNavigation,
+                        navigationItem = item
+                    ) { it() }
+                }
             }
         }
     }
@@ -490,17 +498,17 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.TopicTopScreen.name}/{topic}",
-            arguments = listOf(navArgument("topic") {
-                type = TopicNavType()
+            "${Screens.TopicTopScreen.name}/{navigationItem}",
+            arguments = listOf(navArgument("navigationItem") {
+                type = TopicTopNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("topic")?.let {
-                Gson().fromJson(it, Topic::class.java)
+            backStackEntry.arguments?.getString("navigationItem")?.let {
+                Gson().fromJson(it, TopicTopNavigationItem::class.java)
             }?.let {
                 TopicTopScreen(
                     navController = myPageNavController,
-                    topic = it,
+                    navigationItem = it,
                     showBottomNavigation = showBottomNavigation
                 )
             }
@@ -622,11 +630,17 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("navigationItem")?.let { item ->
                 Gson().fromJson(item, CreateCommentNavigationItem::class.java)
             }?.let { item ->
-                CreateCommentScreen(
-                    navController = myPageNavController,
-                    showBottomNavigation = showBottomNavigation,
-                    navigationItem = item
-                )
+                val completion =
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        "completion"
+                    )
+                completion?.let {
+                    CreateCommentScreen(
+                        navController = myPageNavController,
+                        showBottomNavigation = showBottomNavigation,
+                        navigationItem = item
+                    ) { it() }
+                }
             }
         }
     }

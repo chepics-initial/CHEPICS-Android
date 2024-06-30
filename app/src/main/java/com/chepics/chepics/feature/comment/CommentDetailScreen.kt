@@ -51,6 +51,7 @@ import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
+import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.google.gson.Gson
 
@@ -68,6 +69,10 @@ fun CommentDetailScreen(
 
     val replyFor: MutableState<Comment?> = remember {
         mutableStateOf(null)
+    }
+
+    val createReplyCompletion: () -> Unit = {
+        viewModel.createReplyCompletion()
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
@@ -116,7 +121,12 @@ fun CommentDetailScreen(
                         replyFor = replyFor.value
                     )
                 }"
-            )
+            ) {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    "completion",
+                    createReplyCompletion
+                )
+            }
         }
         viewModel.showCreateCommentScreen.value = false
     }
@@ -156,7 +166,7 @@ fun CommentDetailScreen(
                                 viewModel.rootComment.value?.let { rootComment ->
                                     CommentCell(
                                         comment = rootComment,
-                                        type = CommentType.DETAIL,
+                                        type = if (navigationItem.isTopicTitleEnabled) CommentType.DETAIL else CommentType.TOPICCOMMENTDETAIL,
                                         onTapImage = { index ->
                                             rootComment.images?.let { images ->
                                                 viewModel.onTapImage(
@@ -173,6 +183,17 @@ fun CommentDetailScreen(
                                         }, onTapReplyButton = {
                                             replyFor.value = null
                                             viewModel.onTapReplyButton(rootComment)
+                                        }, onTapTopicTitle = {
+                                            if (navigationItem.isTopicTitleEnabled) {
+                                                navController.navigate(
+                                                    Screens.TopicTopScreen.name + "/${
+                                                        TopicTopNavigationItem(
+                                                            topicId = rootComment.topicId,
+                                                            topic = null
+                                                        )
+                                                    }"
+                                                )
+                                            }
                                         }
                                     )
 
@@ -188,7 +209,8 @@ fun CommentDetailScreen(
                                                     Screens.CommentDetailScreen.name + "/${
                                                         CommentDetailNavigationItem(
                                                             commentId = parentId,
-                                                            comment = null
+                                                            comment = null,
+                                                            isTopicTitleEnabled = navigationItem.isTopicTitleEnabled
                                                         )
                                                     }"
                                                 )
@@ -262,7 +284,7 @@ fun CommentDetailScreen(
                                                     }, onTapReplyButton = {
                                                         replyFor.value = reply
                                                         viewModel.onTapReplyButton(reply)
-                                                    }
+                                                    }, onTapTopicTitle = {}
                                                 )
                                             }
 
@@ -316,7 +338,8 @@ fun CommentDetailScreen(
 
 data class CommentDetailNavigationItem(
     val commentId: String,
-    val comment: Comment?
+    val comment: Comment?,
+    val isTopicTitleEnabled: Boolean
 ) {
     override fun toString(): String = Uri.encode(Gson().toJson(this))
 }

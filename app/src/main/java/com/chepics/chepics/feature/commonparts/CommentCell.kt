@@ -63,7 +63,8 @@ fun CommentCell(
     onTapImage: (Int) -> Unit,
     onTapUserInfo: (User) -> Unit,
     onTapLikeButton: () -> Unit,
-    onTapReplyButton: () -> Unit = {}
+    onTapReplyButton: () -> Unit = {},
+    onTapTopicTitle: () -> Unit
 ) {
     val context = LocalContext.current
     var isLikeButtonEnabled = true
@@ -117,8 +118,8 @@ fun CommentCell(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     when (type) {
-                        CommentType.COMMENT -> {
-                            Row {
+                        CommentType.COMMENT, CommentType.DETAIL -> {
+                            Row(modifier = Modifier.clickable { onTapTopicTitle() }) {
                                 Spacer(
                                     modifier = Modifier
                                         .width(4.dp)
@@ -142,15 +143,7 @@ fun CommentCell(
                             }
                         }
 
-                        CommentType.DETAIL -> {
-                            Box(modifier = Modifier)
-                        }
-
-                        CommentType.REPLY -> {
-                            Box(modifier = Modifier)
-                        }
-
-                        CommentType.SET -> {
+                        CommentType.REPLY, CommentType.SET, CommentType.SETDETAIL, CommentType.SETREPLY, CommentType.TOPICCOMMENTDETAIL -> {
                             Box(modifier = Modifier)
                         }
                     }
@@ -256,58 +249,61 @@ fun CommentCell(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 comment.replyCount?.let {
-                    if (type != CommentType.DETAIL) {
-                        if (it == 1) {
-                            Text(
-                                text = "1 reply",
-                                color = ChepicsPrimary
-                            )
-                        } else if (it > 1) {
-                            Text(
-                                text = "$it replies",
-                                color = ChepicsPrimary
-                            )
+                    when (type) {
+                        CommentType.COMMENT, CommentType.REPLY, CommentType.SET -> {
+                            if (it == 1) {
+                                Text(
+                                    text = "1 reply",
+                                    color = ChepicsPrimary
+                                )
+                            } else if (it > 1) {
+                                Text(
+                                    text = "$it replies",
+                                    color = ChepicsPrimary
+                                )
+                            }
+                        }
+
+                        CommentType.DETAIL, CommentType.SETDETAIL, CommentType.SETREPLY, CommentType.TOPICCOMMENTDETAIL -> {
+                            Box(modifier = Modifier)
                         }
                     }
                 }
 
-                Box(modifier = Modifier)
-
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     when (type) {
-                        CommentType.COMMENT -> {
+                        CommentType.COMMENT, CommentType.SET, CommentType.SETDETAIL, CommentType.SETREPLY -> {
                             Box(modifier = Modifier)
+                        }
+
+                        CommentType.REPLY, CommentType.TOPICCOMMENTDETAIL -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.reply),
+                                contentDescription = "reply icon",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable {
+                                        onTapReplyButton()
+                                    }
+                            )
                         }
 
                         CommentType.DETAIL -> {
-                            Image(
-                                painter = painterResource(id = R.drawable.reply),
-                                contentDescription = "reply icon",
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clickable {
-                                        onTapReplyButton()
-                                    }
-                            )
-                        }
-
-                        CommentType.REPLY -> {
-                            Image(
-                                painter = painterResource(id = R.drawable.reply),
-                                contentDescription = "reply icon",
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clickable {
-                                        onTapReplyButton()
-                                    }
-                            )
-                        }
-
-                        CommentType.SET -> {
-                            Box(modifier = Modifier)
+                            if (comment.parentId == null) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.reply),
+                                    contentDescription = "reply icon",
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable {
+                                            onTapReplyButton()
+                                        }
+                                )
+                            }
                         }
                     }
 
@@ -350,5 +346,8 @@ enum class CommentType {
     COMMENT,
     DETAIL,
     REPLY,
-    SET
+    SET,
+    SETDETAIL,
+    SETREPLY,
+    TOPICCOMMENTDETAIL
 }

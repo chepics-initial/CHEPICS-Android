@@ -47,6 +47,7 @@ import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.navigation.Screens
+import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,7 +111,16 @@ fun MyPageTopicListScreen(
                         items(viewModel.sets.value) { pickedSet ->
                             MyPageTopicCell(
                                 set = pickedSet,
-                                modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${pickedSet.topic}") }
+                                modifier = Modifier.clickable {
+                                    navController.navigate(
+                                        Screens.TopicTopScreen.name + "/${
+                                            TopicTopNavigationItem(
+                                                topicId = pickedSet.topic.id,
+                                                topic = pickedSet.topic
+                                            )
+                                        }"
+                                    )
+                                }
                             )
                         }
 

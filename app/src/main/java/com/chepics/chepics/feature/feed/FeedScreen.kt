@@ -56,6 +56,7 @@ import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.navigation.Screens
+import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -240,7 +241,7 @@ fun FeedTopicContentView(
                     items(viewModel.topics.value) {
                         TopicCell(
                             topic = it,
-                            modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${it}") },
+                            modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${TopicTopNavigationItem(topicId = it.id, topic = it)}") },
                             onTapImage = { index ->
                                 it.images?.let { images ->
                                     viewModel.onTapImage(
@@ -330,7 +331,8 @@ fun FeedCommentContentView(
                                         Screens.CommentDetailScreen.name + "/${
                                             CommentDetailNavigationItem(
                                                 commentId = it.id,
-                                                comment = it
+                                                comment = it, 
+                                                isTopicTitleEnabled = true
                                             )
                                         }"
                                     )
@@ -350,6 +352,16 @@ fun FeedCommentContentView(
                                 },
                                 onTapLikeButton = {
                                     viewModel.onTapLikeButton(it)
+                                },
+                                onTapTopicTitle = {
+                                    navController.navigate(
+                                        Screens.TopicTopScreen.name + "/${
+                                            TopicTopNavigationItem(
+                                                topicId = it.topicId,
+                                                topic = null
+                                            )
+                                        }"
+                                    )
                                 }
                             )
                         }

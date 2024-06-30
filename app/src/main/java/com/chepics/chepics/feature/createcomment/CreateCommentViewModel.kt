@@ -11,6 +11,7 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.usecase.CreateCommentUseCase
+import com.chepics.chepics.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,7 +48,9 @@ class CreateCommentViewModel @Inject constructor(private val createCommentUseCas
 
     fun isActive(): Boolean {
         return comment.value.trim()
-            .isNotEmpty() && (link.value.isEmpty() || URLUtil.isValidUrl(link.value))
+            .isNotEmpty() && comment.value.length <= Constants.COMMENT_LENGTH && (link.value.isEmpty() || URLUtil.isValidUrl(
+            link.value
+        ))
     }
 
     fun onTapRemoveIcon(index: Int) {

@@ -61,6 +61,7 @@ import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.navigation.Screens
+import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import kotlinx.coroutines.launch
 
@@ -342,7 +343,16 @@ fun ProfileTopicContentView(
                 items(viewModel.topics.value) {
                     TopicCell(
                         topic = it,
-                        modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${it}") },
+                        modifier = Modifier.clickable {
+                            navController.navigate(
+                                Screens.TopicTopScreen.name + "/${
+                                    TopicTopNavigationItem(
+                                        topicId = it.id,
+                                        topic = it
+                                    )
+                                }"
+                            )
+                        },
                         onTapImage = { index ->
                             it.images?.let { images ->
                                 viewModel.onTapImage(index = index, images = images.map { image ->
@@ -401,7 +411,8 @@ fun ProfileCommentContentView(
                                     Screens.CommentDetailScreen.name + "/${
                                         CommentDetailNavigationItem(
                                             commentId = it.id,
-                                            comment = it
+                                            comment = it,
+                                            isTopicTitleEnabled = true
                                         )
                                     }"
                                 )
@@ -421,6 +432,16 @@ fun ProfileCommentContentView(
                             },
                             onTapLikeButton = {
                                 viewModel.onTapLikeButton(it)
+                            },
+                            onTapTopicTitle = {
+                                navController.navigate(
+                                    Screens.TopicTopScreen.name + "/${
+                                        TopicTopNavigationItem(
+                                            topicId = it.topicId,
+                                            topic = null
+                                        )
+                                    }"
+                                )
                             }
                         )
                     }

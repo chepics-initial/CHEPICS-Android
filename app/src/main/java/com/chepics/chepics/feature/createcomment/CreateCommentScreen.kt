@@ -79,7 +79,8 @@ fun CreateCommentScreen(
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
     navigationItem: CreateCommentNavigationItem,
-    viewModel: CreateCommentViewModel = hiltViewModel()
+    viewModel: CreateCommentViewModel = hiltViewModel(),
+    completion: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val imageScrollState = rememberScrollState()
@@ -201,7 +202,7 @@ fun CreateCommentScreen(
                             )
 
                             Text(
-                                text = " / ${Constants.TOPIC_TITLE_LENGTH}",
+                                text = " / ${Constants.COMMENT_LENGTH}",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -339,6 +340,7 @@ fun CreateCommentScreen(
                         type = ButtonType.Fill
                     ) {
                         viewModel.onTapSubmitButton {
+                            completion()
                             navController.navigateUp()
                         }
                     }

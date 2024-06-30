@@ -142,6 +142,29 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
         }
     }
 
+    fun createReplyCompletion() {
+        rootComment.value?.let {
+            viewModelScope.launch {
+                when (val result = commentDetailUseCase.fetchComment(it.id)) {
+                    is CallResult.Success -> rootComment.value = result.data
+                    is CallResult.Error -> {}
+                }
+
+                when (val result =
+                    commentDetailUseCase.fetchReplies(commentId = it.id, offset = null)) {
+                    is CallResult.Success -> {
+                        replies.value = result.data.toImmutableList()
+                        footerStatus.value =
+                            if (result.data.size < Constants.ARRAY_LIMIT) FooterStatus.ALLFETCHED else FooterStatus.LOADINGSTOPPED
+                        uiState.value = UIState.SUCCESS
+                    }
+
+                    is CallResult.Error -> return@launch
+                }
+            }
+        }
+    }
+
     private suspend fun fetchComment() {
         commentId?.let {
             when (val result = commentDetailUseCase.fetchComment(it)) {

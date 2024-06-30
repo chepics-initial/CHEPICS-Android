@@ -175,7 +175,8 @@ fun SetCommentScreen(
                                         onTapUserInfo = {},
                                         onTapLikeButton = {
                                             viewModel.onTapLikeButton(comment)
-                                        }
+                                        },
+                                        onTapTopicTitle = {}
                                     )
                                 }
 

@@ -73,6 +73,7 @@ import coil.compose.AsyncImage
 import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
+import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.chepics.chepics.feature.comment.CommentDetailNavigationItem
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.ButtonType
@@ -89,13 +90,14 @@ import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopicTopScreen(
     navController: NavController,
-    topic: Topic,
+    navigationItem: TopicTopNavigationItem,
     showBottomNavigation: MutableState<Boolean>,
     viewModel: TopicTopViewModel = hiltViewModel()
 ) {
@@ -108,7 +110,7 @@ fun TopicTopScreen(
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
-        viewModel.onStart(topic)
+        viewModel.onStart(topicId = navigationItem.topicId, rootTopic = navigationItem.topic)
     }
 
     if (viewModel.showLikeCommentFailureDialog.value) {
@@ -725,6 +727,10 @@ fun TopicTopDetailView(
     viewModel: TopicTopViewModel,
     onTapImage: (Int, List<String>) -> Unit
 ) {
+    val createCommentCompletion: () -> Unit = {
+        viewModel.createCommentCompletion()
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         viewModel.topic.value?.let { topic ->
             viewModel.selectedSet.value?.let { set ->
@@ -773,13 +779,14 @@ fun TopicTopDetailView(
                                 items(comments) { comment ->
                                     CommentCell(
                                         comment = comment,
-                                        type = CommentType.COMMENT,
+                                        type = CommentType.SET,
                                         modifier = Modifier.clickable {
                                             navController.navigate(
                                                 Screens.CommentDetailScreen.name + "/${
                                                     CommentDetailNavigationItem(
                                                         commentId = comment.id,
-                                                        comment = comment
+                                                        comment = comment,
+                                                        isTopicTitleEnabled = false
                                                     )
                                                 }"
                                             )
@@ -794,7 +801,7 @@ fun TopicTopDetailView(
                                         },
                                         onTapLikeButton = {
                                             viewModel.onTapLikeButton(comment)
-                                        }
+                                        }, onTapTopicTitle = {}
                                     )
                                 }
 
@@ -844,7 +851,12 @@ fun TopicTopDetailView(
                                             type = CreateCommentType.COMMENT
                                         )
                                     }"
-                                )
+                                ) {
+                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                        "completion",
+                                        createCommentCompletion
+                                    )
+                                }
                             }
                         }
                     },
@@ -1164,4 +1176,21 @@ private fun getTopicTopImageHeight(): Dp {
 private fun getTopicDetailImageHeight(): Dp {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     return ((screenWidth - 74) / 2).dp
+}
+
+data class TopicTopNavigationItem(
+    val topicId: String,
+    val topic: Topic?
+) {
+    override fun toString(): String = Uri.encode(Gson().toJson(this))
+}
+
+class TopicTopNavigationItemNavType : JsonNavType<TopicTopNavigationItem>() {
+    override fun fromJsonParse(value: String): TopicTopNavigationItem {
+        return Gson().fromJson(value, TopicTopNavigationItem::class.java)
+    }
+
+    override fun TopicTopNavigationItem.getJsonParse(): String {
+        return Gson().toJson(this)
+    }
 }

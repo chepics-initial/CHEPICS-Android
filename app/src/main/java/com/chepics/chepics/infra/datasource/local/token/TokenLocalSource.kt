@@ -26,7 +26,7 @@ internal class TokenLocalSource @Inject constructor(
 
     override suspend fun storeToken(accessToken: String, refreshToken: String) {
         context.datastore.save(ACCESS_TOKEN_KEY, accessToken)
-        context.datastore.save(REFRESH_TOKEN_KEY, accessToken)
+        context.datastore.save(REFRESH_TOKEN_KEY, refreshToken)
 //        saveSecureValue(context = context, key = REFRESH_TOKEN_KEY, value = refreshToken)
     }
 

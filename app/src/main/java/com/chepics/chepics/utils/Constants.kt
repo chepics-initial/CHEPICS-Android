@@ -10,6 +10,7 @@ object Constants {
     const val PASSWORD_LENGTH = 8
     const val TOPIC_TITLE_LENGTH = 100
     const val DESCRIPTION_LENGTH = 300
+    const val COMMENT_LENGTH = 300
     const val TOPIC_IMAGE_COUNT = 4
     const val NAME_COUNT = 30
     const val BIO_COUNT = 100

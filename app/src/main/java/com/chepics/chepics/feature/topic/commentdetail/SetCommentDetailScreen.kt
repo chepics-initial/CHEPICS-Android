@@ -46,9 +46,6 @@ import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.FooterView
-import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
-import com.chepics.chepics.feature.createcomment.CreateCommentType
-import com.chepics.chepics.feature.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -153,24 +150,14 @@ fun SetCommentDetailScreen(
                     item {
                         CommentCell(
                             comment = comment,
-                            type = CommentType.DETAIL,
+                            type = CommentType.SETDETAIL,
                             onTapImage = {},
                             onTapUserInfo = {},
                             onTapLikeButton = {
                                 viewModel.onTapLikeButton(comment)
                             },
-                            onTapReplyButton = {
-                                navController.navigate(
-                                    Screens.CreateCommentScreen.name + "/${
-                                        CreateCommentNavigationItem(
-                                            topicId = comment.topicId,
-                                            setId = comment.setId,
-                                            parentId = comment.id,
-                                            type = CreateCommentType.REPLY
-                                        )
-                                    }"
-                                )
-                            }
+                            onTapReplyButton = {},
+                            onTapTopicTitle = {}
                         )
 
                         comment.replyCount?.let { replyCount ->
@@ -208,25 +195,14 @@ fun SetCommentDetailScreen(
                             items(replies) { reply ->
                                 CommentCell(
                                     comment = reply,
-                                    type = CommentType.REPLY,
+                                    type = CommentType.SETREPLY,
                                     onTapImage = {},
                                     onTapUserInfo = {},
                                     onTapLikeButton = {
                                         viewModel.onTapLikeButton(reply)
                                     },
-                                    onTapReplyButton = {
-                                        navController.navigate(
-                                            Screens.CreateCommentScreen.name + "/${
-                                                CreateCommentNavigationItem(
-                                                    topicId = comment.topicId,
-                                                    setId = comment.setId,
-                                                    parentId = viewModel.rootComment.value?.id,
-                                                    type = CreateCommentType.REPLY,
-                                                    replyFor = reply
-                                                )
-                                            }"
-                                        )
-                                    }
+                                    onTapReplyButton = {},
+                                    onTapTopicTitle = {}
                                 )
                             }
 

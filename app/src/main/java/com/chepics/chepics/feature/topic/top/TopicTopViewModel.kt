@@ -42,27 +42,39 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val commentFooterStatus: MutableState<FooterStatus> =
         mutableStateOf(FooterStatus.LOADINGSTOPPED)
     val setFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    var topicId: String? = null
+    private var isInitialOnStart = true
 
-    fun onStart(topic: Topic) {
-        this.topic.value = topic
-        viewModelScope.launch {
-            when (val result = topicTopUseCase.fetchPickedSet(topic.id)) {
-                is CallResult.Success -> {
-                    status.value = TopicTopStatus.DETAIL
-                    selectedSet.value = result.data
-                    currentSet.value = result.data
-                    fetchTopic()
-                    fetchComments(setId = result.data.id)
-                }
-
-                is CallResult.Error -> {
-                    if (result.exception.message == EMPTY_RESPONSE) {
-                        status.value = TopicTopStatus.TOP
+    fun onStart(topicId: String, rootTopic: Topic?) {
+        this.topicId = topicId
+        if (isInitialOnStart || status.value == TopicTopStatus.FAILURE) {
+            isInitialOnStart = false
+            this.topic.value = rootTopic
+            viewModelScope.launch {
+                when (val result = topicTopUseCase.fetchPickedSet(topicId)) {
+                    is CallResult.Success -> {
                         fetchTopic()
-                        return@launch
+                        if (topic.value != null) {
+                            status.value = TopicTopStatus.DETAIL
+                            selectedSet.value = result.data
+                            currentSet.value = result.data
+                            fetchComments(setId = result.data.id)
+                            return@launch
+                        }
+                        status.value = TopicTopStatus.FAILURE
                     }
 
-                    status.value = TopicTopStatus.FAILURE
+                    is CallResult.Error -> {
+                        if (result.exception.message == EMPTY_RESPONSE) {
+                            fetchTopic()
+                            if (topic.value != null) {
+                                status.value = TopicTopStatus.TOP
+                                return@launch
+                            }
+                        }
+
+                        status.value = TopicTopStatus.FAILURE
+                    }
                 }
             }
         }
@@ -98,8 +110,8 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     }
 
     private suspend fun fetchTopic() {
-        topic.value?.let {
-            when (val result = topicTopUseCase.fetchTopic(it.id)) {
+        topicId?.let {
+            when (val result = topicTopUseCase.fetchTopic(it)) {
                 is CallResult.Success -> topic.value = result.data
                 is CallResult.Error -> return
             }
@@ -145,10 +157,10 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                         topicTopUseCase.pickSet(topicId = topic.id, setId = set.id)) {
                         is CallResult.Success -> {
                             isLoading.value = false
+                            fetchTopic()
                             status.value = TopicTopStatus.DETAIL
                             selectedSet.value = result.data
                             currentSet.value = result.data
-                            fetchTopic()
                             fetchComments(setId = result.data.id)
                         }
 
@@ -233,6 +245,22 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
         }
     }
 
+    fun createCommentCompletion() {
+        topicId?.let {
+            viewModelScope.launch {
+                when (val result = topicTopUseCase.fetchPickedSet(it)) {
+                    is CallResult.Success -> {
+                        selectedSet.value = result.data
+                        currentSet.value = result.data
+                        fetchComments(setId = result.data.id)
+                    }
+
+                    is CallResult.Error -> return@launch
+                }
+            }
+        }
+    }
+
     private suspend fun fetchComments(setId: String) {
         when (val result = topicTopUseCase.fetchSetComments(setId = setId, offset = null)) {
             is CallResult.Success -> {
@@ -245,7 +273,11 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                 commentUIState.value = UIState.SUCCESS
             }
 
-            is CallResult.Error -> commentUIState.value = UIState.FAILURE
+            is CallResult.Error -> {
+                if (comments.value == null) {
+                    commentUIState.value = UIState.FAILURE
+                }
+            }
         }
     }
 }
