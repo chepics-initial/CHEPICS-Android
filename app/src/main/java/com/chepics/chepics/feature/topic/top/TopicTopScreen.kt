@@ -73,6 +73,7 @@ import coil.compose.AsyncImage
 import com.chepics.chepics.R
 import com.chepics.chepics.domainmodel.PickSet
 import com.chepics.chepics.domainmodel.Topic
+import com.chepics.chepics.feature.comment.CommentDetailNavigationItem
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommentCell
@@ -774,7 +775,14 @@ fun TopicTopDetailView(
                                         comment = comment,
                                         type = CommentType.COMMENT,
                                         modifier = Modifier.clickable {
-                                            navController.navigate(Screens.CommentDetailScreen.name + "/${comment}")
+                                            navController.navigate(
+                                                Screens.CommentDetailScreen.name + "/${
+                                                    CommentDetailNavigationItem(
+                                                        commentId = comment.id,
+                                                        comment = comment
+                                                    )
+                                                }"
+                                            )
                                         },
                                         onTapImage = { index ->
                                             comment.images?.let { images ->

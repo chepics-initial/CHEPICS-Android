@@ -24,6 +24,7 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     val selectedImageIndex: MutableState<Int?> = mutableStateOf(null)
     val commentImages: MutableState<List<String>?> = mutableStateOf(null)
     val rootComment: MutableState<Comment?> = mutableStateOf(null)
+    val headerUIState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val uiState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val replies: MutableState<ImmutableList<Comment>?> = mutableStateOf(null)
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
@@ -31,14 +32,19 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     val showReplyRestrictionDialog: MutableState<Boolean> = mutableStateOf(false)
     val showCreateCommentScreen: MutableState<Boolean> = mutableStateOf(false)
     val footerStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    var commentId: String? = null
 
     fun onTapImage(index: Int, images: List<String>) {
         selectedImageIndex.value = index
         commentImages.value = images
     }
 
-    fun onStart(comment: Comment) {
+    fun onStart(commentId: String, comment: Comment?) {
+        this.commentId = commentId
         this.rootComment.value = comment
+        if (rootComment.value != null) {
+            headerUIState.value = UIState.SUCCESS
+        }
         viewModelScope.launch {
             fetchComment()
             fetchReplies()
@@ -102,12 +108,12 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     }
 
     fun onReachFooterView() {
-        rootComment.value?.let {
+        commentId?.let {
             if (footerStatus.value == FooterStatus.LOADINGSTOPPED || footerStatus.value == FooterStatus.FAILURE) {
                 footerStatus.value = FooterStatus.LOADINGSTARTED
                 viewModelScope.launch {
                     when (val result = commentDetailUseCase.fetchReplies(
-                        commentId = it.id,
+                        commentId = it,
                         offset = replies.value?.size
                     )) {
                         is CallResult.Success -> {
@@ -137,18 +143,26 @@ class CommentDetailViewModel @Inject constructor(private val commentDetailUseCas
     }
 
     private suspend fun fetchComment() {
-        rootComment.value?.let {
-            when (val result = commentDetailUseCase.fetchComment(it.id)) {
-                is CallResult.Success -> rootComment.value = result.data
-                is CallResult.Error -> return
+        commentId?.let {
+            when (val result = commentDetailUseCase.fetchComment(it)) {
+                is CallResult.Success -> {
+                    rootComment.value = result.data
+                    headerUIState.value = UIState.SUCCESS
+                }
+
+                is CallResult.Error -> {
+                    if (headerUIState.value == UIState.LOADING) {
+                        headerUIState.value = UIState.FAILURE
+                    }
+                }
             }
         }
     }
 
     private suspend fun fetchReplies() {
-        rootComment.value?.let {
+        commentId?.let {
             when (val result =
-                commentDetailUseCase.fetchReplies(commentId = it.id, offset = null)) {
+                commentDetailUseCase.fetchReplies(commentId = it, offset = null)) {
                 is CallResult.Success -> {
                     replies.value = result.data.toImmutableList()
                     if (result.data.size < Constants.ARRAY_LIMIT) {

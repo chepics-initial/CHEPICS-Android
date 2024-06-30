@@ -50,6 +50,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.chepics.chepics.domainmodel.User
+import com.chepics.chepics.feature.comment.CommentDetailNavigationItem
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
@@ -396,7 +397,14 @@ fun ProfileCommentContentView(
                             comment = it,
                             type = CommentType.COMMENT,
                             modifier = Modifier.clickable {
-                                navController.navigate(Screens.CommentDetailScreen.name + "/${it}")
+                                navController.navigate(
+                                    Screens.CommentDetailScreen.name + "/${
+                                        CommentDetailNavigationItem(
+                                            commentId = it.id,
+                                            comment = it
+                                        )
+                                    }"
+                                )
                             },
                             onTapImage = { index ->
                                 it.images?.let { images ->

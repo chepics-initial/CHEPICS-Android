@@ -124,5 +124,9 @@ dependencies {
 
     implementation(libs.androidx.security.crypto)
 
+    // for Immutable List
     implementation(libs.kotlinx.collections.immutable)
+
+    // Google Tink
+    implementation(libs.tink.android)
 }

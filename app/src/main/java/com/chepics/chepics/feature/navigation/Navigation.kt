@@ -46,6 +46,8 @@ import com.chepics.chepics.feature.authentication.login.LoginScreen
 import com.chepics.chepics.feature.authentication.nameregistration.NameRegistrationScreen
 import com.chepics.chepics.feature.authentication.onetimecode.OneTimeCodeScreen
 import com.chepics.chepics.feature.authentication.passwordregistration.PasswordRegistrationScreen
+import com.chepics.chepics.feature.comment.CommentDetailNavigationItem
+import com.chepics.chepics.feature.comment.CommentDetailNavigationItemNavType
 import com.chepics.chepics.feature.comment.CommentDetailScreen
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItemNavType
@@ -259,16 +261,16 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CommentDetailScreen.name}/{comment}",
-            arguments = listOf(navArgument("comment") {
-                type = CommentNavType()
+            "${Screens.CommentDetailScreen.name}/{navigationItem}",
+            arguments = listOf(navArgument("navigationItem") {
+                type = CommentDetailNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("comment")?.let {
-                Gson().fromJson(it, Comment::class.java)
+            backStackEntry.arguments?.getString("navigationItem")?.let {
+                Gson().fromJson(it, CommentDetailNavigationItem::class.java)
             }?.let {
                 CommentDetailScreen(
-                    comment = it,
+                    navigationItem = it,
                     navController = feedNavController,
                     showBottomNavigation = showBottomNavigation
                 )
@@ -471,16 +473,16 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CommentDetailScreen.name}/{comment}",
-            arguments = listOf(navArgument("comment") {
-                type = CommentNavType()
+            "${Screens.CommentDetailScreen.name}/{navigationItem}",
+            arguments = listOf(navArgument("navigationItem") {
+                type = CommentDetailNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("comment")?.let {
-                Gson().fromJson(it, Comment::class.java)
+            backStackEntry.arguments?.getString("navigationItem")?.let {
+                Gson().fromJson(it, CommentDetailNavigationItem::class.java)
             }?.let {
                 CommentDetailScreen(
-                    comment = it,
+                    navigationItem = it,
                     navController = myPageNavController,
                     showBottomNavigation = showBottomNavigation
                 )

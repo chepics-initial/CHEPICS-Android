@@ -1,9 +1,11 @@
 package com.chepics.chepics.feature.comment
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,6 +43,7 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import androidx.navigation.NavController
+import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.chepics.chepics.feature.common.UIState
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.FooterView
@@ -47,11 +51,13 @@ import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
 import com.chepics.chepics.feature.navigation.Screens
+import com.chepics.chepics.ui.theme.ChepicsPrimary
+import com.google.gson.Gson
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentDetailScreen(
-    comment: Comment,
+    navigationItem: CommentDetailNavigationItem,
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
     viewModel: CommentDetailViewModel = hiltViewModel()
@@ -65,7 +71,7 @@ fun CommentDetailScreen(
     }
 
     LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
-        viewModel.onStart(comment)
+        viewModel.onStart(navigationItem.commentId, navigationItem.comment)
     }
 
     if (viewModel.showLikeCommentFailureDialog.value) {
@@ -138,52 +144,7 @@ fun CommentDetailScreen(
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    item {
-                        viewModel.rootComment.value?.let { rootComment ->
-                            CommentCell(
-                                comment = rootComment,
-                                type = CommentType.DETAIL,
-                                onTapImage = { index ->
-                                    rootComment.images?.let { images ->
-                                        viewModel.onTapImage(
-                                            index = index,
-                                            images = images.map { image ->
-                                                image.url
-                                            })
-                                        showImageViewer.value = true
-                                    }
-                                }, onTapUserInfo = { user ->
-                                    navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                                }, onTapLikeButton = {
-                                    viewModel.onTapLikeButton(rootComment)
-                                }, onTapReplyButton = {
-                                    replyFor.value = null
-                                    viewModel.onTapReplyButton(rootComment)
-                                }
-                            )
-
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Reply",
-                                    fontWeight = FontWeight.SemiBold
-                                )
-
-                                Spacer(modifier = Modifier.width(16.dp))
-
-                                rootComment.replyCount?.let { replyCount ->
-                                    Text(
-                                        text = "$replyCount 件の返信",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = Color.LightGray
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    when (viewModel.uiState.value) {
+                    when (viewModel.headerUIState.value) {
                         UIState.LOADING -> {
                             item {
                                 CommonProgressSpinner(backgroundColor = Color.Transparent)
@@ -191,13 +152,13 @@ fun CommentDetailScreen(
                         }
 
                         UIState.SUCCESS -> {
-                            viewModel.replies.value?.let { replies ->
-                                items(replies) { reply ->
+                            item {
+                                viewModel.rootComment.value?.let { rootComment ->
                                     CommentCell(
-                                        comment = reply,
-                                        type = CommentType.REPLY,
+                                        comment = rootComment,
+                                        type = CommentType.DETAIL,
                                         onTapImage = { index ->
-                                            comment.images?.let { images ->
+                                            rootComment.images?.let { images ->
                                                 viewModel.onTapImage(
                                                     index = index,
                                                     images = images.map { image ->
@@ -207,22 +168,122 @@ fun CommentDetailScreen(
                                             }
                                         }, onTapUserInfo = { user ->
                                             navController.navigate(Screens.ProfileScreen.name + "/${user}")
-                                        },
-                                        onTapLikeButton = {
-                                            viewModel.onTapLikeButton(reply)
+                                        }, onTapLikeButton = {
+                                            viewModel.onTapLikeButton(rootComment)
                                         }, onTapReplyButton = {
-                                            replyFor.value = reply
-                                            viewModel.onTapReplyButton(reply)
+                                            replyFor.value = null
+                                            viewModel.onTapReplyButton(rootComment)
                                         }
                                     )
-                                }
 
-                                item {
-                                    LaunchedEffect(Unit) {
-                                        viewModel.onReachFooterView()
+                                    viewModel.rootComment.value?.parentId?.let { parentId ->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            Row(modifier = Modifier.clickable {
+                                                navController.navigate(
+                                                    Screens.CommentDetailScreen.name + "/${
+                                                        CommentDetailNavigationItem(
+                                                            commentId = parentId,
+                                                            comment = null
+                                                        )
+                                                    }"
+                                                )
+                                            }) {
+                                                Text(
+                                                    text = "リプライ元のコメントを見る",
+                                                    color = ChepicsPrimary
+                                                )
+
+                                                Spacer(modifier = Modifier.width(16.dp))
+
+                                                Image(
+                                                    imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                                                    contentDescription = "arrow icon",
+                                                    colorFilter = ColorFilter.tint(color = ChepicsPrimary)
+                                                )
+                                            }
+                                        }
+                                    } ?: run {
+                                        Row(
+                                            modifier = Modifier.padding(16.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = "Reply",
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+
+                                            Spacer(modifier = Modifier.width(16.dp))
+
+                                            rootComment.replyCount?.let { replyCount ->
+                                                Text(
+                                                    text = "$replyCount 件の返信",
+                                                    style = MaterialTheme.typography.titleSmall,
+                                                    color = Color.LightGray
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (viewModel.rootComment.value?.parentId == null) {
+                                when (viewModel.uiState.value) {
+                                    UIState.LOADING -> {
+                                        item {
+                                            CommonProgressSpinner(backgroundColor = Color.Transparent)
+                                        }
                                     }
 
-                                    FooterView(status = viewModel.footerStatus.value)
+                                    UIState.SUCCESS -> {
+                                        viewModel.replies.value?.let { replies ->
+                                            items(replies) { reply ->
+                                                CommentCell(
+                                                    comment = reply,
+                                                    type = CommentType.REPLY,
+                                                    onTapImage = { index ->
+                                                        reply.images?.let { images ->
+                                                            viewModel.onTapImage(
+                                                                index = index,
+                                                                images = images.map { image ->
+                                                                    image.url
+                                                                })
+                                                            showImageViewer.value = true
+                                                        }
+                                                    }, onTapUserInfo = { user ->
+                                                        navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                                                    },
+                                                    onTapLikeButton = {
+                                                        viewModel.onTapLikeButton(reply)
+                                                    }, onTapReplyButton = {
+                                                        replyFor.value = reply
+                                                        viewModel.onTapReplyButton(reply)
+                                                    }
+                                                )
+                                            }
+
+                                            item {
+                                                LaunchedEffect(Unit) {
+                                                    viewModel.onReachFooterView()
+                                                }
+
+                                                FooterView(status = viewModel.footerStatus.value)
+                                            }
+                                        }
+                                    }
+
+                                    UIState.FAILURE -> {
+                                        item {
+                                            Text(
+                                                text = "投稿の取得に失敗しました。インターネット環境を確認して、もう一度お試しください。",
+                                                modifier = Modifier.padding(16.dp)
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -250,5 +311,22 @@ fun CommentDetailScreen(
                 showBottomNavigation.value = true
             }
         }
+    }
+}
+
+data class CommentDetailNavigationItem(
+    val commentId: String,
+    val comment: Comment?
+) {
+    override fun toString(): String = Uri.encode(Gson().toJson(this))
+}
+
+class CommentDetailNavigationItemNavType : JsonNavType<CommentDetailNavigationItem>() {
+    override fun fromJsonParse(value: String): CommentDetailNavigationItem {
+        return Gson().fromJson(value, CommentDetailNavigationItem::class.java)
+    }
+
+    override fun CommentDetailNavigationItem.getJsonParse(): String {
+        return Gson().toJson(this)
     }
 }
