@@ -26,14 +26,14 @@ internal class TokenLocalSource @Inject constructor(
 
     override suspend fun storeToken(accessToken: String, refreshToken: String) {
         context.datastore.save(ACCESS_TOKEN_KEY, accessToken)
-        context.datastore.save(REFRESH_TOKEN_KEY, refreshToken)
-//        saveSecureValue(context = context, key = REFRESH_TOKEN_KEY, value = refreshToken)
+//        context.datastore.save(REFRESH_TOKEN_KEY, refreshToken)
+        saveSecureValue(context = context, key = REFRESH_TOKEN_KEY, value = refreshToken)
     }
 
     override suspend fun removeToken() {
         context.datastore.save(ACCESS_TOKEN_KEY, "")
-        context.datastore.save(REFRESH_TOKEN_KEY, "")
-//        saveSecureValue(context = context, key = REFRESH_TOKEN_KEY, value = "")
+//        context.datastore.save(REFRESH_TOKEN_KEY, "")
+        saveSecureValue(context = context, key = REFRESH_TOKEN_KEY, value = "")
         accessToken.value = ""
     }
 
@@ -46,8 +46,8 @@ internal class TokenLocalSource @Inject constructor(
     }
 
     override suspend fun getRefreshToken(): String {
-        return context.datastore.getStream(REFRESH_TOKEN_KEY, "").first()
-//        return getSecureValue(context = context, key = REFRESH_TOKEN_KEY) ?: ""
+//        return context.datastore.getStream(REFRESH_TOKEN_KEY, "").first()
+        return getSecureValue(context = context, key = REFRESH_TOKEN_KEY) ?: ""
     }
 
     private fun getEncryptedSharedPreferences(context: Context): SharedPreferences {
@@ -79,7 +79,7 @@ internal class TokenLocalSource @Inject constructor(
 
     private companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
-        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
-//        private const val REFRESH_TOKEN_KEY = "refresh_token"
+//        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+        private const val REFRESH_TOKEN_KEY = "refresh_token"
     }
 }
