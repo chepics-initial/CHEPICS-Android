@@ -126,9 +126,22 @@ fun EmailRegistrationScreen(
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
                 onDismissRequest = { },
-                title = { Text(text = "エラー") },
+                title = { Text(text = "通信エラー") },
+                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
+        }
+
+        if (viewModel.showAlreadyAlertDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "すでに使用されているメールアドレスです") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showAlreadyAlertDialog.value = false }) {
                         Text(text = "OK")
                     }
                 }

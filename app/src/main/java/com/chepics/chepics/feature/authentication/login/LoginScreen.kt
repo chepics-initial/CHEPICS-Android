@@ -51,7 +51,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         .padding(vertical = 8.dp)
                         .fillMaxWidth(),
                     maxLines = 1,
-                    label = { Text(text = "メールアドレスを入力")},
+                    label = { Text(text = "メールアドレスを入力") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Done
@@ -72,7 +72,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         .padding(vertical = 8.dp)
                         .fillMaxWidth(),
                     maxLines = 1,
-                    label = { Text(text = "パスワードを入力")},
+                    label = { Text(text = "パスワードを入力") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -94,7 +94,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                 modifier = Modifier.align(Alignment.BottomCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RoundButton(text = "ログイン", isActive = viewModel.loginButtonIsActive(), type = ButtonType.Fill) {
+                RoundButton(
+                    text = "ログイン",
+                    isActive = viewModel.loginButtonIsActive(),
+                    type = ButtonType.Fill
+                ) {
                     viewModel.onTapLoginButton()
                 }
 
@@ -118,10 +122,24 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
         if (viewModel.showAlertDialog.value) {
             AlertDialog(
-                onDismissRequest = {  },
-                title = { Text(text = "ログインできませんでした") },
+                onDismissRequest = { },
+                title = { Text(text = "通信エラー") },
+                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
+                        Text(text = "OK")
+                    }
+                }
+            )
+        }
+
+        if (viewModel.showInvalidAlertDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text(text = "ログインできませんでした") },
+                text = { Text(text = "メールアドレスとパスワードが正しいことを確認してください") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.showInvalidAlertDialog.value = false }) {
                         Text(text = "OK")
                     }
                 }
