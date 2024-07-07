@@ -42,8 +42,24 @@ internal class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchUser(userId: String): CallResult<User> {
-        return handleResponse {
+        return when (val result = handleResponse {
             userDataSource.fetchUser(userId)
+        }) {
+            is CallResult.Success -> {
+                if (userId == getUserId()) {
+                    userStoreDataSource.storeUserData(
+                        UserData(
+                            username = result.data.username,
+                            fullname = result.data.fullname,
+                            bio = result.data.bio,
+                            imageUrl = result.data.profileImageUrl
+                        )
+                    )
+                }
+                result
+            }
+
+            is CallResult.Error -> result
         }
     }
 
@@ -74,7 +90,8 @@ internal class UserRepositoryImpl @Inject constructor(
                     UserData(
                         username = username,
                         fullname = fullname,
-                        bio = bio
+                        bio = bio,
+                        imageUrl = imageUri.toString()
                     )
                 )
                 return result

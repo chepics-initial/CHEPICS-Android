@@ -15,8 +15,16 @@ import javax.inject.Inject
 class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPageTopUseCase) :
     ViewModel() {
     val user: MutableState<User?> = mutableStateOf(null)
+    val uiModel: MutableState<MyPageTopUIModel?> = mutableStateOf(null)
 
     init {
+        myPageTopUseCase.getUserData()?.let {
+            uiModel.value = MyPageTopUIModel(
+                username = it.username,
+                fullname = it.fullname,
+                imageUrl = it.imageUrl
+            )
+        }
         viewModelScope.launch {
             fetchUser()
         }
@@ -24,7 +32,15 @@ class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPag
 
     private suspend fun fetchUser() {
         when (val result = myPageTopUseCase.fetchUser()) {
-            is CallResult.Success -> user.value = result.data
+            is CallResult.Success -> {
+                user.value = result.data
+                uiModel.value = MyPageTopUIModel(
+                    username = result.data.username,
+                    fullname = result.data.fullname,
+                    imageUrl = result.data.profileImageUrl.toString()
+                )
+            }
+
             is CallResult.Error -> return
         }
     }
@@ -35,3 +51,9 @@ class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPag
         }
     }
 }
+
+data class MyPageTopUIModel(
+    val username: String,
+    val fullname: String,
+    val imageUrl: String?
+)

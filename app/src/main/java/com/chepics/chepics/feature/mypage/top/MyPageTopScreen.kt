@@ -73,11 +73,11 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    UserIcon(url = viewModel.user.value?.profileImageUrl, scale = IconScale.PROFILE)
+                    UserIcon(url = viewModel.uiModel.value?.imageUrl, scale = IconScale.PROFILE)
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    viewModel.user.value?.let {
+                    viewModel.uiModel.value?.let {
                         Column {
                             Text(
                                 text = it.fullname,
