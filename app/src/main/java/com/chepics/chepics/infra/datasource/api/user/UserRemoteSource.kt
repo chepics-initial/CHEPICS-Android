@@ -72,4 +72,9 @@ class UserRemoteSource @Inject constructor(
             )
         }.mapSuccess { }
     }
+
+    // TODO: - デバッグ用なのであとで削除
+    override suspend fun deleteUser(userId: String): CallResult<Unit> {
+        return safeApiCall { api.deleteUser(userId) }.mapSuccess { }
+    }
 }

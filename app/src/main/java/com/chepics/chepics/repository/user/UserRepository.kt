@@ -28,6 +28,9 @@ interface UserRepository {
     ): CallResult<Unit>
 
     fun getUserData(): UserData?
+
+    // TODO: - デバッグ用なのであとで削除
+    suspend fun deleteUser(userId: String): CallResult<Unit>
 }
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -103,6 +106,22 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override fun getUserData(): UserData? {
         return userStoreDataSource.getUserData()
+    }
+
+    override suspend fun deleteUser(userId: String): CallResult<Unit> {
+        // TODO: - デバッグ用なのであとで削除
+        return when (
+            val result = handleResponse {
+                userDataSource.deleteUser(userId)
+            }
+        ) {
+            is CallResult.Success -> {
+                tokenDataSource.removeToken()
+                result
+            }
+
+            is CallResult.Error -> result
+        }
     }
 
     private suspend fun <T : Any> handleResponse(request: suspend () -> CallResult<T>): CallResult<T> {

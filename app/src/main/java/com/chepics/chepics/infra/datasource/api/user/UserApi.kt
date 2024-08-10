@@ -8,6 +8,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -30,4 +31,8 @@ interface UserApi {
         @Part image: MultipartBody.Part?,
         @Part("is_update_user_image") isUpdated: RequestBody
     ): Response<UpdateUserResponse>
+
+    // TODO: - デバッグ用なのであとで削除
+    @DELETE("v1/chepics/user")
+    suspend fun deleteUser(@Query("user_id") userId: String): Response<UpdateUserResponse>
 }

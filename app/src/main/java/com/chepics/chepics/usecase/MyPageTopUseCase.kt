@@ -11,6 +11,9 @@ interface MyPageTopUseCase {
     fun getUserData(): UserData?
     suspend fun fetchUser(): CallResult<User>
     suspend fun logout()
+
+    // TODO: - デバッグ用なのであとで削除
+    suspend fun deleteUser(userId: String): CallResult<Unit>
 }
 
 internal class MyPageTopUseCaseImpl @Inject constructor(
@@ -27,5 +30,10 @@ internal class MyPageTopUseCaseImpl @Inject constructor(
 
     override suspend fun logout() {
         authRepository.logout()
+    }
+
+    // TODO: - デバッグ用なのであとで削除
+    override suspend fun deleteUser(userId: String): CallResult<Unit> {
+        return userRepository.deleteUser(userId)
     }
 }

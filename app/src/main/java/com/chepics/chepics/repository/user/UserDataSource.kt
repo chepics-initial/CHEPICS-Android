@@ -14,4 +14,7 @@ interface UserDataSource {
         bio: String?,
         imageUri: Uri?
     ): CallResult<Unit>
+
+    // TODO: - デバッグ用なのであとで削除
+    suspend fun deleteUser(userId: String): CallResult<Unit>
 }

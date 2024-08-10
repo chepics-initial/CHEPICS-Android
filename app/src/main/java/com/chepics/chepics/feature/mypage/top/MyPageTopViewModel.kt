@@ -50,6 +50,15 @@ class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPag
             myPageTopUseCase.logout()
         }
     }
+
+    // TODO: - デバッグ用なのであとで削除
+    fun onTapDeleteButton() {
+        user.value?.let {
+            viewModelScope.launch {
+                myPageTopUseCase.deleteUser(it.id)
+            }
+        }
+    }
 }
 
 data class MyPageTopUIModel(

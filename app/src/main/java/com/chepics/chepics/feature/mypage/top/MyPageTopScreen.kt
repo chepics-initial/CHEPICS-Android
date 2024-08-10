@@ -129,6 +129,17 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
                     fontWeight = FontWeight.Bold
                 )
             }
+
+            // TODO: - デバッグ用なのであとで削除
+            Spacer(modifier = Modifier.height(80.dp))
+            Text(text = "※同じメールアドレスで起動処理をデバッグするためのユーザー削除 ↓")
+            TextButton(onClick = { viewModel.onTapDeleteButton() }) {
+                Text(
+                    text = "ユーザー削除",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Red
+                )
+            }
         }
 
         if (showConfirmDialog.value) {
