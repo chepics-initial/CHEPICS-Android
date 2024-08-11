@@ -9,10 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -49,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.comment.CommentDetailNavigationItem
 import com.chepics.chepics.feature.common.UIState
+import com.chepics.chepics.feature.commonparts.BannerAdView
 import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
@@ -238,14 +240,23 @@ fun FeedTopicContentView(
                     modifier = Modifier.fillMaxSize(),
                     state = viewModel.topicScrollState.value
                 ) {
-                    items(viewModel.topics.value) {
+                    itemsIndexed(viewModel.topics.value) { index, topic ->
                         TopicCell(
-                            topic = it,
-                            modifier = Modifier.clickable { navController.navigate(Screens.TopicTopScreen.name + "/${TopicTopNavigationItem(topicId = it.id, topic = it)}") },
-                            onTapImage = { index ->
-                                it.images?.let { images ->
+                            topic = topic,
+                            modifier = Modifier.clickable {
+                                navController.navigate(
+                                    Screens.TopicTopScreen.name + "/${
+                                        TopicTopNavigationItem(
+                                            topicId = topic.id,
+                                            topic = topic
+                                        )
+                                    }"
+                                )
+                            },
+                            onTapImage = { imageIndex ->
+                                topic.images?.let { images ->
                                     viewModel.onTapImage(
-                                        index = index,
+                                        index = imageIndex,
                                         images = images.map { image ->
                                             image.url
                                         })
@@ -254,6 +265,10 @@ fun FeedTopicContentView(
                             }
                         ) { user ->
                             navController.navigate(Screens.ProfileScreen.name + "/${user}")
+                        }
+
+                        if (index % 5 == 4) {
+                            FeedBannerAdView()
                         }
                     }
 
@@ -322,25 +337,25 @@ fun FeedCommentContentView(
                     state = viewModel.commentScrollState.value
                 ) {
                     viewModel.comments.value?.let { comments ->
-                        items(comments) {
+                        itemsIndexed(comments) { index, comment ->
                             CommentCell(
-                                comment = it,
+                                comment = comment,
                                 type = CommentType.COMMENT,
                                 modifier = Modifier.clickable {
                                     navController.navigate(
                                         Screens.CommentDetailScreen.name + "/${
                                             CommentDetailNavigationItem(
-                                                commentId = it.id,
-                                                comment = it, 
+                                                commentId = comment.id,
+                                                comment = comment,
                                                 isTopicTitleEnabled = true
                                             )
                                         }"
                                     )
                                 },
-                                onTapImage = { index ->
-                                    it.images?.let { images ->
+                                onTapImage = { imageIndex ->
+                                    comment.images?.let { images ->
                                         viewModel.onTapImage(
-                                            index = index,
+                                            index = imageIndex,
                                             images = images.map { image ->
                                                 image.url
                                             })
@@ -351,19 +366,23 @@ fun FeedCommentContentView(
                                     navController.navigate(Screens.ProfileScreen.name + "/${user}")
                                 },
                                 onTapLikeButton = {
-                                    viewModel.onTapLikeButton(it)
+                                    viewModel.onTapLikeButton(comment)
                                 },
                                 onTapTopicTitle = {
                                     navController.navigate(
                                         Screens.TopicTopScreen.name + "/${
                                             TopicTopNavigationItem(
-                                                topicId = it.topicId,
+                                                topicId = comment.topicId,
                                                 topic = null
                                             )
                                         }"
                                     )
                                 }
                             )
+
+                            if (index % 5 == 4) {
+                                FeedBannerAdView()
+                            }
                         }
 
                         item {
@@ -403,4 +422,14 @@ fun FeedCommentContentView(
             }
         }
     }
+}
+
+@Composable
+fun FeedBannerAdView() {
+    BannerAdView(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(280.dp),
+        adID = "ca-app-pub-3940256099942544/9214589741"
+    )
 }

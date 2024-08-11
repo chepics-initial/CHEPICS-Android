@@ -129,4 +129,6 @@ dependencies {
 
     // Google Tink
     implementation(libs.tink.android)
+
+    implementation(libs.play.services.ads)
 }

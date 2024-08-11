@@ -15,6 +15,7 @@ import com.chepics.chepics.feature.navigation.AuthNavigation
 import com.chepics.chepics.feature.navigation.ServiceNavigation
 import com.chepics.chepics.feature.splash.SplashScreen
 import com.chepics.chepics.ui.theme.CHEPICSTheme
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MobileAds.initialize(this)
         setContent {
             CHEPICSTheme {
                 ChepicsApp(viewModel)
