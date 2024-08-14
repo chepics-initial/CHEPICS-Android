@@ -129,7 +129,6 @@ internal class CommentRepositoryImpl @Inject constructor(
                                 accessToken = tokenRefreshResult.data.accessToken,
                                 refreshToken = tokenRefreshResult.data.refreshToken
                             )
-                            tokenDataSource.setAccessToken()
                             delay(1000L)
                             return withContext(ioDispatcher) {
                                 request()

@@ -15,18 +15,22 @@ class MainActivityViewModel @Inject constructor(private val tokenUseCase: TokenU
     ViewModel() {
     val isLoggedIn: MutableState<Boolean> = mutableStateOf(false)
     val isSplashProgress: MutableState<Boolean> = mutableStateOf(true)
+    private var isInitial = true
 
     init {
         viewModelScope.launch {
-            observeAccessToken()
+            observeAuthInfo()
         }
     }
 
-    private suspend fun observeAccessToken() {
-        tokenUseCase.observeAccessToken().collect {
-            tokenUseCase.setAccessToken()
-            isLoggedIn.value = it.isNotBlank()
-            tokenUseCase.setHeaders(mapOf(RequestHeaderKey.AUTHORIZATION_TOKEN.key to "Bearer $it"))
+    private suspend fun observeAuthInfo() {
+        tokenUseCase.observeAuthInfo().collect {
+            if (isInitial) {
+                isInitial = false
+                tokenUseCase.setInitialAuthInfo()
+            }
+            isLoggedIn.value = it.isLoggedIn
+            tokenUseCase.setHeaders(mapOf(RequestHeaderKey.AUTHORIZATION_TOKEN.key to "Bearer ${it.accessToken}"))
         }
     }
 }

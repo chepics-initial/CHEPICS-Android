@@ -40,7 +40,7 @@ internal class AuthRepositoryImpl @Inject constructor(
                     accessToken = result.data.accessToken,
                     refreshToken = result.data.refreshToken
                 )
-                tokenDataSource.setAccessToken()
+                tokenDataSource.setLoginStatus(true)
                 CallResult.Success(Unit)
             }
 
@@ -93,6 +93,6 @@ internal class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun skip() {
-        tokenDataSource.setAccessToken()
+        tokenDataSource.setLoginStatus(true)
     }
 }

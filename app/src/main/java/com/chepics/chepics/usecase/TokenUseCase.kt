@@ -1,13 +1,14 @@
 package com.chepics.chepics.usecase
 
+import com.chepics.chepics.domainmodel.LocalAuthInfo
 import com.chepics.chepics.repository.net.RequestHeaderRepository
 import com.chepics.chepics.repository.token.TokenRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 interface TokenUseCase {
-    fun observeAccessToken(): Flow<String>
-    suspend fun setAccessToken()
+    fun observeAuthInfo(): Flow<LocalAuthInfo>
+    suspend fun setInitialAuthInfo()
     fun setHeaders(headers: Map<String, String>)
 }
 
@@ -16,12 +17,12 @@ internal class TokenUseCaseImpl @Inject constructor(
     private val requestHeaderRepository: RequestHeaderRepository
 ) : TokenUseCase {
 
-    override fun observeAccessToken(): Flow<String> {
-        return tokenRepository.observeAccessToken()
+    override fun observeAuthInfo(): Flow<LocalAuthInfo> {
+        return tokenRepository.observeAuthInfo()
     }
 
-    override suspend fun setAccessToken() {
-        tokenRepository.setAccessToken()
+    override suspend fun setInitialAuthInfo() {
+        tokenRepository.setInitialAuthInfo()
     }
 
     override fun setHeaders(headers: Map<String, String>) {
