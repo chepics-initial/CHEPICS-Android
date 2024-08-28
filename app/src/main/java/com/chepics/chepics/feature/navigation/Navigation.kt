@@ -83,12 +83,12 @@ fun AuthNavigation() {
         }
 
         composable(
-            "${Screens.OneTimeCodeScreen.name}/{email}",
-            arguments = listOf(navArgument("email") {
+            "${Screens.OneTimeCodeScreen.name}/{${NavigationParts.oneTimeCodeEmail}}",
+            arguments = listOf(navArgument(NavigationParts.oneTimeCodeEmail) {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("email").let {
+            backStackEntry.arguments?.getString(NavigationParts.oneTimeCodeEmail).let {
                 OneTimeCodeScreen(navController = navController, email = it.toString())
             }
         }
@@ -208,12 +208,12 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.ExploreResultScreen.name}/{searchText}",
-            arguments = listOf(navArgument("searchText") {
+            "${Screens.ExploreResultScreen.name}/{${NavigationParts.exploreResultText}}",
+            arguments = listOf(navArgument(NavigationParts.exploreResultText) {
                 type = NavType.StringType
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("searchText")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.exploreResultText)?.let {
                 ExploreResultScreen(
                     navController = feedNavController,
                     searchText = it,
@@ -223,12 +223,12 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.ProfileScreen.name}/{user}",
-            arguments = listOf(navArgument("user") {
+            "${Screens.ProfileScreen.name}/{${NavigationParts.profileUser}}",
+            arguments = listOf(navArgument(NavigationParts.profileUser) {
                 type = UserNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("user")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.profileUser)?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
                 ProfileScreen(
@@ -240,8 +240,8 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.EditProfileScreen.name}/{user}",
-            arguments = listOf(navArgument("user") {
+            "${Screens.EditProfileScreen.name}/{${NavigationParts.editProfileUser}}",
+            arguments = listOf(navArgument(NavigationParts.editProfileUser) {
                 type = UserNavType()
             }),
             enterTransition = {
@@ -251,11 +251,13 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 slideOut { fullSize -> IntOffset(0, fullSize.height) }
             }
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("user")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.editProfileUser)?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
                 val completion =
-                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.editProfileCompletion
+                    )
                 completion?.let { completion ->
                     EditProfileScreen(
                         navController = feedNavController,
@@ -267,12 +269,12 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CommentDetailScreen.name}/{navigationItem}",
-            arguments = listOf(navArgument("navigationItem") {
+            "${Screens.CommentDetailScreen.name}/{${NavigationParts.commentDetailNavigationItem}}",
+            arguments = listOf(navArgument(NavigationParts.commentDetailNavigationItem) {
                 type = CommentDetailNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("navigationItem")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.commentDetailNavigationItem)?.let {
                 Gson().fromJson(it, CommentDetailNavigationItem::class.java)
             }?.let {
                 CommentDetailScreen(
@@ -284,12 +286,12 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.TopicTopScreen.name}/{navigationItem}",
-            arguments = listOf(navArgument("navigationItem") {
+            "${Screens.TopicTopScreen.name}/{${NavigationParts.topicTopNavigationItem}}",
+            arguments = listOf(navArgument(NavigationParts.topicTopNavigationItem) {
                 type = TopicTopNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("navigationItem")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.topicTopNavigationItem)?.let {
                 Gson().fromJson(it, TopicTopNavigationItem::class.java)
             }?.let {
                 TopicTopScreen(
@@ -301,12 +303,12 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.TopicDetailScreen.name}/{topic}",
-            arguments = listOf(navArgument("topic") {
+            "${Screens.TopicDetailScreen.name}/{${NavigationParts.topicDetailTopic}}",
+            arguments = listOf(navArgument(NavigationParts.topicDetailTopic) {
                 type = TopicNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("topic")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.topicDetailTopic)?.let {
                 Gson().fromJson(it, Topic::class.java)
             }?.let {
                 TopicDetailScreen(
@@ -318,8 +320,8 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CreateSetScreen.name}/{topicId}",
-            arguments = listOf(navArgument("topicId") {
+            "${Screens.CreateSetScreen.name}/{${NavigationParts.createSetTopicId}}",
+            arguments = listOf(navArgument(NavigationParts.createSetTopicId) {
                 type = NavType.StringType
             }),
             enterTransition = {
@@ -329,11 +331,15 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 slideOut { fullSize -> IntOffset(0, fullSize.height) }
             }
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("topicId")?.let { topicId ->
+            backStackEntry.arguments?.getString(NavigationParts.createSetTopicId)?.let { topicId ->
                 val onBack =
-                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.createSetOnBack
+                    )
                 val completion =
-                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.createSetCompletion
+                    )
                 onBack?.let {
                     completion?.let {
                         CreateSetScreen(
@@ -353,16 +359,18 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.SetCommentScreen.name}/{set}",
-            arguments = listOf(navArgument("set") {
+            "${Screens.SetCommentScreen.name}/{${NavigationParts.setCommentSet}}",
+            arguments = listOf(navArgument(NavigationParts.setCommentSet) {
                 type = SetNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("set")?.let { set ->
+            backStackEntry.arguments?.getString(NavigationParts.setCommentSet)?.let { set ->
                 Gson().fromJson(set, PickSet::class.java)
             }?.let { set ->
                 val onBack =
-                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.setCommentOnBack
+                    )
                 onBack?.let { onBack ->
                     SetCommentScreen(
                         set = set,
@@ -375,24 +383,25 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.SetCommentDetailScreen.name}/{set}/{comment}",
-            arguments = listOf(navArgument("set") {
+            "${Screens.SetCommentDetailScreen.name}/{${NavigationParts.setCommentDetailSet}}/{${NavigationParts.setCommentDetailComment}}",
+            arguments = listOf(navArgument(NavigationParts.setCommentDetailSet) {
                 type = SetNavType()
             },
-                navArgument("comment") {
+                navArgument(NavigationParts.setCommentDetailComment) {
                     type = CommentNavType()
                 }
             )
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("set")?.let { set ->
+            backStackEntry.arguments?.getString(NavigationParts.setCommentDetailSet)?.let { set ->
                 Gson().fromJson(set, PickSet::class.java)
             }?.let { set ->
-                backStackEntry.arguments?.getString("comment")?.let { comment ->
-                    Gson().fromJson(comment, Comment::class.java)
-                }?.let { comment ->
+                backStackEntry.arguments?.getString(NavigationParts.setCommentDetailComment)
+                    ?.let { comment ->
+                        Gson().fromJson(comment, Comment::class.java)
+                    }?.let { comment ->
                     val onBack =
                         feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                            "onBack"
+                            NavigationParts.setCommentDetailOnBack
                         )
                     onBack?.let { onBack ->
                         SetCommentDetailScreen(
@@ -408,17 +417,18 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CreateCommentScreen.name}/{navigationItem}",
-            arguments = listOf(navArgument("navigationItem") {
+            "${Screens.CreateCommentScreen.name}/{${NavigationParts.createCommentNavigationItem}}",
+            arguments = listOf(navArgument(NavigationParts.createCommentNavigationItem) {
                 type = CreateCommentNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("navigationItem")?.let { item ->
-                Gson().fromJson(item, CreateCommentNavigationItem::class.java)
-            }?.let { item ->
+            backStackEntry.arguments?.getString(NavigationParts.createCommentNavigationItem)
+                ?.let { item ->
+                    Gson().fromJson(item, CreateCommentNavigationItem::class.java)
+                }?.let { item ->
                 val completion =
                     feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                        "completion"
+                        NavigationParts.createCommentCompletion
                     )
                 completion?.let {
                     CreateCommentScreen(
@@ -437,12 +447,12 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
     val myPageNavController = rememberNavController()
     NavHost(myPageNavController, startDestination = Screens.MyPageTopScreen.name) {
         composable(
-            "${Screens.ProfileScreen.name}/{user}",
-            arguments = listOf(navArgument("user") {
+            "${Screens.ProfileScreen.name}/{${NavigationParts.profileUser}}",
+            arguments = listOf(navArgument(NavigationParts.profileUser) {
                 type = UserNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("user")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.profileUser)?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
                 ProfileScreen(
@@ -458,8 +468,8 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.EditProfileScreen.name}/{user}",
-            arguments = listOf(navArgument("user") {
+            "${Screens.EditProfileScreen.name}/{${NavigationParts.editProfileUser}}",
+            arguments = listOf(navArgument(NavigationParts.editProfileUser) {
                 type = UserNavType()
             }),
             enterTransition = {
@@ -469,11 +479,13 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                 slideOut { fullSize -> IntOffset(0, fullSize.height) }
             }
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("user")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.editProfileUser)?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
                 val completion =
-                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.editProfileCompletion
+                    )
                 completion?.let { completion ->
                     EditProfileScreen(
                         navController = myPageNavController,
@@ -489,12 +501,12 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CommentDetailScreen.name}/{navigationItem}",
-            arguments = listOf(navArgument("navigationItem") {
+            "${Screens.CommentDetailScreen.name}/{${NavigationParts.commentDetailNavigationItem}}",
+            arguments = listOf(navArgument(NavigationParts.commentDetailNavigationItem) {
                 type = CommentDetailNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("navigationItem")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.commentDetailNavigationItem)?.let {
                 Gson().fromJson(it, CommentDetailNavigationItem::class.java)
             }?.let {
                 CommentDetailScreen(
@@ -506,12 +518,12 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.TopicTopScreen.name}/{navigationItem}",
-            arguments = listOf(navArgument("navigationItem") {
+            "${Screens.TopicTopScreen.name}/{${NavigationParts.topicTopNavigationItem}}",
+            arguments = listOf(navArgument(NavigationParts.topicTopNavigationItem) {
                 type = TopicTopNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("navigationItem")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.topicTopNavigationItem)?.let {
                 Gson().fromJson(it, TopicTopNavigationItem::class.java)
             }?.let {
                 TopicTopScreen(
@@ -523,12 +535,12 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.TopicDetailScreen.name}/{topic}",
-            arguments = listOf(navArgument("topic") {
+            "${Screens.TopicDetailScreen.name}/{${NavigationParts.topicDetailTopic}}",
+            arguments = listOf(navArgument(NavigationParts.topicDetailTopic) {
                 type = TopicNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("topic")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.topicDetailTopic)?.let {
                 Gson().fromJson(it, Topic::class.java)
             }?.let {
                 TopicDetailScreen(
@@ -540,8 +552,8 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CreateSetScreen.name}/{topicId}",
-            arguments = listOf(navArgument("topicId") {
+            "${Screens.CreateSetScreen.name}/{${NavigationParts.createSetTopicId}}",
+            arguments = listOf(navArgument(NavigationParts.createSetTopicId) {
                 type = NavType.StringType
             }),
             enterTransition = {
@@ -551,11 +563,15 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                 slideOut { fullSize -> IntOffset(0, fullSize.height) }
             }
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("topicId")?.let { topicId ->
+            backStackEntry.arguments?.getString(NavigationParts.createSetTopicId)?.let { topicId ->
                 val onBack =
-                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.createSetOnBack
+                    )
                 val completion =
-                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.createSetCompletion
+                    )
                 onBack?.let {
                     completion?.let {
                         CreateSetScreen(
@@ -575,16 +591,18 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.SetCommentScreen.name}/{set}",
-            arguments = listOf(navArgument("set") {
+            "${Screens.SetCommentScreen.name}/{${NavigationParts.setCommentSet}}",
+            arguments = listOf(navArgument(NavigationParts.setCommentSet) {
                 type = SetNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("set")?.let {
+            backStackEntry.arguments?.getString(NavigationParts.setCommentSet)?.let {
                 Gson().fromJson(it, PickSet::class.java)
             }?.let { set ->
                 val onBack =
-                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("onBack")
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                        NavigationParts.setCommentOnBack
+                    )
                 onBack?.let { onBack ->
                     SetCommentScreen(
                         set = set,
@@ -597,24 +615,25 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.SetCommentDetailScreen.name}/{set}/{comment}",
-            arguments = listOf(navArgument("set") {
+            "${Screens.SetCommentDetailScreen.name}/{${NavigationParts.setCommentDetailSet}}/{${NavigationParts.setCommentDetailComment}}",
+            arguments = listOf(navArgument(NavigationParts.setCommentDetailSet) {
                 type = SetNavType()
             },
-                navArgument("comment") {
+                navArgument(NavigationParts.setCommentDetailComment) {
                     type = CommentNavType()
                 }
             )
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("set")?.let { set ->
+            backStackEntry.arguments?.getString(NavigationParts.setCommentDetailSet)?.let { set ->
                 Gson().fromJson(set, PickSet::class.java)
             }?.let { set ->
-                backStackEntry.arguments?.getString("comment")?.let { comment ->
-                    Gson().fromJson(comment, Comment::class.java)
-                }?.let { comment ->
+                backStackEntry.arguments?.getString(NavigationParts.setCommentDetailComment)
+                    ?.let { comment ->
+                        Gson().fromJson(comment, Comment::class.java)
+                    }?.let { comment ->
                     val onBack =
                         myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                            "onBack"
+                            NavigationParts.setCommentDetailOnBack
                         )
                     onBack?.let { onBack ->
                         SetCommentDetailScreen(
@@ -630,17 +649,18 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
         }
 
         composable(
-            "${Screens.CreateCommentScreen.name}/{navigationItem}",
-            arguments = listOf(navArgument("navigationItem") {
+            "${Screens.CreateCommentScreen.name}/{${NavigationParts.createCommentNavigationItem}}",
+            arguments = listOf(navArgument(NavigationParts.createCommentNavigationItem) {
                 type = CreateCommentNavigationItemNavType()
             })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("navigationItem")?.let { item ->
-                Gson().fromJson(item, CreateCommentNavigationItem::class.java)
-            }?.let { item ->
+            backStackEntry.arguments?.getString(NavigationParts.createCommentNavigationItem)
+                ?.let { item ->
+                    Gson().fromJson(item, CreateCommentNavigationItem::class.java)
+                }?.let { item ->
                 val completion =
                     myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                        "completion"
+                        NavigationParts.createCommentCompletion
                     )
                 completion?.let {
                     CreateCommentScreen(
@@ -672,3 +692,34 @@ val tabItems = listOf(
         unselectedIcon = Icons.Outlined.Person
     )
 )
+
+object NavigationParts {
+    const val oneTimeCodeEmail = "email"
+
+    const val exploreResultText = "searchText"
+
+    const val profileUser = "user"
+
+    const val editProfileUser = "user"
+    const val editProfileCompletion = "completion"
+
+    const val commentDetailNavigationItem = "navigationItem"
+
+    const val topicTopNavigationItem = "navigationItem"
+
+    const val topicDetailTopic = "topic"
+
+    const val createSetTopicId = "topicId"
+    const val createSetOnBack = "onBack"
+    const val createSetCompletion = "completion"
+
+    const val setCommentSet = "set"
+    const val setCommentOnBack = "onBack"
+
+    const val setCommentDetailSet = "set"
+    const val setCommentDetailComment = "comment"
+    const val setCommentDetailOnBack = "onBack"
+
+    const val createCommentNavigationItem = "navigationItem"
+    const val createCommentCompletion = "completion"
+}

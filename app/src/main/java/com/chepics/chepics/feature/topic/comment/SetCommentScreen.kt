@@ -44,6 +44,7 @@ import com.chepics.chepics.feature.commonparts.CommentCell
 import com.chepics.chepics.feature.commonparts.CommentType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.FooterView
+import com.chepics.chepics.feature.navigation.NavigationParts
 import com.chepics.chepics.feature.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -166,7 +167,7 @@ fun SetCommentScreen(
                                         modifier = Modifier.clickable {
                                             navController.navigate(Screens.SetCommentDetailScreen.name + "/${selectedSet}/${comment}") {
                                                 navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                    "onBack",
+                                                    NavigationParts.setCommentDetailOnBack,
                                                     onBack
                                                 )
                                             }

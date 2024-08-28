@@ -50,6 +50,7 @@ import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
+import com.chepics.chepics.feature.navigation.NavigationParts
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import com.chepics.chepics.ui.theme.ChepicsPrimary
@@ -123,7 +124,7 @@ fun CommentDetailScreen(
                 }"
             ) {
                 navController.currentBackStackEntry?.savedStateHandle?.set(
-                    "completion",
+                    NavigationParts.createCommentCompletion,
                     createReplyCompletion
                 )
             }

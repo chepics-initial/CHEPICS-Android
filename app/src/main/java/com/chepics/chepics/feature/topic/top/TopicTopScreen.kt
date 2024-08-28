@@ -87,6 +87,7 @@ import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.createcomment.CreateCommentNavigationItem
 import com.chepics.chepics.feature.createcomment.CreateCommentType
+import com.chepics.chepics.feature.navigation.NavigationParts
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.getDateTimeString
@@ -323,7 +324,7 @@ fun TopicSetListView(
                                 viewModel.showBottomSheet.value = false
                                 navController.navigate(Screens.SetCommentScreen.name + "/${it}") {
                                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                                        "onBack",
+                                        NavigationParts.setCommentOnBack,
                                         onBack
                                     )
                                 }
@@ -352,11 +353,11 @@ fun TopicSetListView(
                                             viewModel.showBottomSheet.value = false
                                             navController.navigate(Screens.CreateSetScreen.name + "/${it.id}") {
                                                 navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                    "onBack",
+                                                    NavigationParts.createSetOnBack,
                                                     onBack
                                                 )
                                                 navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                    "completion",
+                                                    NavigationParts.createSetCompletion,
                                                     createSetCompletion
                                                 )
                                             }
@@ -853,7 +854,7 @@ fun TopicTopDetailView(
                                     }"
                                 ) {
                                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                                        "completion",
+                                        NavigationParts.createCommentCompletion,
                                         createCommentCompletion
                                     )
                                 }

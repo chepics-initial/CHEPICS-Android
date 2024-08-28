@@ -60,6 +60,7 @@ import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserIcon
+import com.chepics.chepics.feature.navigation.NavigationParts
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import com.chepics.chepics.ui.theme.ChepicsPrimary
@@ -141,7 +142,7 @@ fun ProfileScreen(
                                     viewModel.user.value?.let { user ->
                                         navController.navigate(Screens.EditProfileScreen.name + "/${user}") {
                                             navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                "completion",
+                                                NavigationParts.editProfileCompletion,
                                                 editProfileCompletion
                                             )
                                         }
