@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -32,6 +32,7 @@ import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.authentication.HeaderView
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 
@@ -56,7 +57,7 @@ fun EmailRegistrationScreen(
                             modifier = Modifier.align(Alignment.CenterStart)
                         ) {
                             Image(
-                                imageVector = Icons.Default.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back button"
                             )
                         }
@@ -124,16 +125,9 @@ fun EmailRegistrationScreen(
         }
 
         if (viewModel.showAlertDialog.value) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = "通信エラー") },
-                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
-                        Text(text = "OK")
-                    }
-                }
-            )
+            NetworkErrorDialog {
+                viewModel.showAlertDialog.value = false
+            }
         }
 
         if (viewModel.showAlreadyAlertDialog.value) {

@@ -68,6 +68,7 @@ import com.chepics.chepics.domainmodel.Comment
 import com.chepics.chepics.domainmodel.common.JsonNavType
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
@@ -379,16 +380,9 @@ fun CreateCommentScreen(
         }
 
         if (viewModel.showNetworkErrorDialog.value) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = "通信エラー") },
-                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.showNetworkErrorDialog.value = false }) {
-                        Text(text = "OK")
-                    }
-                }
-            )
+            NetworkErrorDialog {
+                viewModel.showNetworkErrorDialog.value = false
+            }
         }
     }
 }

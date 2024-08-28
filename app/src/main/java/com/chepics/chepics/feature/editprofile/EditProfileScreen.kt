@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -32,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -56,6 +54,7 @@ import coil.compose.AsyncImage
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
@@ -214,16 +213,9 @@ fun EditProfileScreen(
                 CommonProgressSpinner()
             }
             if (viewModel.showAlertDialog.value) {
-                AlertDialog(
-                    onDismissRequest = { },
-                    title = { Text(text = "通信エラー") },
-                    text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
-                    confirmButton = {
-                        TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
-                            Text(text = "OK")
-                        }
-                    }
-                )
+                NetworkErrorDialog {
+                    viewModel.showAlertDialog.value = false
+                }
             }
         }
     }

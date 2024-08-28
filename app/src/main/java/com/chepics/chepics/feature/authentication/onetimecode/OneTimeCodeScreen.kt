@@ -50,6 +50,7 @@ import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.authentication.HeaderView
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.utils.Constants
 import com.chepics.chepics.utils.Constants.ONE_TIME_CODE_LENGTH
@@ -168,16 +169,23 @@ fun OneTimeCodeScreen(
             CommonProgressSpinner()
         }
 
-        if (viewModel.showAlertDialog.value) {
+        if (viewModel.showInvalidAlertDialog.value) {
             AlertDialog(
                 onDismissRequest = { },
-                title = { Text(text = "エラー") },
+                title = { Text(text = "認証に失敗しました") },
+                text = { Text(text = "不適切なコードです") },
                 confirmButton = {
-                    TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
+                    TextButton(onClick = { viewModel.showInvalidAlertDialog.value = false }) {
                         Text(text = "OK")
                     }
                 }
             )
+        }
+
+        if (viewModel.showAlertDialog.value) {
+            NetworkErrorDialog {
+                viewModel.showAlertDialog.value = false
+            }
         }
     }
 }

@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +29,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +56,7 @@ import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.FooterView
 import com.chepics.chepics.feature.commonparts.IconScale
 import com.chepics.chepics.feature.commonparts.ImagePager
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserIcon
 import com.chepics.chepics.feature.navigation.NavigationParts
@@ -309,16 +308,9 @@ fun ProfileScreen(
         }
 
         if (viewModel.showDialog.value) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = "通信エラー") },
-                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.showDialog.value = false }) {
-                        Text(text = "OK")
-                    }
-                }
-            )
+            NetworkErrorDialog {
+                viewModel.showDialog.value = false
+            }
         }
 
         if (showImageViewer.value && viewModel.selectedImageIndex.value != null && viewModel.profileImages.value != null) {

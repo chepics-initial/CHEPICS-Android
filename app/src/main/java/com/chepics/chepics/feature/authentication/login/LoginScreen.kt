@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.ui.theme.ChepicsPrimary
@@ -121,22 +122,15 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         }
 
         if (viewModel.showAlertDialog.value) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = "通信エラー") },
-                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.showAlertDialog.value = false }) {
-                        Text(text = "OK")
-                    }
-                }
-            )
+            NetworkErrorDialog {
+                viewModel.showAlertDialog.value = false
+            }
         }
 
         if (viewModel.showInvalidAlertDialog.value) {
             AlertDialog(
                 onDismissRequest = { },
-                title = { Text(text = "ログインできませんでした") },
+                title = { Text(text = "ログインに失敗しました") },
                 text = { Text(text = "メールアドレスとパスワードが正しいことを確認してください") },
                 confirmButton = {
                     TextButton(onClick = { viewModel.showInvalidAlertDialog.value = false }) {

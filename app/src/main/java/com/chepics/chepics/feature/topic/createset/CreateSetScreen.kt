@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -20,7 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -38,6 +36,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
+import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.RoundButton
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
@@ -171,18 +170,9 @@ fun CreateSetScreen(
         }
 
         if (viewModel.showDialog.value) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(text = "通信エラー") },
-                text = { Text(text = "インターネット環境を確認して、もう一度お試しください。") },
-                confirmButton = {
-                    TextButton(onClick = {
-                        viewModel.showDialog.value = false
-                    }) {
-                        Text(text = "OK")
-                    }
-                }
-            )
+            NetworkErrorDialog {
+                viewModel.showDialog.value = false
+            }
         }
     }
 }
