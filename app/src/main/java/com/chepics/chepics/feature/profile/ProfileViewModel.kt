@@ -59,6 +59,12 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
         }
     }
 
+    fun editProfileCompletion() {
+        user.value?.let {
+            viewModelScope.launch { fetchUser(it.id) }
+        }
+    }
+
     private suspend fun fetchUser(userId: String) {
         when (val result = profileUseCase.fetchUser(userId)) {
             is CallResult.Success -> {

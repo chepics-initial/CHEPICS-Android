@@ -66,7 +66,8 @@ fun EditProfileScreen(
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
     user: User,
-    viewModel: EditProfileViewModel = hiltViewModel()
+    viewModel: EditProfileViewModel = hiltViewModel(),
+    completion: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val isEnabled = remember {
@@ -202,7 +203,10 @@ fun EditProfileScreen(
                         isActive = viewModel.isActive(),
                         type = ButtonType.Fill
                     ) {
-                        viewModel.onTapButton(completion = { navController.navigateUp() })
+                        viewModel.onTapButton(completion = {
+                            completion()
+                            navController.navigateUp()
+                        })
                     }
                 }
             }

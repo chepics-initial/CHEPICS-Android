@@ -28,6 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import com.chepics.chepics.R
 import com.chepics.chepics.feature.commonparts.IconScale
@@ -49,6 +51,10 @@ fun MyPageTopScreen(navController: NavController, viewModel: MyPageTopViewModel 
             delay(1000L)
             isNavigationEnabled.value = true
         }
+    }
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_START) {
+        viewModel.onStart()
     }
 
     Box {

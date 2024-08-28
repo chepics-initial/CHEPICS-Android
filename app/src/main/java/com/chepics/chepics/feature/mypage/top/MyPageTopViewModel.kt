@@ -25,6 +25,9 @@ class MyPageTopViewModel @Inject constructor(private val myPageTopUseCase: MyPag
                 imageUrl = it.imageUrl
             )
         }
+    }
+
+    fun onStart() {
         viewModelScope.launch {
             fetchUser()
         }

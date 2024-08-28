@@ -84,6 +84,10 @@ fun ProfileScreen(
         viewModel.onStart(user)
     }
 
+    val editProfileCompletion: () -> Unit = {
+        viewModel.editProfileCompletion()
+    }
+
     if (viewModel.showLikeCommentFailureDialog.value) {
         Toast.makeText(
             LocalContext.current,
@@ -134,8 +138,13 @@ fun ProfileScreen(
 
                             if (viewModel.isCurrentUser.value) {
                                 IconButton(onClick = {
-                                    viewModel.user.value?.let {
-                                        navController.navigate(Screens.EditProfileScreen.name + "/${it}")
+                                    viewModel.user.value?.let { user ->
+                                        navController.navigate(Screens.EditProfileScreen.name + "/${user}") {
+                                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                "completion",
+                                                editProfileCompletion
+                                            )
+                                        }
                                     }
                                 }) {
                                     Image(

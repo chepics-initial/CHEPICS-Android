@@ -254,11 +254,15 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("user")?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
-                EditProfileScreen(
-                    navController = feedNavController,
-                    showBottomNavigation = showBottomNavigation,
-                    user = it
-                )
+                val completion =
+                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
+                completion?.let { completion ->
+                    EditProfileScreen(
+                        navController = feedNavController,
+                        showBottomNavigation = showBottomNavigation,
+                        user = it
+                    ) { completion() }
+                }
             }
         }
 
@@ -468,11 +472,15 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString("user")?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
-                EditProfileScreen(
-                    navController = myPageNavController,
-                    showBottomNavigation = showBottomNavigation,
-                    user = it
-                )
+                val completion =
+                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>("completion")
+                completion?.let { completion ->
+                    EditProfileScreen(
+                        navController = myPageNavController,
+                        showBottomNavigation = showBottomNavigation,
+                        user = it
+                    ) { completion() }
+                }
             }
         }
 
