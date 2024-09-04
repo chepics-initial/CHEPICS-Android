@@ -32,7 +32,7 @@ class EditProfileViewModel @Inject constructor(private val editProfileUseCase: E
 
     fun isActive(): Boolean {
         return username.value.isNotEmpty()
-                && fullname.value.isNotEmpty()
+                && fullname.value.trim().isNotEmpty()
                 && (
                 initialUsername != username.value
                         || initialFullname != fullname.value

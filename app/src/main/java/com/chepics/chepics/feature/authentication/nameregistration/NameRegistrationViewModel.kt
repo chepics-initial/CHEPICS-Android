@@ -23,7 +23,7 @@ class NameRegistrationViewModel @Inject constructor(private val nameRegistration
     val isCompleted: MutableState<Boolean> = mutableStateOf(false)
 
     fun isActive(): Boolean {
-        return username.value.isNotEmpty() && fullname.value.isNotEmpty()
+        return username.value.isNotEmpty() && fullname.value.trim().isNotEmpty()
     }
 
     fun onTapButton() {
