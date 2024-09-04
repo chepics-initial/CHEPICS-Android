@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.APIErrorCode
+import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.User
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.usecase.EditProfileUseCase
@@ -22,6 +24,7 @@ class EditProfileViewModel @Inject constructor(private val editProfileUseCase: E
     val imageUri: MutableState<Uri?> = mutableStateOf(null)
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val showAlertDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showUniqueAlertDialog: MutableState<Boolean> = mutableStateOf(false)
     private var initialImageUri: Uri? = null
     private var initialUsername = ""
     private var initialFullname = ""
@@ -56,7 +59,7 @@ class EditProfileViewModel @Inject constructor(private val editProfileUseCase: E
     fun onTapButton(completion: () -> Unit) {
         isLoading.value = true
         viewModelScope.launch {
-            when (editProfileUseCase.updateUser(
+            when (val result = editProfileUseCase.updateUser(
                 username = username.value,
                 fullname = fullname.value,
                 bio = bio.value.ifEmpty { null },
@@ -69,6 +72,10 @@ class EditProfileViewModel @Inject constructor(private val editProfileUseCase: E
 
                 is CallResult.Error -> {
                     isLoading.value = false
+                    if (result.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.USED_USER_NAME) {
+                        showUniqueAlertDialog.value = true
+                        return@launch
+                    }
                     showAlertDialog.value = true
                 }
             }

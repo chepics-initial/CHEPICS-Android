@@ -4,6 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chepics.chepics.domainmodel.APIErrorCode
+import com.chepics.chepics.domainmodel.InfraException
 import com.chepics.chepics.domainmodel.common.CallResult
 import com.chepics.chepics.usecase.auth.NameRegistrationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +19,7 @@ class NameRegistrationViewModel @Inject constructor(private val nameRegistration
     val fullname: MutableState<String> = mutableStateOf("")
     val isLoading: MutableState<Boolean> = mutableStateOf(false)
     val showAlertDialog: MutableState<Boolean> = mutableStateOf(false)
+    val showUniqueAlertDialog: MutableState<Boolean> = mutableStateOf(false)
     val isCompleted: MutableState<Boolean> = mutableStateOf(false)
 
     fun isActive(): Boolean {
@@ -26,7 +29,7 @@ class NameRegistrationViewModel @Inject constructor(private val nameRegistration
     fun onTapButton() {
         viewModelScope.launch {
             isLoading.value = true
-            when (nameRegistrationUseCase.registerName(
+            when (val result = nameRegistrationUseCase.registerName(
                 username = username.value,
                 fullname = fullname.value
             )) {
@@ -37,6 +40,10 @@ class NameRegistrationViewModel @Inject constructor(private val nameRegistration
 
                 is CallResult.Error -> {
                     isLoading.value = false
+                    if (result.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.USED_USER_NAME) {
+                        showAlertDialog.value = true
+                        return@launch
+                    }
                     showAlertDialog.value = true
                 }
             }

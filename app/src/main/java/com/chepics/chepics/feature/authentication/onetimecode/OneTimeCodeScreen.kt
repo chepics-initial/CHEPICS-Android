@@ -135,7 +135,11 @@ fun OneTimeCodeScreen(
                     OtpTextField(
                         otpText = viewModel.code.value,
                         onOtpTextChange = { value, _ ->
-                            viewModel.code.value = value
+                            if (value.all { character ->
+                                    character.isDigit()
+                                }) {
+                                viewModel.code.value = value
+                            }
                         }
                     ) {
                         if (viewModel.code.value.length != ONE_TIME_CODE_LENGTH) return@OtpTextField
