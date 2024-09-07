@@ -37,6 +37,8 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
     val topicFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
     val commentFooterStatus: MutableState<FooterStatus> =
         mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val isTopicRefreshing: MutableState<Boolean> = mutableStateOf(false)
+    val isCommentRefreshing: MutableState<Boolean> = mutableStateOf(false)
     private var isTopicFetchStarted = false
     private var isCommentFetchStarted = false
 
@@ -46,7 +48,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         }
     }
 
-    suspend fun fetchTopics() {
+    private suspend fun fetchTopics() {
         isTopicFetchStarted = true
         when (val result = feedUseCase.fetchFavoriteTopics(null)) {
             is CallResult.Success -> {
@@ -65,7 +67,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         }
     }
 
-    suspend fun fetchComments() {
+    private suspend fun fetchComments() {
         isCommentFetchStarted = true
         when (val result = feedUseCase.fetchComments(null)) {
             is CallResult.Success -> {
@@ -81,6 +83,22 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
             is CallResult.Error -> {
                 commentUIState.value = UIState.FAILURE
             }
+        }
+    }
+
+    fun onTopicRefresh() {
+        viewModelScope.launch {
+            isTopicRefreshing.value = true
+            fetchTopics()
+            isTopicRefreshing.value = false
+        }
+    }
+
+    fun onCommentRefresh() {
+        viewModelScope.launch {
+            isCommentRefreshing.value = true
+            fetchComments()
+            isCommentRefreshing.value = false
         }
     }
 

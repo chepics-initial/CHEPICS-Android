@@ -28,20 +28,17 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -221,12 +218,8 @@ fun FeedTopicContentView(
     showImageViewer: MutableState<Boolean>,
     navController: NavController
 ) {
-    val refreshState = rememberPullToRefreshState()
-    if (refreshState.isRefreshing) {
-        LaunchedEffect(true) {
-            viewModel.fetchTopics()
-            refreshState.endRefresh()
-        }
+    val onRefresh: () -> Unit = {
+        viewModel.onTopicRefresh()
     }
 
     when (viewModel.topicUIState.value) {
@@ -235,7 +228,9 @@ fun FeedTopicContentView(
         }
 
         UIState.SUCCESS -> {
-            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+            PullToRefreshBox(
+                isRefreshing = viewModel.isTopicRefreshing.value,
+                onRefresh = { onRefresh() }) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     state = viewModel.topicScrollState.value
@@ -280,16 +275,13 @@ fun FeedTopicContentView(
                         FooterView(status = viewModel.topicFooterStatus.value)
                     }
                 }
-
-                PullToRefreshContainer(
-                    state = refreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
             }
         }
 
         UIState.FAILURE -> {
-            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+            PullToRefreshBox(
+                isRefreshing = viewModel.isTopicRefreshing.value,
+                onRefresh = { onRefresh() }) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Text(
@@ -300,11 +292,6 @@ fun FeedTopicContentView(
                         )
                     }
                 }
-
-                PullToRefreshContainer(
-                    state = refreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
             }
         }
     }
@@ -317,12 +304,8 @@ fun FeedCommentContentView(
     showImageViewer: MutableState<Boolean>,
     navController: NavController
 ) {
-    val refreshState = rememberPullToRefreshState()
-    if (refreshState.isRefreshing) {
-        LaunchedEffect(true) {
-            viewModel.fetchComments()
-            refreshState.endRefresh()
-        }
+    val onRefresh: () -> Unit = {
+        viewModel.onCommentRefresh()
     }
 
     when (viewModel.commentUIState.value) {
@@ -331,7 +314,9 @@ fun FeedCommentContentView(
         }
 
         UIState.SUCCESS -> {
-            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+            PullToRefreshBox(
+                isRefreshing = viewModel.isCommentRefreshing.value,
+                onRefresh = { onRefresh() }) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     state = viewModel.commentScrollState.value
@@ -394,16 +379,13 @@ fun FeedCommentContentView(
                         }
                     }
                 }
-
-                PullToRefreshContainer(
-                    state = refreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
             }
         }
 
         UIState.FAILURE -> {
-            Box(Modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+            PullToRefreshBox(
+                isRefreshing = viewModel.isCommentRefreshing.value,
+                onRefresh = { onRefresh() }) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Text(
@@ -414,11 +396,6 @@ fun FeedCommentContentView(
                         )
                     }
                 }
-
-                PullToRefreshContainer(
-                    state = refreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
             }
         }
     }

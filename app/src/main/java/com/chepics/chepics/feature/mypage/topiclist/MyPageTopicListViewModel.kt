@@ -20,6 +20,7 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
     val uiState: MutableState<UIState> = mutableStateOf(UIState.LOADING)
     val sets: MutableState<List<MySet>> = mutableStateOf(emptyList())
     val footerStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val isRefreshing: MutableState<Boolean> = mutableStateOf(false)
 
     init {
         viewModelScope.launch {
@@ -27,7 +28,7 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
         }
     }
 
-    suspend fun fetchSets() {
+    private suspend fun fetchSets() {
         when (val result = myPageTopicListUseCase.fetchPickedSets(null)) {
             is CallResult.Success -> {
                 sets.value = result.data
@@ -40,6 +41,14 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
             }
 
             is CallResult.Error -> uiState.value = UIState.FAILURE
+        }
+    }
+
+    fun onRefresh() {
+        viewModelScope.launch {
+            isRefreshing.value = true
+            fetchSets()
+            isRefreshing.value = false
         }
     }
 
