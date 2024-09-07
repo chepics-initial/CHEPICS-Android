@@ -55,7 +55,7 @@ fun ExploreTopBar(
             Surface(
                 shape = CircleShape,
                 color = Color.LightGray.copy(0.8f),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 TextField(
                     value = searchText.value,

@@ -41,7 +41,7 @@ class NameRegistrationViewModel @Inject constructor(private val nameRegistration
                 is CallResult.Error -> {
                     isLoading.value = false
                     if (result.exception is InfraException.Server && result.exception.errorCode == APIErrorCode.USED_USER_NAME) {
-                        showAlertDialog.value = true
+                        showUniqueAlertDialog.value = true
                         return@launch
                     }
                     showAlertDialog.value = true

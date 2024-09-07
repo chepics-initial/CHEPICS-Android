@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "619666938834",
+    "project_id": "chepics-initial",
+    "storage_bucket": "chepics-initial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619666938834:android:bfb4606de3c9473b01460b",
+        "android_client_info": {
+          "package_name": "com.chepics.chepics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEkgosQvRL8RoZfrmvz3_ksc4pLmnGjtM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

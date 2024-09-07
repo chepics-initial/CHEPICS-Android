@@ -4,6 +4,7 @@ agp = "8.3.2"
 coilCompose = "2.6.0"
 converterGson = "2.9.0"
 datastorePreferences = "1.1.1"
+firebaseBom = "33.2.0"
 hiltAndroidCompiler = "2.49"
 hiltNavigationCompose = "1.2.0"
 kotlin = "1.9.0"
@@ -46,6 +47,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
