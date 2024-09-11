@@ -45,6 +45,8 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
     val commentFooterStatus: MutableState<FooterStatus> =
         mutableStateOf(FooterStatus.LOADINGSTOPPED)
     private var isInitialOnStart = true
+    private var topicOffset = 0
+    private var commentOffset = 0
 
     fun onStart(user: User) {
         this.user.value = user
@@ -90,6 +92,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                         topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
                     }
                     topicUIState.value = UIState.SUCCESS
+                    topicOffset = Constants.ARRAY_LIMIT
                 }
 
                 is CallResult.Error -> topicUIState.value = UIState.FAILURE
@@ -111,6 +114,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                         commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
                     }
                     commentUIState.value = UIState.SUCCESS
+                    commentOffset = Constants.ARRAY_LIMIT
                 }
 
                 is CallResult.Error -> commentUIState.value = UIState.FAILURE
@@ -194,7 +198,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                 topicFooterStatus.value = FooterStatus.LOADINGSTARTED
                 viewModelScope.launch {
                     when (val result =
-                        profileUseCase.fetchTopics(userId = it.id, offset = topics.value.size)) {
+                        profileUseCase.fetchTopics(userId = it.id, offset = topicOffset)) {
                         is CallResult.Success -> {
                             val updatedTopics = topics.value.toMutableList()
                             for (additionalTopic in result.data) {
@@ -209,9 +213,11 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                             topics.value = updatedTopics
                             if (result.data.size < Constants.ARRAY_LIMIT) {
                                 topicFooterStatus.value = FooterStatus.ALLFETCHED
-                            } else {
-                                topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                                topicOffset = 0
+                                return@launch
                             }
+                            topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            topicOffset += Constants.ARRAY_LIMIT
                         }
 
                         is CallResult.Error -> topicFooterStatus.value = FooterStatus.FAILURE
@@ -228,7 +234,7 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                 viewModelScope.launch {
                     when (val result = profileUseCase.fetchComments(
                         userId = it.id,
-                        offset = comments.value?.size
+                        offset = commentOffset
                     )) {
                         is CallResult.Success -> {
                             val updatedComments = comments.value?.toMutableList()
@@ -244,9 +250,11 @@ class ProfileViewModel @Inject constructor(private val profileUseCase: ProfileUs
                             comments.value = updatedComments?.toImmutableList()
                             if (result.data.size < Constants.ARRAY_LIMIT) {
                                 commentFooterStatus.value = FooterStatus.ALLFETCHED
-                            } else {
-                                commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                                commentOffset = 0
+                                return@launch
                             }
+                            commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            commentOffset += Constants.ARRAY_LIMIT
                         }
 
                         is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE

@@ -39,6 +39,8 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         mutableStateOf(FooterStatus.LOADINGSTOPPED)
     private var isTopicFetchStarted = false
     private var isCommentFetchStarted = false
+    private var topicOffset = 0
+    private var commentOffset = 0
 
     init {
         viewModelScope.launch {
@@ -57,6 +59,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
                     topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 topicUIState.value = UIState.SUCCESS
+                topicOffset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> {
@@ -76,6 +79,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
                     commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 commentUIState.value = UIState.SUCCESS
+                commentOffset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> {
@@ -142,7 +146,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         if (topicFooterStatus.value == FooterStatus.LOADINGSTOPPED || topicFooterStatus.value == FooterStatus.FAILURE) {
             topicFooterStatus.value = FooterStatus.LOADINGSTARTED
             viewModelScope.launch {
-                when (val result = feedUseCase.fetchFavoriteTopics(topics.value.size)) {
+                when (val result = feedUseCase.fetchFavoriteTopics(topicOffset)) {
                     is CallResult.Success -> {
                         val updatedTopics = topics.value.toMutableList()
                         for (additionalTopic in result.data) {
@@ -156,9 +160,11 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
                         topics.value = updatedTopics
                         if (result.data.size < Constants.ARRAY_LIMIT) {
                             topicFooterStatus.value = FooterStatus.ALLFETCHED
-                        } else {
-                            topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            topicOffset = 0
+                            return@launch
                         }
+                        topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        topicOffset += Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> topicFooterStatus.value = FooterStatus.FAILURE
@@ -171,7 +177,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
         if (commentFooterStatus.value == FooterStatus.LOADINGSTOPPED || commentFooterStatus.value == FooterStatus.FAILURE) {
             commentFooterStatus.value = FooterStatus.LOADINGSTARTED
             viewModelScope.launch {
-                when (val result = feedUseCase.fetchComments(comments.value?.size)) {
+                when (val result = feedUseCase.fetchComments(commentOffset)) {
                     is CallResult.Success -> {
                         val updatedComments = comments.value?.toMutableList()
                         for (additionalComment in result.data) {
@@ -186,9 +192,11 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase) : 
                         comments.value = updatedComments?.toImmutableList()
                         if (result.data.size < Constants.ARRAY_LIMIT) {
                             commentFooterStatus.value = FooterStatus.ALLFETCHED
-                        } else {
-                            commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            commentOffset = 0
+                            return@launch
                         }
+                        commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        commentOffset += Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE

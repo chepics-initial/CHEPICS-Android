@@ -44,6 +44,8 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
     val setFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
     var topicId: String? = null
     private var isInitialOnStart = true
+    private var setOffset = 0
+    private var commentOffset = 0
 
     fun onStart(topicId: String, rootTopic: Topic?) {
         this.topicId = topicId
@@ -135,6 +137,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                             setFooterStatus.value = FooterStatus.LOADINGSTOPPED
                         }
                         setListUIState.value = UIState.SUCCESS
+                        setOffset = Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> setListUIState.value = UIState.FAILURE
@@ -185,7 +188,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                 viewModelScope.launch {
                     when (val result = topicTopUseCase.fetchSetComments(
                         setId = it.id,
-                        offset = comments.value?.size
+                        offset = commentOffset
                     )) {
                         is CallResult.Success -> {
                             val updatedComments = comments.value?.toMutableList()
@@ -201,9 +204,11 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                             comments.value = updatedComments?.toImmutableList()
                             if (result.data.size < Constants.ARRAY_LIMIT) {
                                 commentFooterStatus.value = FooterStatus.ALLFETCHED
-                            } else {
-                                commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                                commentOffset = 0
+                                return@launch
                             }
+                            commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            commentOffset += Constants.ARRAY_LIMIT
                         }
 
                         is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE
@@ -219,7 +224,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                 setFooterStatus.value = FooterStatus.LOADINGSTARTED
                 viewModelScope.launch {
                     when (val result =
-                        topicTopUseCase.fetchSets(topicId = it.id, offset = sets.value.size)) {
+                        topicTopUseCase.fetchSets(topicId = it.id, offset = setOffset)) {
                         is CallResult.Success -> {
                             val updatedSets = sets.value.toMutableList()
                             for (additionalSet in result.data) {
@@ -233,9 +238,11 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                             sets.value = updatedSets
                             if (result.data.size < Constants.ARRAY_LIMIT) {
                                 setFooterStatus.value = FooterStatus.ALLFETCHED
-                            } else {
-                                setFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                                setOffset = 0
+                                return@launch
                             }
+                            setFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            setOffset += Constants.ARRAY_LIMIT
                         }
 
                         is CallResult.Error -> setFooterStatus.value = FooterStatus.FAILURE
@@ -271,6 +278,7 @@ class TopicTopViewModel @Inject constructor(private val topicTopUseCase: TopicTo
                     commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 commentUIState.value = UIState.SUCCESS
+                commentOffset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> {
