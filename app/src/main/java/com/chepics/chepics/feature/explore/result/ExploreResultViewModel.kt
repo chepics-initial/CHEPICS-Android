@@ -49,6 +49,9 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val isUserRefreshing: MutableState<Boolean> = mutableStateOf(false)
     var initialSearchText: String = ""
     private var isInitialOnStart = true
+    private var topicOffset = 0
+    private var commentOffset = 0
+    private var userOffset = 0
 
     fun onStart(searchText: String) {
         initialSearchText = searchText
@@ -126,6 +129,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                     topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 topicUIState.value = UIState.SUCCESS
+                topicOffset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> {
@@ -148,6 +152,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                     commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 commentUIState.value = UIState.SUCCESS
+                commentOffset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> {
@@ -171,6 +176,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                     userFooterStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 userUIState.value = UIState.SUCCESS
+                userOffset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> {
@@ -244,7 +250,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             viewModelScope.launch {
                 when (val result = exploreResultUseCase.fetchTopics(
                     word = initialSearchText,
-                    offset = topics.value.size
+                    offset = topicOffset
                 )) {
                     is CallResult.Success -> {
                         val updatedTopics = topics.value.toMutableList()
@@ -259,9 +265,11 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                         topics.value = updatedTopics
                         if (result.data.size < Constants.ARRAY_LIMIT) {
                             topicFooterStatus.value = FooterStatus.ALLFETCHED
-                        } else {
-                            topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            topicOffset = 0
+                            return@launch
                         }
+                        topicFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        topicOffset += Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> topicFooterStatus.value = FooterStatus.FAILURE
@@ -276,7 +284,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             viewModelScope.launch {
                 when (val result = exploreResultUseCase.fetchComments(
                     word = initialSearchText,
-                    offset = comments.value?.size
+                    offset = commentOffset
                 )) {
                     is CallResult.Success -> {
                         val updatedComments = comments.value?.toMutableList()
@@ -292,9 +300,11 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                         comments.value = updatedComments?.toImmutableList()
                         if (result.data.size < Constants.ARRAY_LIMIT) {
                             commentFooterStatus.value = FooterStatus.ALLFETCHED
-                        } else {
-                            commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            commentOffset = 0
+                            return@launch
                         }
+                        commentFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        commentOffset += Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> commentFooterStatus.value = FooterStatus.FAILURE
@@ -309,7 +319,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             viewModelScope.launch {
                 when (val result = exploreResultUseCase.fetchUsers(
                     word = initialSearchText,
-                    offset = users.value.size
+                    offset = userOffset
                 )) {
                     is CallResult.Success -> {
                         val updatedUsers = users.value.toMutableList()
@@ -324,9 +334,11 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
                         users.value = updatedUsers
                         if (result.data.size < Constants.ARRAY_LIMIT) {
                             userFooterStatus.value = FooterStatus.ALLFETCHED
-                        } else {
-                            userFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                            userOffset = 0
+                            return@launch
                         }
+                        userFooterStatus.value = FooterStatus.LOADINGSTOPPED
+                        userOffset += Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> userFooterStatus.value = FooterStatus.FAILURE

@@ -21,6 +21,7 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
     val sets: MutableState<List<MySet>> = mutableStateOf(emptyList())
     val footerStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
     val isRefreshing: MutableState<Boolean> = mutableStateOf(false)
+    private var offset = 0
 
     init {
         viewModelScope.launch {
@@ -38,6 +39,7 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
                     footerStatus.value = FooterStatus.LOADINGSTOPPED
                 }
                 uiState.value = UIState.SUCCESS
+                offset = Constants.ARRAY_LIMIT
             }
 
             is CallResult.Error -> uiState.value = UIState.FAILURE
@@ -56,7 +58,7 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
         if (footerStatus.value == FooterStatus.LOADINGSTOPPED || footerStatus.value == FooterStatus.FAILURE) {
             footerStatus.value = FooterStatus.LOADINGSTARTED
             viewModelScope.launch {
-                when (val result = myPageTopicListUseCase.fetchPickedSets(sets.value.size)) {
+                when (val result = myPageTopicListUseCase.fetchPickedSets(offset)) {
                     is CallResult.Success -> {
                         val updatedSets = sets.value.toMutableList()
                         for (additionalSet in result.data) {
@@ -71,9 +73,11 @@ class MyPageTopicListViewModel @Inject constructor(private val myPageTopicListUs
                         sets.value = updatedSets
                         if (result.data.size < Constants.ARRAY_LIMIT) {
                             footerStatus.value = FooterStatus.ALLFETCHED
-                        } else {
-                            footerStatus.value = FooterStatus.LOADINGSTOPPED
+                            offset = 0
+                            return@launch
                         }
+                        footerStatus.value = FooterStatus.LOADINGSTOPPED
+                        offset += Constants.ARRAY_LIMIT
                     }
 
                     is CallResult.Error -> footerStatus.value = FooterStatus.FAILURE

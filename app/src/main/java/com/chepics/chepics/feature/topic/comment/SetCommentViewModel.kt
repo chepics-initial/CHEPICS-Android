@@ -28,6 +28,8 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
     val showLikeCommentFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val showLikeReplyFailureDialog: MutableState<Boolean> = mutableStateOf(false)
     val footerStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    private var offset = 0
+
     fun onStart(set: PickSet) {
         this.set.value = set
         viewModelScope.launch {
@@ -72,7 +74,7 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
                 viewModelScope.launch {
                     when (val result = setCommentUseCase.fetchComments(
                         setId = it.id,
-                        offset = comments.value?.size
+                        offset = offset
                     )) {
                         is CallResult.Success -> {
                             val updatedComments = comments.value?.toMutableList()
@@ -88,9 +90,11 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
                             comments.value = updatedComments?.toImmutableList()
                             if (result.data.size < Constants.ARRAY_LIMIT) {
                                 footerStatus.value = FooterStatus.ALLFETCHED
-                            } else {
-                                footerStatus.value = FooterStatus.LOADINGSTOPPED
+                                offset = 0
+                                return@launch
                             }
+                            footerStatus.value = FooterStatus.LOADINGSTOPPED
+                            offset += Constants.ARRAY_LIMIT
                         }
 
                         is CallResult.Error -> footerStatus.value = FooterStatus.FAILURE
@@ -120,6 +124,7 @@ class SetCommentViewModel @Inject constructor(private val setCommentUseCase: Set
                         footerStatus.value = FooterStatus.LOADINGSTOPPED
                     }
                     uiState.value = UIState.SUCCESS
+                    offset = Constants.ARRAY_LIMIT
                 }
 
                 is CallResult.Error -> uiState.value = UIState.FAILURE
