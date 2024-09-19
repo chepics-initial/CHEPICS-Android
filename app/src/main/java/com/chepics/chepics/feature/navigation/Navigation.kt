@@ -254,17 +254,11 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString(NavigationParts.editProfileUser)?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
-                val completion =
-                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                        NavigationParts.editProfileCompletion
-                    )
-                completion?.let { completion ->
-                    EditProfileScreen(
-                        navController = feedNavController,
-                        showBottomNavigation = showBottomNavigation,
-                        user = it
-                    ) { completion() }
-                }
+                EditProfileScreen(
+                    navController = feedNavController,
+                    showBottomNavigation = showBottomNavigation,
+                    user = it
+                )
             }
         }
 
@@ -399,20 +393,20 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                     ?.let { comment ->
                         Gson().fromJson(comment, Comment::class.java)
                     }?.let { comment ->
-                    val onBack =
-                        feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                            NavigationParts.setCommentDetailOnBack
-                        )
-                    onBack?.let { onBack ->
-                        SetCommentDetailScreen(
-                            set = set,
-                            comment = comment,
-                            navController = feedNavController
-                        ) {
-                            onBack()
+                        val onBack =
+                            feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                                NavigationParts.setCommentDetailOnBack
+                            )
+                        onBack?.let { onBack ->
+                            SetCommentDetailScreen(
+                                set = set,
+                                comment = comment,
+                                navController = feedNavController
+                            ) {
+                                onBack()
+                            }
                         }
                     }
-                }
             }
         }
 
@@ -426,18 +420,18 @@ fun FeedNavHost(showBottomNavigation: MutableState<Boolean>) {
                 ?.let { item ->
                     Gson().fromJson(item, CreateCommentNavigationItem::class.java)
                 }?.let { item ->
-                val completion =
-                    feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                        NavigationParts.createCommentCompletion
-                    )
-                completion?.let {
-                    CreateCommentScreen(
-                        navController = feedNavController,
-                        showBottomNavigation = showBottomNavigation,
-                        navigationItem = item
-                    ) { it() }
+                    val completion =
+                        feedNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                            NavigationParts.createCommentCompletion
+                        )
+                    completion?.let {
+                        CreateCommentScreen(
+                            navController = feedNavController,
+                            showBottomNavigation = showBottomNavigation,
+                            navigationItem = item
+                        ) { it() }
+                    }
                 }
-            }
         }
     }
 }
@@ -482,17 +476,11 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
             backStackEntry.arguments?.getString(NavigationParts.editProfileUser)?.let {
                 Gson().fromJson(it, User::class.java)
             }?.let {
-                val completion =
-                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                        NavigationParts.editProfileCompletion
-                    )
-                completion?.let { completion ->
-                    EditProfileScreen(
-                        navController = myPageNavController,
-                        showBottomNavigation = showBottomNavigation,
-                        user = it
-                    ) { completion() }
-                }
+                EditProfileScreen(
+                    navController = myPageNavController,
+                    showBottomNavigation = showBottomNavigation,
+                    user = it
+                )
             }
         }
 
@@ -631,20 +619,20 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                     ?.let { comment ->
                         Gson().fromJson(comment, Comment::class.java)
                     }?.let { comment ->
-                    val onBack =
-                        myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                            NavigationParts.setCommentDetailOnBack
-                        )
-                    onBack?.let { onBack ->
-                        SetCommentDetailScreen(
-                            set = set,
-                            comment = comment,
-                            navController = myPageNavController
-                        ) {
-                            onBack()
+                        val onBack =
+                            myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                                NavigationParts.setCommentDetailOnBack
+                            )
+                        onBack?.let { onBack ->
+                            SetCommentDetailScreen(
+                                set = set,
+                                comment = comment,
+                                navController = myPageNavController
+                            ) {
+                                onBack()
+                            }
                         }
                     }
-                }
             }
         }
 
@@ -658,18 +646,18 @@ fun MyPageNavHost(showBottomNavigation: MutableState<Boolean>) {
                 ?.let { item ->
                     Gson().fromJson(item, CreateCommentNavigationItem::class.java)
                 }?.let { item ->
-                val completion =
-                    myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
-                        NavigationParts.createCommentCompletion
-                    )
-                completion?.let {
-                    CreateCommentScreen(
-                        navController = myPageNavController,
-                        showBottomNavigation = showBottomNavigation,
-                        navigationItem = item
-                    ) { it() }
+                    val completion =
+                        myPageNavController.previousBackStackEntry?.savedStateHandle?.get<() -> Unit>(
+                            NavigationParts.createCommentCompletion
+                        )
+                    completion?.let {
+                        CreateCommentScreen(
+                            navController = myPageNavController,
+                            showBottomNavigation = showBottomNavigation,
+                            navigationItem = item
+                        ) { it() }
+                    }
                 }
-            }
         }
     }
 }
@@ -701,7 +689,6 @@ object NavigationParts {
     const val profileUser = "user"
 
     const val editProfileUser = "user"
-    const val editProfileCompletion = "completion"
 
     const val commentDetailNavigationItem = "navigationItem"
 
@@ -722,4 +709,8 @@ object NavigationParts {
 
     const val createCommentNavigationItem = "navigationItem"
     const val createCommentCompletion = "completion"
+}
+
+object Lambdas {
+    const val editProfile = "editProfileCompletion"
 }

@@ -59,7 +59,7 @@ import com.chepics.chepics.feature.commonparts.ImagePager
 import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.TopicCell
 import com.chepics.chepics.feature.commonparts.UserIcon
-import com.chepics.chepics.feature.navigation.NavigationParts
+import com.chepics.chepics.feature.navigation.Lambdas
 import com.chepics.chepics.feature.navigation.Screens
 import com.chepics.chepics.feature.topic.top.TopicTopNavigationItem
 import com.chepics.chepics.ui.theme.ChepicsPrimary
@@ -77,6 +77,9 @@ fun ProfileScreen(
         mutableStateOf(false)
     }
 
+    val currentBackStackEntry = navController.currentBackStackEntry
+    val savedStateHandle = currentBackStackEntry?.savedStateHandle
+
     val topicCoroutineScope = rememberCoroutineScope()
     val commentCoroutineScope = rememberCoroutineScope()
 
@@ -84,8 +87,13 @@ fun ProfileScreen(
         viewModel.onStart(user)
     }
 
-    val editProfileCompletion: () -> Unit = {
-        viewModel.editProfileCompletion()
+    LaunchedEffect(key1 = savedStateHandle) {
+        savedStateHandle?.getLiveData<Boolean>(Lambdas.editProfile)
+            ?.observe(currentBackStackEntry) { isCompleted ->
+                if (isCompleted) {
+                    viewModel.editProfileCompletion()
+                }
+            }
     }
 
     if (viewModel.showLikeCommentFailureDialog.value) {
@@ -139,12 +147,7 @@ fun ProfileScreen(
                             if (viewModel.isCurrentUser.value) {
                                 IconButton(onClick = {
                                     viewModel.user.value?.let { user ->
-                                        navController.navigate(Screens.EditProfileScreen.name + "/${user}") {
-                                            navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                NavigationParts.editProfileCompletion,
-                                                editProfileCompletion
-                                            )
-                                        }
+                                        navController.navigate(Screens.EditProfileScreen.name + "/${user}")
                                     }
                                 }) {
                                     Image(

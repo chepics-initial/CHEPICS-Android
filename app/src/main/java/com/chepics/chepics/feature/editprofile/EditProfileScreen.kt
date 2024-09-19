@@ -58,6 +58,7 @@ import com.chepics.chepics.feature.commonparts.ButtonType
 import com.chepics.chepics.feature.commonparts.CommonProgressSpinner
 import com.chepics.chepics.feature.commonparts.NetworkErrorDialog
 import com.chepics.chepics.feature.commonparts.RoundButton
+import com.chepics.chepics.feature.navigation.Lambdas
 import com.chepics.chepics.ui.theme.ChepicsPrimary
 import com.chepics.chepics.utils.Constants
 
@@ -67,8 +68,7 @@ fun EditProfileScreen(
     navController: NavController,
     showBottomNavigation: MutableState<Boolean>,
     user: User,
-    viewModel: EditProfileViewModel = hiltViewModel(),
-    completion: () -> Unit
+    viewModel: EditProfileViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
     val isEnabled = remember {
@@ -205,7 +205,10 @@ fun EditProfileScreen(
                         type = ButtonType.Fill
                     ) {
                         viewModel.onTapButton(completion = {
-                            completion()
+                            navController.previousBackStackEntry?.savedStateHandle?.set(
+                                Lambdas.editProfile,
+                                true
+                            )
                             navController.navigateUp()
                         })
                     }
