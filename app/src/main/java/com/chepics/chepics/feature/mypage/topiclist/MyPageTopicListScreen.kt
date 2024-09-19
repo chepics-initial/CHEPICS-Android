@@ -27,15 +27,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,12 +54,8 @@ fun MyPageTopicListScreen(
     navController: NavController,
     viewModel: MyPageTopicListViewModel = hiltViewModel()
 ) {
-    val refreshState = rememberPullToRefreshState()
-    if (refreshState.isRefreshing && viewModel.uiState.value != UIState.LOADING) {
-        LaunchedEffect(true) {
-            viewModel.fetchSets()
-            refreshState.endRefresh()
-        }
+    val onRefresh: () -> Unit = {
+        viewModel.onRefresh()
     }
 
     Scaffold(
@@ -90,11 +84,12 @@ fun MyPageTopicListScreen(
             })
         }
     ) {
-        Box(
+        PullToRefreshBox(
+            isRefreshing = viewModel.isRefreshing.value,
+            onRefresh = { onRefresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-                .nestedScroll(refreshState.nestedScrollConnection)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -143,11 +138,6 @@ fun MyPageTopicListScreen(
                     }
                 }
             }
-
-            PullToRefreshContainer(
-                state = refreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 }

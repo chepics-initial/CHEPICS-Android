@@ -44,6 +44,9 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
     val commentFooterStatus: MutableState<FooterStatus> =
         mutableStateOf(FooterStatus.LOADINGSTOPPED)
     val userFooterStatus: MutableState<FooterStatus> = mutableStateOf(FooterStatus.LOADINGSTOPPED)
+    val isTopicRefreshing: MutableState<Boolean> = mutableStateOf(false)
+    val isCommentRefreshing: MutableState<Boolean> = mutableStateOf(false)
+    val isUserRefreshing: MutableState<Boolean> = mutableStateOf(false)
     var initialSearchText: String = ""
     private var isInitialOnStart = true
     private var topicOffset = 0
@@ -112,7 +115,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         }
     }
 
-    suspend fun fetchTopics() {
+    private suspend fun fetchTopics() {
         if (topicUIState.value != UIState.SUCCESS) {
             topicUIState.value = UIState.LOADING
         }
@@ -135,7 +138,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         }
     }
 
-    suspend fun fetchComments() {
+    private suspend fun fetchComments() {
         if (commentUIState.value != UIState.SUCCESS) {
             commentUIState.value = UIState.LOADING
         }
@@ -158,7 +161,7 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
         }
     }
 
-    suspend fun fetchUsers() {
+    private suspend fun fetchUsers() {
         if (userUIState.value != UIState.SUCCESS) {
             userUIState.value = UIState.LOADING
         }
@@ -181,6 +184,31 @@ class ExploreResultViewModel @Inject constructor(private val exploreResultUseCas
             }
         }
     }
+
+    fun onTopicRefresh() {
+        viewModelScope.launch {
+            isTopicRefreshing.value = true
+            fetchTopics()
+            isTopicRefreshing.value = false
+        }
+    }
+
+    fun onCommentRefresh() {
+        viewModelScope.launch {
+            isCommentRefreshing.value = true
+            fetchComments()
+            isCommentRefreshing.value = false
+        }
+    }
+
+    fun onUserRefresh() {
+        viewModelScope.launch {
+            isUserRefreshing.value = true
+            fetchUsers()
+            isUserRefreshing.value = false
+        }
+    }
+
 
     fun onTapImage(index: Int, images: List<String>) {
         selectedImageIndex.value = index
